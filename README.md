@@ -1,7 +1,7 @@
 # chat
 
 Веб приложение чат на нативном js.  
-https://chat-dementeva.netlify.app/  
+https://chat-deploy-dementeva.netlify.app/
 Проект находится на стадии разработки.  
 
 Основные команды:
