@@ -1,0 +1,16 @@
+.wrap-auth
+    .auth-form
+        h1.auth-form__title Вход
+        .auth-form__field
+            .text-field.text-field_bottom
+                label(for="login").text-field__label Логин
+                input(type="text", name="login", id="login", placeholder="Логин").text-field__input
+            .text-field
+                label(for="password").text-field__label Пароль
+                input(type="password", name="password", id="password", placeholder="Пароль").text-field__input 
+        .auth-form__action
+            button(type="button").btn.btn_login-top-bottom
+                span Вход
+            a(href='/sigin').auth-form__href Нет аккаунта?
+
+

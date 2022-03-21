@@ -1,0 +1,39 @@
+doctype html
+html(lang="ru")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(http-equiv="X-UA-Compatible", content="ie=edge")
+        title Войти
+    body
+        .wrap-auth
+            .auth-form
+                h1.auth-form__title Регистрация
+                .auth-form__field
+                    .text-field.text-field_bottom
+                        label(for="email").text-field__label Почта
+                        input(type="text", name="email", id="email", placeholder="Почта").text-field__input
+                    .text-field.text-field_bottom
+                        label(for="login").text-field__label Логин
+                        input(type="text", name="login", id="login", placeholder="Логин").text-field__input
+                    .text-field.text-field_bottom
+                        label(for="first_name").text-field__label Имя
+                        input(type="text", name="first_name", id="first_name", placeholder="Имя").text-field__input
+                    .text-field.text-field_bottom
+                        label(for="second_name").text-field__label Фамилия
+                        input(type="text", name="second_name", id="second_name", placeholder="Фамилия").text-field__input
+                    .text-field.text-field_bottom
+                        label(for="phone").text-field__label Телефон
+                        input(type="phone", name="phone", id="phone", placeholder="Телефон").text-field__input
+                    .text-field.text-field_bottom
+                        label(for="password").text-field__label Пароль
+                        input(type="password", name="password", id="password", placeholder="Пароль").text-field__input
+                    .text-field
+                        label(for="password_repeat").text-field__label Пароль (ещё раз)
+                        input(type="password", name="password_repeat", id="password_repeat", placeholder="Пароль (ещё раз)").text-field__input
+                .auth-form__action
+                    button(type="button").btn.btn_sigin-top-bottom
+                        span Зарегистрироваться
+                    a(href="/auth").auth-form__href Войти
+
+        script(src='../../../../../index.js', type="module")

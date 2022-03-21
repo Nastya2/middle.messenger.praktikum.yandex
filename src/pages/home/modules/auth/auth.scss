@@ -1,0 +1,74 @@
+.wrap-auth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.auth-form {
+    width: 340px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.14);
+    border-radius: 12px;
+    padding-top: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 30px;
+    font-weight: 500;
+
+    &__username {
+        margin-bottom: 30px;
+    }
+
+    &__password {
+        margin-bottom: 150px;
+    }
+
+    &__title {
+        font-size: 20px;
+        line-height: 20px;
+        text-align: center;
+    }
+
+    &__href {
+        font-size: 11px;
+        line-height: 11px;
+        color: #3369F3;    
+    }
+
+    &__field {
+        width: 100%;
+    }
+
+    &__action {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__registration {
+            font-size: 11px;
+            line-height: 11px;
+            color: #3369F3;
+        }
+        
+        &__submit {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    }
+}
+
+.btn_sigin-top-bottom {
+    margin-top: 60px;
+    margin-bottom: 15px;
+}
+
+.btn_login-top-bottom {
+    margin-top: 150px;
+    margin-bottom: 15px;
+}
+
+.text-field_bottom {
+    margin-bottom: 15px;
+}
