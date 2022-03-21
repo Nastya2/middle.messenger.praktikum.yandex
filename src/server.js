@@ -6,7 +6,6 @@ const PORT = 3000;
 const root = "public";
 
 app.use(express.static(`${root}`));
-app.use(`/auth`, express.static(`${root}`));
 app.use(`/sigin`, express.static(`${root}/pages/home/modules/auth/sigin/sigin.html`));
 app.use(`/profile`, express.static(`${root}/pages/home/modules/profile/profile.html`));
 app.use(`/profile/edit`, express.static(`${root}/pages/home/modules/profile/edit-profile.html`));
