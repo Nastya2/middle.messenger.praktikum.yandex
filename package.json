@@ -4,7 +4,7 @@
   "scripts": {
     "start": "node server.js ",
     "build": "parcel build src/**/*.pug --dist-dir public --no-cache",
-    "server": "parcel src/pages/home/modules/errors/error404.pug"
+    "server": "parcel src/index.pug"
   },
   "devDependencies": {
     "@parcel/transformer-pug": "^2.3.2",
