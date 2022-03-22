@@ -2,7 +2,7 @@
   "name": "chat",
   "source": "src/index.html",
   "scripts": {
-    "start": "node src/server.js ",
+    "start": "node server.js ",
     "build": "parcel build src/**/*.pug --dist-dir public --no-cache",
     "server": "parcel src/pages/home/modules/errors/error404.pug"
   },

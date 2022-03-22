@@ -2,8 +2,8 @@ const express = require('express');
 
 const app = express();
 const PORT = 3000;
-
 const root = "public";
+
 
 app.use(express.static(`${root}`));
 app.use(`/sigin`, express.static(`${root}/pages/home/modules/auth/sigin/sigin.html`));
@@ -16,4 +16,4 @@ app.use(`/error500`, express.static(`${root}/pages/home/modules/errors/error500.
 
 app.listen(PORT, function () {
   console.log(`Example app listening on port ${PORT}!`);
-}); 
+});
