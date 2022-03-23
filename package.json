@@ -2,9 +2,9 @@
   "name": "chat",
   "source": "src/index.html",
   "scripts": {
-    "start": "node server.js ",
+    "start": "npm run build && node server.js",
     "build": "parcel build src/**/*.pug --dist-dir public --no-cache",
-    "server": "parcel src/index.pug"
+    "dev": "parcel src/index.pug"
   },
   "devDependencies": {
     "@parcel/transformer-pug": "^2.3.2",
