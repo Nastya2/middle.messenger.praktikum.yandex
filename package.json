@@ -1,0 +1,22 @@
+{
+  "name": "chat",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "npm run build && node server.js",
+    "build": "parcel build src/**/*.pug --dist-dir public --no-cache",
+    "dev": "parcel src/index.pug"
+  },
+  "devDependencies": {
+    "@parcel/transformer-pug": "2.3.2",
+    "@parcel/transformer-sass": "2.3.2",
+    "express": "4.17.3",
+    "parcel": "2.3.2"
+  },
+  "dependencies": {
+    "normalize.css": "^8.0.1"
+  },
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "engines": {
+    "node": ">= 12.0.0"
+  }
+}
