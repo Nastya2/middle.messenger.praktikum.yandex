@@ -59,7 +59,7 @@ body, html {
         padding-bottom: 7px;
 
         &:focus-visible {
-            outline: none !important;
+            outline-color: transparent;
         }
     }
 }
@@ -80,7 +80,7 @@ body, html {
         text-align: right;
 
         &:focus-visible {
-            outline: none !important;
+            outline-color: transparent;
         }
     }
 
@@ -93,7 +93,7 @@ body, html {
 
 .btn {
     width: 100%;
-    border: none !important;
+    border: none;
     background: var(--blue-color);
     color: var(--white-color);
     border-radius: 8px;
