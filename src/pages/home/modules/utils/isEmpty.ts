@@ -1,4 +1,4 @@
-export function isEmpty(value) {
+export function isEmpty(value: unknown) {
     if (!value) {
       return true;
     }
@@ -16,16 +16,16 @@ export function isEmpty(value) {
      if (typeof value === "boolean") {
       return true;
     }
+
+    if (value instanceof Map || value instanceof Set) {
+      return !!!value.size;
+    }
     
     if (typeof value === "object" && !Array.isArray(value)) {
-      if (value.size === undefined) {
-        if (!Object.keys(value).length) {
-          return true;
-        }
-      } else {
-        return !!!value.size;
+      if (!Object.keys(value).length) {
+        return true;
       }
-      
     }
+  
     return false;    
   }

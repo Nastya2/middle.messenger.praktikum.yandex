@@ -1,4 +1,4 @@
-export function range(start = 0, end, step = 1, isRight = false) {
+export function range(start = 0, end: number | undefined, step = 1, isRight = false) {
     let arr = [];
     if(end === undefined) {
       end = start;
