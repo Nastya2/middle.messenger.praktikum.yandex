@@ -3,4 +3,4 @@ export function last(list: unknown) {
     
     const length = list.length;
     return length ? list[length - 1] : undefined;
-}
+}  

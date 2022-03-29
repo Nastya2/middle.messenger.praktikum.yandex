@@ -4,13 +4,19 @@
   "scripts": {
     "start": "npm run build && node server.js",
     "build": "parcel build src/**/*.pug --dist-dir public --no-cache",
-    "dev": "parcel src/index.pug"
+    "dev": "parcel src/index.pug",
+    "lint": "./node_modules/.bin/eslint . && npx stylelint '**/*.scss'",
+    "lint-fix": "./node_modules/.bin/eslint . --fix && npx stylelint '**/*.scss' --fix"
   },
   "devDependencies": {
     "@parcel/transformer-pug": "2.3.2",
     "@parcel/transformer-sass": "2.3.2",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
     "express": "4.17.3",
-    "parcel": "2.3.2"
+    "parcel": "2.3.2",
+    "stylelint": "^14.6.1",
+    "stylelint-config-standard-scss": "^3.0.0"
   },
   "dependencies": {
     "normalize.css": "^8.0.1"
@@ -20,5 +26,3 @@
     "node": ">= 12.0.0"
   }
 }
-
-

@@ -1,0 +1,17 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "node_modiles/**/*",
+    "public/**/*",
+    "dist/**/*",
+    "src/static/**/*"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "@typescript-eslint/no-var-requires": 0
+  }
+}

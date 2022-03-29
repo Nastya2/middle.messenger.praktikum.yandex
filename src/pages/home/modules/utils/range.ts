@@ -1,6 +1,6 @@
 export function range(start = 0, end: number | undefined, step = 1, isRight = false) {
-    let arr = [];
-    if(end === undefined) {
+    const arr = [];
+    if(end === undefined) {  
       end = start;
       start = 0;
     }
