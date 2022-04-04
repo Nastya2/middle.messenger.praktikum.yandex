@@ -7,7 +7,7 @@ abstract class Block {
     INIT: "init",
     FLOW_CDM: "flow:component-did-mount",
     FLOW_RENDER: "flow:render",
-    FLOW_UPDATE: "flow:component-did-update"
+    FLOW_CDU: "flow:component-did-update"
   };
 
   private element: HTMLElement;
@@ -34,7 +34,7 @@ abstract class Block {
     this.eventBus().on(Block.EVENTS.INIT, this.init.bind(this));
     this.eventBus().on(Block.EVENTS.FLOW_CDM, this.componentDidMount.bind(this));
     this.eventBus().on(Block.EVENTS.FLOW_RENDER, this.renderTmp.bind(this));
-    this.eventBus().on(Block.EVENTS.FLOW_UPDATE, this.componentDidUpdate.bind(this));
+    this.eventBus().on(Block.EVENTS.FLOW_CDU, this.componentDidUpdate.bind(this));
   }
 
   private createResources(): void {
@@ -88,10 +88,11 @@ abstract class Block {
           },
           set(target: Tprops, prop: string, value: string) {
             if(target[prop] !== value) {
-              self.eventBus().emit(Block.EVENTS.FLOW_UPDATE, true, target[prop], value);
+              const oldValue = target[prop];
               target[prop] = value;
+              self.eventBus().emit(Block.EVENTS.FLOW_CDU, true, oldValue, value);
             } else {
-              self.eventBus().emit(Block.EVENTS.FLOW_UPDATE, false);
+              self.eventBus().emit(Block.EVENTS.FLOW_CDU, false);
               console.log("no update");
             }
             return true;

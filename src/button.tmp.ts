@@ -1,3 +1,4 @@
-export default `button #{text}`
+export default `button
+                    span #{text}`
 
 
