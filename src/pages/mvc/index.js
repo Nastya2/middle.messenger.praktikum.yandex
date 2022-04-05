@@ -1,4 +1,4 @@
-import { EventBus } from "./event-bus";
+import { EventBus } from "../modules/shared/services/event-bus";
 import { compileFile } from 'pug';
 
 const eventBus = new EventBus();

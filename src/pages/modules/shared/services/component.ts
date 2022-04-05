@@ -1,8 +1,8 @@
-import { EventBus } from "./pages/mvc/event-bus";
+import { EventBus } from "./event-bus";
 
 type Tprops = {[key: string]: string};
 
-abstract class Block {
+abstract class Component {
   static EVENTS = {
     INIT: "init",
     FLOW_CDM: "flow:component-did-mount",
@@ -27,14 +27,14 @@ abstract class Block {
     this.props = this.makePropsProxy(props);
 
     this.registerEvents();
-    this.eventBus().emit(Block.EVENTS.INIT);
+    this.eventBus().emit(Component.EVENTS.INIT);
   }
 
   private registerEvents(): void {
-    this.eventBus().on(Block.EVENTS.INIT, this.init.bind(this));
-    this.eventBus().on(Block.EVENTS.FLOW_CDM, this.componentDidMount.bind(this));
-    this.eventBus().on(Block.EVENTS.FLOW_RENDER, this.renderTmp.bind(this));
-    this.eventBus().on(Block.EVENTS.FLOW_CDU, this.componentDidUpdate.bind(this));
+    this.eventBus().on(Component.EVENTS.INIT, this.init.bind(this));
+    this.eventBus().on(Component.EVENTS.FLOW_CDM, this.componentDidMount.bind(this));
+    this.eventBus().on(Component.EVENTS.FLOW_RENDER, this.renderTmp.bind(this));
+    this.eventBus().on(Component.EVENTS.FLOW_CDU, this.componentDidUpdate.bind(this));
   }
 
   private createResources(): void {
@@ -43,7 +43,7 @@ abstract class Block {
 
   private init(): void {
     this.createResources();
-    this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
+    this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
   private componentDidMount(): void {
@@ -51,18 +51,20 @@ abstract class Block {
   }
 
   public dispatchComponentDidMount(): void {
-    this.eventBus().emit(Block.EVENTS.FLOW_CDM);
+    this.eventBus().emit(Component.EVENTS.FLOW_CDM);
   }
 
-  private componentDidUpdate(...args: unknown[]) {
-    const [oldValue, newValue] = args;
-    if(oldValue !== newValue) {
-      this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
-      console.log(oldValue, newValue, "update");
+  private _componentDidUpdate(oldProps: Tprops, newProps: Tprops) {
+    if(JSON.stringify(oldProps) !== JSON.stringify(newProps)) {
       return true;
     } else {
       return false;
     }
+  }
+
+  public componentDidUpdate() {
+    console.log("update");
+    this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
   public setProps = (nextProps: Tprops) => {
@@ -70,7 +72,10 @@ abstract class Block {
       return;
     }
 
-    Object.assign(this.props, nextProps);
+    if(this._componentDidUpdate(this.props, nextProps)) {
+      Object.assign(this.props, nextProps);
+      this.eventBus().emit(Component.EVENTS.FLOW_CDU, nextProps, this.props);
+    }
   };
 
   private renderTmp(): void {
@@ -81,15 +86,12 @@ abstract class Block {
   abstract render(): string;
 
   private makePropsProxy(props: Tprops): Tprops {
-      const self = this;
       return new Proxy(props, {
           get(target: Tprops, prop: string) {
             return target[prop];
           },
           set(target: Tprops, prop: string, value: string) {
-            const oldValue = target[prop];
             target[prop] = value;
-            self.eventBus().emit(Block.EVENTS.FLOW_CDU, oldValue, value);
             return true;
           },
           deleteProperty() {
@@ -111,4 +113,4 @@ abstract class Block {
   }
 }
 
-export default Block; 
+export default Component; 

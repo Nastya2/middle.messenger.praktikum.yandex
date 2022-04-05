@@ -1,6 +1,6 @@
 @import "npm:normalize.css/normalize.css";
-@import "pages/home/modules/auth/auth";
-@import "pages/home/modules/profile/profile";
+@import "pages/modules/auth/auth";
+@import "pages/modules/profile/profile";
 
 :root {
   --blue-color: #3369f3;
@@ -110,6 +110,11 @@ html {
   &_width280 {
     width: 280px;
   }
+}
+
+.btn-action {
+  width: 100%;
+  text-align: center;
 }
 
 .color-blue {
