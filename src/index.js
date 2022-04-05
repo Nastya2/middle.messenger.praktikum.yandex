@@ -13,8 +13,4 @@ setTimeout(() => {
 
 console.log(button);
 
-class A {
-    b; c;
-}
 
-console.log(new A());

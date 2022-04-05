@@ -55,8 +55,8 @@ abstract class Block {
   }
 
   private componentDidUpdate(...args: unknown[]) {
-    const [update, oldValue, newValue] = args;
-    if(update) {
+    const [oldValue, newValue] = args;
+    if(oldValue !== newValue) {
       this.eventBus().emit(Block.EVENTS.FLOW_RENDER);
       console.log(oldValue, newValue, "update");
       return true;
@@ -87,14 +87,9 @@ abstract class Block {
             return target[prop];
           },
           set(target: Tprops, prop: string, value: string) {
-            if(target[prop] !== value) {
-              const oldValue = target[prop];
-              target[prop] = value;
-              self.eventBus().emit(Block.EVENTS.FLOW_CDU, true, oldValue, value);
-            } else {
-              self.eventBus().emit(Block.EVENTS.FLOW_CDU, false);
-              console.log("no update");
-            }
+            const oldValue = target[prop];
+            target[prop] = value;
+            self.eventBus().emit(Block.EVENTS.FLOW_CDU, oldValue, value);
             return true;
           },
           deleteProperty() {
