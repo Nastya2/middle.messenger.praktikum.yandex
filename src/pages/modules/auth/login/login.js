@@ -7,3 +7,4 @@ const button = new Button({
 });
 
 render(".btn-action", button);
+
