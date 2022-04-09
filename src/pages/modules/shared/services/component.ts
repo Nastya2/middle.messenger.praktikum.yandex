@@ -1,6 +1,8 @@
+
 import { EventBus } from "./event-bus";
 
 type Tprops = {[key: string]: string};
+
 
 abstract class Component {
   static EVENTS = {
@@ -72,6 +74,8 @@ abstract class Component {
       return;
     }
 
+    this.removeListener();
+
     if(this._componentDidUpdate(this.props, nextProps)) {
       Object.assign(this.props, nextProps);
       this.eventBus().emit(Component.EVENTS.FLOW_CDU, nextProps, this.props);
@@ -81,6 +85,7 @@ abstract class Component {
   private renderTmp(): void {
     const block = this.render();
     this.element.innerHTML = block;
+    this.addEvents();
   }
 
   abstract render(): string;
@@ -111,6 +116,26 @@ abstract class Component {
   public hide(): void {
     this.getContent().style.display = "none";
   }
+
+  private addEvents() {
+    /* eslint-disable */
+    const events = this.props.event as any;
+
+    if (events) {
+      Object.keys(events).forEach(eventName => {
+        this.element.addEventListener(eventName, events[eventName]);
+      });
+    }
+  }
+
+  private removeListener() {
+    const events = this.props.event as any;
+    if(events) {
+      Object.keys(events).forEach(eventName => {
+        this.element.removeEventListener(eventName, events[eventName]);
+      });
+    }
+  }
 }
 
-export default Component; 
+export default Component;

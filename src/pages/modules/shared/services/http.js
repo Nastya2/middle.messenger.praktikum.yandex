@@ -17,13 +17,9 @@ const METHODS = {
   }
   
   class HTTPTransport {
-          get = (url, options = {}) => {
-            if(options.data) {
-                options.data =  queryStringify(options.data);
-              }
-   
-              return this.request(url, {...options, method: METHODS.GET}, options.timeout);
-          };
+        get = (url, options = {}) => {
+          return this.request(url, {...options, method: METHODS.GET}, options.timeout);
+        };
     
         post = (url, options = {}) => {	
           return this.request(url, {...options, method: METHODS.POST}, options.timeout);
@@ -44,7 +40,6 @@ const METHODS = {
           // headers — obj
           // data — obj
           request = (url, options, timeout = 5000) => {
-            console.log(url, options, timeout);
               const {method, headers} = options;
             
               let data;
@@ -55,6 +50,10 @@ const METHODS = {
               return new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.timeout = timeout;
+
+                if(method === METHODS.GET) {
+                  url = url + queryStringify(data);
+                }
                 xhr.open(method, url);
                 
                 for(let key in headers) {
@@ -66,9 +65,19 @@ const METHODS = {
                   resolve(xhr);
                 };
   
-                xhr.onabort = function() {reject(new Error("1"))}
-                xhr.onerror = function() {reject(new Error("2"))}
-                xhr.ontimeout = function() {reject(new Error("3"))}
+                xhr.onabort = retry;
+                xhr.onerror = retry;
+                xhr.ontimeout = retry;
+
+                let count = 1;
+                function retry() {
+                  if (count !== retries) {
+                    count++;
+                    return this.request(url, options);
+                  } else {
+                    reject(new Error("err"))
+                  }
+                }
   
                 if (method === METHODS.GET || !data) {
                   console.log("send");
