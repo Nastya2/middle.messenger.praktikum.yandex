@@ -4,7 +4,6 @@ import { checkValidity } from "../shared/validation-functions";
 import { regular_name } from "../shared/regular_expressions";
 
 
-
 const form = document.querySelector('.info') as HTMLFormElement;
 const error_first_name = form.querySelector('.error-first-name');
 const error_second_name = form.querySelector('.error-second-name');
