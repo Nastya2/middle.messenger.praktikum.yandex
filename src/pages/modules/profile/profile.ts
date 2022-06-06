@@ -1,9 +1,11 @@
-import Button from "../../shared/components/button/button";
-import { checkValidity } from "../../shared/validation-functions";
-import { render } from "../../utils/renderDom";
-import { regular_name } from "../../shared/regular_expressions";
+import Button from "../shared/components/button/button";
+import { render } from "../utils/renderDom";
+import { checkValidity } from "../shared/validation-functions";
+import { regular_name } from "../shared/regular_expressions";
 
-const form = document.querySelector('.auth-form') as HTMLFormElement;
+
+
+const form = document.querySelector('.info') as HTMLFormElement;
 const error_first_name = form.querySelector('.error-first-name');
 const error_second_name = form.querySelector('.error-second-name');
 const first_name = form.elements.namedItem("first_name") as HTMLInputElement;
@@ -17,27 +19,17 @@ if (second_name) {
     second_name.setAttribute("pattern", regular_name);
 }
 
-const button = new Button({
-    text: 'Зарегистрироваться',
-    clases: 'btn btn_sigin-top-bottom',
-    event: {
-        click: function() {
-            getDataForm();
-        }
-    }
-});
-
-render(".btn-action", button);
-
 function getDataForm() {
     const data = {
         login: (form.elements.namedItem("login") as HTMLInputElement).value,
-        password: (form.elements.namedItem("password") as HTMLInputElement).value,
         email: (form.elements.namedItem("email") as HTMLInputElement).value,
         first_name: first_name.value,
         second_name: second_name.value,
         phone: (form.elements.namedItem("phone") as HTMLInputElement).value,
-        password_repeat: (form.elements.namedItem("password_repeat") as HTMLInputElement).value,
+        display_name: (form.elements.namedItem("display_name") as HTMLInputElement).value,
+        oldPassword: (form.elements.namedItem("oldPassword") as HTMLInputElement).value,
+        newPassword: (form.elements.namedItem("newPassword") as HTMLInputElement).value,
+        newPasswordRepeat: (form.elements.namedItem("newPasswordRepeat") as HTMLInputElement).value,
     };
     console.log(data);
     checkValidity(first_name, error_first_name, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
@@ -63,3 +55,14 @@ second_name.addEventListener("focus", () => {
 second_name.addEventListener("blur", () => {
     checkValidity(second_name, error_second_name, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
 });
+
+const button = new Button({
+    text: 'Сохранить',
+    clases: 'btn btn_width280',
+    event: {
+        click: function() {
+            getDataForm();
+        }
+    }
+});
+render(".btn-action", button);

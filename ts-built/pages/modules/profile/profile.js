@@ -1,8 +1,8 @@
-import Button from "../../shared/components/button/button";
-import { checkValidity } from "../../shared/validation-functions";
-import { render } from "../../utils/renderDom";
-import { regular_name } from "../../shared/regular_expressions";
-const form = document.querySelector('.auth-form');
+import Button from "../shared/components/button/button";
+import { render } from "../utils/renderDom";
+import { checkValidity } from "../shared/validation-functions";
+import { regular_name } from "../shared/regular_expressions";
+const form = document.querySelector('.info');
 const error_first_name = form.querySelector('.error-first-name');
 const error_second_name = form.querySelector('.error-second-name');
 const first_name = form.elements.namedItem("first_name");
@@ -13,25 +13,17 @@ if (first_name) {
 if (second_name) {
     second_name.setAttribute("pattern", regular_name);
 }
-const button = new Button({
-    text: 'Зарегистрироваться',
-    clases: 'btn btn_sigin-top-bottom',
-    event: {
-        click: function () {
-            getDataForm();
-        }
-    }
-});
-render(".btn-action", button);
 function getDataForm() {
     const data = {
         login: form.elements.namedItem("login").value,
-        password: form.elements.namedItem("password").value,
         email: form.elements.namedItem("email").value,
         first_name: first_name.value,
         second_name: second_name.value,
         phone: form.elements.namedItem("phone").value,
-        password_repeat: form.elements.namedItem("password_repeat").value,
+        display_name: form.elements.namedItem("display_name").value,
+        oldPassword: form.elements.namedItem("oldPassword").value,
+        newPassword: form.elements.namedItem("newPassword").value,
+        newPasswordRepeat: form.elements.namedItem("newPasswordRepeat").value,
     };
     console.log(data);
     checkValidity(first_name, error_first_name, { patternMismatch: "Некорректное имя, пример, Иван или Ivan." });
@@ -53,4 +45,14 @@ second_name.addEventListener("focus", () => {
 second_name.addEventListener("blur", () => {
     checkValidity(second_name, error_second_name, { patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov." });
 });
-//# sourceMappingURL=sigin.js.map
+const button = new Button({
+    text: 'Сохранить',
+    clases: 'btn btn_width280',
+    event: {
+        click: function () {
+            getDataForm();
+        }
+    }
+});
+render(".btn-action", button);
+//# sourceMappingURL=profile.js.map
