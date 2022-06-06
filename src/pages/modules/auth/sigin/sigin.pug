@@ -8,7 +8,7 @@ html(lang="ru")
         title Войти
     body
         .wrap-auth
-            form.auth-form
+            form.auth-form(onsubmit="getDataForm()")
                 h1.auth-form__title Регистрация
                 .auth-form__field
                     .text-field.text-field_bottom
@@ -19,10 +19,12 @@ html(lang="ru")
                         input(type="text", name="login", id="login", placeholder="Логин").text-field__input
                     .text-field.text-field_bottom
                         label(for="first_name").text-field__label Имя
-                        input(type="text", name="first_name", id="first_name", placeholder="Имя").text-field__input
+                        input(type="text", name="first_name", id="first_name", placeholder="Имя", required).text-field__input
+                        .error-first-name.none.error
                     .text-field.text-field_bottom
                         label(for="second_name").text-field__label Фамилия
-                        input(type="text", name="second_name", id="second_name", placeholder="Фамилия").text-field__input
+                        input(type="text", name="second_name", id="second_name", placeholder="Фамилия", required).text-field__input
+                        .error-second-name.none.error
                     .text-field.text-field_bottom
                         label(for="phone").text-field__label Телефон
                         input(type="phone", name="phone", id="phone", placeholder="Телефон").text-field__input

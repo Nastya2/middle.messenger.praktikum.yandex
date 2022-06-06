@@ -1,7 +1,7 @@
 
 import { EventBus } from "./event-bus";
 
-type Tprops = {[key: string]: string};
+type Tprops = {[key: string]: any};
 
 
 abstract class Component {

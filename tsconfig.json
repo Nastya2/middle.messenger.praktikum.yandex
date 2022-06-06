@@ -8,5 +8,7 @@
         "noUnusedParameters": true,
         "strictNullChecks": true,
         "moduleResolution": "node",
+        "outDir": "ts-built",
+        "rootDir": "src"
     }
 }

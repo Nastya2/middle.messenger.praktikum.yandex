@@ -21,7 +21,7 @@ export function isEmpty(value: unknown) {
       return !!!value.size;
     }
     
-    if (typeof value === "object" && !Array.isArray(value)) {
+    if (typeof value === "object" && !Array.isArray(value) && value !== null) {
       if (!Object.keys(value).length) {
         return true;
       }
