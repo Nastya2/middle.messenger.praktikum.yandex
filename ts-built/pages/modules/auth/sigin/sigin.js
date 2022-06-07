@@ -1,14 +1,22 @@
 import Button from "../../shared/components/button/button";
 import { checkValidity } from "../../shared/validation-functions";
 import { render } from "../../utils/renderDom";
-import { regular_name, regular_login } from "../../shared/regular_expressions";
+import { regular_name, regular_login, regular_password, regular_email, regular_phone } from "../../shared/regular_expressions";
 const form = document.querySelector('.auth-form');
 const error_first_name = form.querySelector('.error-first-name');
 const error_second_name = form.querySelector('.error-second-name');
 const error_login = form.querySelector('.error-login');
+const error_password = form.querySelector('.error-password');
+const error_password_repeat = form.querySelector('.error-password');
+const error_email = form.querySelector('.error-email');
+const error_phone = form.querySelector('.error-phone');
 const first_name = form.elements.namedItem("first_name");
 const second_name = form.elements.namedItem("second_name");
 const login = form.elements.namedItem("login");
+const password = form.elements.namedItem("password");
+const password_repeat = form.elements.namedItem("password_repeat");
+const email = form.elements.namedItem("email");
+const phone = form.elements.namedItem("phone");
 addPattern();
 const button = new Button({
     text: 'Зарегистрироваться',
@@ -46,6 +54,38 @@ function addEvent() {
     login.addEventListener("blur", () => {
         checkValidity(login, error_login, { min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5" });
     });
+    password.addEventListener("focus", () => {
+        if (error_password) {
+            error_password.classList.add("none");
+        }
+    });
+    password.addEventListener("blur", () => {
+        checkValidity(password, error_password, { min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру" });
+    });
+    password_repeat.addEventListener("focus", () => {
+        if (error_password_repeat) {
+            error_password_repeat.classList.add("none");
+        }
+    });
+    password_repeat.addEventListener("blur", () => {
+        checkValidity(password_repeat, error_password_repeat, { min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру" });
+    });
+    email.addEventListener("focus", () => {
+        if (error_email) {
+            error_email.classList.add("none");
+        }
+    });
+    email.addEventListener("blur", () => {
+        checkValidity(email, error_email, { patternMismatch: "Некорректный адресс, пример, address@yandex.ru" });
+    });
+    phone.addEventListener("focus", () => {
+        if (error_phone) {
+            error_phone.classList.add("none");
+        }
+    });
+    phone.addEventListener("blur", () => {
+        checkValidity(phone, error_phone, { patternMismatch: "Некорректный телефон" });
+    });
 }
 function addPattern() {
     if (first_name) {
@@ -57,20 +97,36 @@ function addPattern() {
     if (login) {
         login.setAttribute("pattern", regular_login);
     }
+    if (password) {
+        password.setAttribute("pattern", regular_password);
+    }
+    if (password_repeat) {
+        password_repeat.setAttribute("pattern", regular_password);
+    }
+    if (phone) {
+        phone.setAttribute("pattern", regular_phone);
+    }
+    if (email) {
+        email.setAttribute("pattern", regular_email);
+    }
 }
 function getDataForm() {
     const data = {
         login: login.value,
-        password: form.elements.namedItem("password").value,
-        email: form.elements.namedItem("email").value,
+        password: password.value,
+        email: email.value,
         first_name: first_name.value,
         second_name: second_name.value,
-        phone: form.elements.namedItem("phone").value,
-        password_repeat: form.elements.namedItem("password_repeat").value,
+        phone: phone.value,
+        password_repeat: password_repeat.value,
     };
     console.log(data);
     checkValidity(first_name, error_first_name, { patternMismatch: "Некорректное имя, пример, Иван или Ivan." });
     checkValidity(second_name, error_second_name, { patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov." });
     checkValidity(login, error_login, { min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5" });
+    checkValidity(password, error_password, { min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру" });
+    checkValidity(password_repeat, error_password_repeat, { min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру" });
+    checkValidity(email, error_email, { patternMismatch: "Некорректный адресс, пример, address@yandex.ru" });
+    checkValidity(phone, error_phone, { patternMismatch: "Некорректный телефон" });
 }
 //# sourceMappingURL=sigin.js.map
