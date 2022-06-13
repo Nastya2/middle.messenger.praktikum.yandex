@@ -2,27 +2,57 @@ import Button from "../../shared/components/button/button";
 import { checkValidity } from "../../shared/validation-functions";
 import { render } from "../../utils/renderDom";
 import { regular_login, regular_password } from "../../shared/regular_expressions";
+import Input from "../../shared/components/input/input";
+
+
+const button = new Button({
+    text: 'Вход',
+    classes: 'btn btn_sigin-top-bottom',
+    event: {
+        click: function() {
+            getDataForm();
+        }
+    },
+    settings: {withInternalID: true},
+});
+
+const input_password = new Input({
+    text: "Пароль",
+    for_label: "password",
+    input_type: "password",
+    input_name:"password",
+    input_id: "password",
+    input_placeholder: "Пароль",
+    class_error: "error-password",
+    settings: {withInternalID: true},
+    min: "8",
+    max: "40"
+});
+
+const input_login = new Input({
+    text: "Логин",
+    for_label: "login",
+    input_type: "text",
+    input_name:"login",
+    input_id: "login",
+    input_placeholder: "Логин",
+    class_error: "error-login",
+    settings: {withInternalID: true},
+    min: "3",
+    max: "20"
+});
+
+
+render(".btn-action", button);
+render(".auth-form__field", input_login);
+render(".auth-form__field", input_password);
 
 const form = document.querySelector('.auth-form') as HTMLFormElement;
 const login = form.elements.namedItem("login") as HTMLInputElement;
 const password = form.elements.namedItem("password") as HTMLInputElement;
 const error_login = form.querySelector('.error-login');
 const error_password = form.querySelector('.error-password');
-
 addPattern();
-
-const button = new Button({
-    text: 'Вход',
-    clases: 'btn btn_sigin-top-bottom',
-    event: {
-        click: function() {
-            getDataForm();
-        }
-    }
-});
-
-render(".btn-action", button);
-
 addEvent();
 
 function getDataForm() {

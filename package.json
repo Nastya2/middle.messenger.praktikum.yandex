@@ -13,6 +13,7 @@
     "@parcel/transformer-sass": "2.3.2",
     "@parcel/transformer-typescript-tsc": "2.3.2",
     "@types/pug": "^2.0.6",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.17.0",
     "assert": "^2.0.0",
@@ -28,7 +29,8 @@
     "ts-node": "^10.7.0"
   },
   "dependencies": {
-    "normalize.css": "^8.0.1"
+    "normalize.css": "^8.0.1",
+    "uuid": "^8.3.2"
   },
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "engines": {

@@ -1,9 +1,9 @@
 import Component from "../../services/component";
 import { compile, compileTemplate } from "pug";
-import template from "./button.tmp"
+import template from "./input.tmp"
 
 
-export default class Button extends Component {
+export default class Input extends Component {
   private fn: compileTemplate | undefined;
   constructor(props: {[key: string]: any}) {
     super("div", props);

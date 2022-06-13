@@ -1,5 +1,6 @@
 
 import { EventBus } from "./event-bus";
+import {v4 as makeUUID} from "uuid";
 
 type Tprops = {[key: string]: any};
 
@@ -13,22 +14,25 @@ abstract class Component {
   };
 
   private element: HTMLElement;
-  private meta: null | {"wrap": string, props: Tprops} = null;
   public props: Tprops;
-  private eventBus: () => EventBus; 
+  private eventBus: () => EventBus;
+  private wrap: string = "div";
+  private id: string = "";
 
-  constructor(wrap = "div", props: Tprops = {}) {
+  constructor(wrap: string, props: Tprops = {}) {
     const bus = new EventBus();
     this.eventBus = () => bus;
+    this.wrap = wrap;
 
-    this.meta = {
-      wrap,
-      props
-    };
-
+   
     this.props = this.makePropsProxy(props);
 
     this.registerEvents();
+    if (props?.settings?.withInternalID) {
+      this.id = makeUUID();
+      this.props = this.makePropsProxy({ ...props, __id: this.id });
+    }
+ 
     this.eventBus().emit(Component.EVENTS.INIT);
   }
 
@@ -39,21 +43,32 @@ abstract class Component {
     this.eventBus().on(Component.EVENTS.FLOW_CDU, this.componentDidUpdate.bind(this));
   }
 
-  private createResources(): void {
-    this.element = document.createElement(this.meta?.wrap || "div");
-  }
-
   private init(): void {
     this.createResources();
+    if (this.props?.settings?.withInternalID) {
+      this.element.setAttribute("data-id", this.id);
+    }
     this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
+  }
+
+  private createResources(): void {
+    this.element = document.createElement(this.wrap);
+  }
+
+  private renderTmp(): void {
+    const block = this.render();
+    this.element.innerHTML = block;
+    this.addEvents();
+  }
+
+  abstract render(): string;
+
+  public dispatchComponentDidMount(): void { // external call render
+    this.eventBus().emit(Component.EVENTS.FLOW_CDM);
   }
 
   private componentDidMount(): void {
     console.log("Component render into DOM");
-  }
-
-  public dispatchComponentDidMount(): void {
-    this.eventBus().emit(Component.EVENTS.FLOW_CDM);
   }
 
   private _componentDidUpdate(oldProps: Tprops, newProps: Tprops) {
@@ -64,8 +79,8 @@ abstract class Component {
     }
   }
 
-  public componentDidUpdate() {
-    console.log("update");
+  private componentDidUpdate() {
+    console.log("update render");
     this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
@@ -81,14 +96,6 @@ abstract class Component {
       this.eventBus().emit(Component.EVENTS.FLOW_CDU, nextProps, this.props);
     }
   };
-
-  private renderTmp(): void {
-    const block = this.render();
-    this.element.innerHTML = block;
-    this.addEvents();
-  }
-
-  abstract render(): string;
 
   private makePropsProxy(props: Tprops): Tprops {
       return new Proxy(props, {
@@ -117,7 +124,7 @@ abstract class Component {
     this.getContent().style.display = "none";
   }
 
-  private addEvents() {
+  private addEvents(): void {
     /* eslint-disable */
     const events = this.props.event as any;
 
@@ -128,7 +135,7 @@ abstract class Component {
     }
   }
 
-  private removeListener() {
+  private removeListener(): void {
     const events = this.props.event as any;
     if(events) {
       Object.keys(events).forEach(eventName => {

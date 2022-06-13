@@ -1,3 +1,3 @@
-export default `button(class=clases, type="button") #{text}`
+export default `button(class=classes, type="button") #{text}`
 
 
