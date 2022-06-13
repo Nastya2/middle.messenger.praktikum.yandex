@@ -7,6 +7,21 @@ html(lang="ru")
         link(rel="stylesheet", href="../../styles.scss")
         title Чаты
     body
-        .chats
+        .wrap-chats 
+            .left-chats
+                .left-chats__header
+                    .left-chats__profile
+                        a(href="./../profile/profile.pug") Профиль
+                    .left-chats__search
+                        input(type="text", placeholder="Поиск").search
+                .chats
+            .right-chats
+                .right-chats__header
+                    .right-chats__profile
+                        .avatar
+                        .right-chats__name Андрей
+                .right-chats__msg
+
+                                   
     
         script(src="../../../ts-built/modules/chats/chats.js", type="module")
