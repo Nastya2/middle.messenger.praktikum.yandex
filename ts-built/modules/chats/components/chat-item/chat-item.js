@@ -1,7 +1,7 @@
-import Component from "../../services/component";
+import Component from "../../../shared/services/component";
 import { compile } from "pug";
-import template from "./button.tmp";
-export default class Button extends Component {
+import template from "./chat-item.tmp";
+export default class ChatItem extends Component {
     constructor(props) {
         super("div", props);
     }
@@ -12,4 +12,4 @@ export default class Button extends Component {
         return this.fn(this.props);
     }
 }
-//# sourceMappingURL=button.js.map
+//# sourceMappingURL=chat-item.js.map
