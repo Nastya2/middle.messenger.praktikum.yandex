@@ -34,6 +34,11 @@
 
     .right-chats {
         width: 100%;
+        padding-right: 20px;
+        padding-left: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         &__header {
             border-bottom: 1px solid #EAEAEA;
             padding: 10px;
@@ -57,6 +62,34 @@
         &__msg {
             display: flex;
             flex-direction: column;
+            padding-top: 20px;
+        }
+
+        &__input {
+            margin-bottom: 15px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            input {
+                background: #EFEFEF;
+                border-radius: 30px;
+                width: 100%;
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 12px;
+                color: #111;
+                outline: none;
+                height: 40px;
+                padding: 10px;
+                border: none;
+
+                &:focus {
+                    outline: none;
+                }
+
+            }
         }
     }
 
@@ -85,9 +118,20 @@
     max-width: 400px;
     border-radius: 10px;
     margin-bottom: 10px;
+    min-width: 100px;
 
     &_from {
-        background: #E4EDFD;
+        display: flex;
+        justify-content: flex-end;
+
+        & .msg {
+            background: #E4EDFD;
+        }
+    }
+
+    &_to {
+        display: flex;
+        justify-content: flex-start;
     }
 }
 
@@ -148,17 +192,6 @@
     }
 }
 
-div .msg-from {
-    display: flex;
-    justify-content: flex-end;
-}
-
-div .msg-to {
-    display: flex;
-    justify-content: flex-start;
-}
-
-
 .time {
     font-weight: 500;
     font-size: 9px;
@@ -192,4 +225,9 @@ div .msg-to {
     height: 47px;
     border-radius: 50%;
     background: #EFEFEF;
+}
+
+.submit-msg {
+    margin-left: 14px;
+    transform: rotate(180deg);
 }

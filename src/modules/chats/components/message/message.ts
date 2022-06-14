@@ -6,7 +6,7 @@ import template from "./message.tpm"
 export default class Message extends Component {
   private fn: compileTemplate | undefined;
   constructor(props: {[key: string]: any}) {
-    super("div", props);
+    super("div", props, props.class_position);
   }
 
   public render(): string {

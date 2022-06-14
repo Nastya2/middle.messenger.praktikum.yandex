@@ -3,7 +3,7 @@ import { compile } from "pug";
 import template from "./message.tpm";
 export default class Message extends Component {
     constructor(props) {
-        super("div", props);
+        super("div", props, props.class_position);
     }
     render() {
         if (!this.fn) {

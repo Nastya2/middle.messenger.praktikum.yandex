@@ -1,7 +1,7 @@
 import { EventBus } from "./event-bus";
 import { v4 as makeUUID } from "uuid";
 class Component {
-    constructor(wrap, props = {}) {
+    constructor(wrap, props = {}, class_style) {
         var _a;
         this.wrap = "div";
         this.id = "";
@@ -18,6 +18,7 @@ class Component {
         const bus = new EventBus();
         this.eventBus = () => bus;
         this.wrap = wrap;
+        this.class_style = class_style;
         this.props = this.makePropsProxy(props);
         this.registerEvents();
         if ((_a = props === null || props === void 0 ? void 0 : props.settings) === null || _a === void 0 ? void 0 : _a.withInternalID) {
@@ -42,6 +43,9 @@ class Component {
     }
     createResources() {
         this.element = document.createElement(this.wrap);
+        if (this.class_style) {
+            this.element.classList.add(this.class_style);
+        }
     }
     renderTmp() {
         const block = this.render();

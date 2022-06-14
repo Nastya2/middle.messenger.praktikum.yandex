@@ -16,11 +16,16 @@ html(lang="ru")
                         input(type="text", placeholder="Поиск").search
                 .chats
             .right-chats
-                .right-chats__header
-                    .right-chats__profile
-                        .avatar
-                        .right-chats__name Андрей
-                .right-chats__msg
+                .right-chats-top
+                    .right-chats__header
+                        .right-chats__profile
+                            .avatar
+                            .right-chats__name Андрей
+                    .right-chats__msg
+                .right-chats__input
+                    input(type="text", required, placeholder="Сообщение")
+                    .submit-msg 
+                        img(src="../../../static/img/arrow.svg")
 
                                    
     

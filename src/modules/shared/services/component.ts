@@ -18,11 +18,13 @@ abstract class Component {
   private eventBus: () => EventBus;
   private wrap: string = "div";
   private id: string = "";
+  private class_style: string | undefined;
 
-  constructor(wrap: string, props: Tprops = {}) {
+  constructor(wrap: string, props: Tprops = {}, class_style?: string) {
     const bus = new EventBus();
     this.eventBus = () => bus;
     this.wrap = wrap;
+    this.class_style = class_style;
 
    
     this.props = this.makePropsProxy(props);
@@ -53,6 +55,9 @@ abstract class Component {
 
   private createResources(): void {
     this.element = document.createElement(this.wrap);
+    if (this.class_style) {
+      this.element.classList.add(this.class_style);
+    }
   }
 
   private renderTmp(): void {
