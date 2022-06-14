@@ -21,6 +21,9 @@ const input_email = new Input({
     input_placeholder: "Почта",
     class_error: "error-email",
     settings: { withInternalID: true },
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 const input_password = new Input({
     text: "Пароль",
@@ -32,7 +35,10 @@ const input_password = new Input({
     class_error: "error-password",
     settings: { withInternalID: true },
     min: "8",
-    max: "40"
+    max: "40",
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 const input_password_repeat = new Input({
     text: "Пароль (еще раз)",
@@ -44,7 +50,10 @@ const input_password_repeat = new Input({
     class_error: "error-password-repeat",
     settings: { withInternalID: true },
     min: "8",
-    max: "40"
+    max: "40",
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 const input_login = new Input({
     text: "Логин",
@@ -56,7 +65,10 @@ const input_login = new Input({
     class_error: "error-login",
     settings: { withInternalID: true },
     min: "3",
-    max: "20"
+    max: "20",
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 const input_first_name = new Input({
     text: "Имя",
@@ -67,6 +79,9 @@ const input_first_name = new Input({
     input_placeholder: "Имя",
     class_error: "error-first-name",
     settings: { withInternalID: true },
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 const input_second_name = new Input({
     text: "Фамилия",
@@ -77,6 +92,9 @@ const input_second_name = new Input({
     input_placeholder: "Фамилия",
     class_error: "error-second-name",
     settings: { withInternalID: true },
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 const input_phone = new Input({
     text: "Телефон",
@@ -88,7 +106,10 @@ const input_phone = new Input({
     class_error: "error-phone",
     settings: { withInternalID: true },
     min: "10",
-    max: "15"
+    max: "15",
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 render(".btn-action", button);
 render(".auth-form__field", input_email);

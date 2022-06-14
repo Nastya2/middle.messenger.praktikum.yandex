@@ -6,7 +6,7 @@ import template from "./input.tmp"
 export default class Input extends Component {
   private fn: compileTemplate | undefined;
   constructor(props: {[key: string]: any}) {
-    super("div", props);
+    super("div", props, props.class_wrap);
   }
 
   public render(): string {

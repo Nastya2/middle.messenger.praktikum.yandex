@@ -26,7 +26,10 @@ const input_password = new Input({
     class_error: "error-password",
     settings: {withInternalID: true},
     min: "8",
-    max: "40"
+    max: "40",
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 
 const input_login = new Input({
@@ -39,7 +42,10 @@ const input_login = new Input({
     class_error: "error-login",
     settings: {withInternalID: true},
     min: "3",
-    max: "20"
+    max: "20",
+    class_wrap: "text-field",
+    class_label: "text-field__label",
+    class_input: "text-field__input"
 });
 
 

@@ -3,7 +3,7 @@ import { compile } from "pug";
 import template from "./input.tmp";
 export default class Input extends Component {
     constructor(props) {
-        super("div", props);
+        super("div", props, props.class_wrap);
     }
     render() {
         if (!this.fn) {
