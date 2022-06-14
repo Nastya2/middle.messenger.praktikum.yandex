@@ -16,8 +16,8 @@ abstract class Component {
   private element: HTMLElement;
   public props: Tprops;
   private eventBus: () => EventBus;
-  private wrap: string = "div";
-  private id: string = "";
+  private wrap = "div";
+  private id = "";
   private class_style: string | undefined;
 
   constructor(wrap: string, props: Tprops = {}, class_style?: string) {

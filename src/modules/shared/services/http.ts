@@ -3,7 +3,7 @@ enum METHODS {
   POST = 'post',
   PUT = 'put',
   DELETE = 'delete'
-};
+}
 
 type stringObj = {[key:string]: string};
 
@@ -17,7 +17,7 @@ interface Options {
 function queryStringify(data: Options["data"]): string {
   let url = "";
 
-  for(let key in data) {
+  for(const key in data) {
     const str = `${key}=${data[key].toString()}`;
     url+= `&${str}`;
   }
@@ -59,7 +59,7 @@ class HTTPTransport {
         }
         xhr.open(method, url);
         
-        for(let key in headers) {
+        for(const key in headers) {
           xhr.setRequestHeader(key, headers[key]);
         }
         

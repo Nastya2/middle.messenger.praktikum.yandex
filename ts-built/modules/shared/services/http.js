@@ -5,7 +5,7 @@ var METHODS;
     METHODS["PUT"] = "put";
     METHODS["DELETE"] = "delete";
 })(METHODS || (METHODS = {}));
-;
+
 function queryStringify(data) {
     let url = "";
     for (let key in data) {
