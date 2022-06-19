@@ -1,10 +1,12 @@
-import Component from "../../services/component";
+import { Tprops } from "@types";
+import Component from "../../../shared/services/component";
+
 import template from "./button.tmp"
 
 
-export default class Button extends Component {
-  constructor(props: {[key: string]: any}) {
-    super("div", props);
+export class Button extends Component {
+  constructor(props: Tprops) {
+    super(props);
   }
 
   public render(): DocumentFragment {

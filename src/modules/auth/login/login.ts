@@ -1,44 +1,23 @@
-import Button from "../../shared/components/button/button";
+
 // import { checkValidity } from "../../shared/validation-functions";
-import { render } from "../../utils/renderDom";
 // import { regular_login, regular_password } from "../../shared/regular_expressions";
 // import Input from "../../shared/components/input/input";
-import Component from "./../../shared/services/component";
-// import template from "./login.tmp";
+
+import { Tprops } from "@types";
+import Component from "../../shared/services/component";
+import template from "./login.tmp";
 
 export default class LoginPage extends Component {
-    constructor(props: {[key: string]: any}) {
-        super("div", props);
+    constructor(props: Tprops) {
+        super(props);
     }
 
-   private getTemplate(): string {
-    return  `.wrap-auth
-                form.auth-form
-                    h1.auth-form__title Вход
-                    .auth-form__field
-                    .auth-form__action
-                        .btn-action
-                            #{button}
-                    a(href='#').auth-form__href Нет аккаунта?`;
-   }
-
     public render(): DocumentFragment {
-        return this.compile(this.getTemplate(), this.props);
+        return this.compile(template, this.props);
     }
 
 }
 
-const button = new Button({
-    text: 'Вход',
-    classes: 'btn btn_sigin-top-bottom',
-    event: {
-        click: function() {
-            //getDataForm();
-            console.log("la");
-        }
-    },
-    settings: {withInternalID: true},
-});
 
 // const input_password = new Input({
 //     text: "Пароль",
@@ -73,7 +52,7 @@ const button = new Button({
 // });
 
 
-render(".btn-action", button);
+
 // render(".auth-form__field", input_login);
 // render(".auth-form__field", input_password);
 

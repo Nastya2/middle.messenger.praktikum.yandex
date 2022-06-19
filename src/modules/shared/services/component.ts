@@ -2,8 +2,7 @@
 import { EventBus } from "./event-bus";
 import {v4 as makeUUID} from "uuid";
 import { compile, compileTemplate } from "pug";
-
-type Tprops = Record<string, any>;
+import { Tprops } from "@types";
 
 
 abstract class Component {
@@ -14,30 +13,23 @@ abstract class Component {
     FLOW_CDU: "flow:component-did-update"
   };
 
-  private element: HTMLElement;
+  private element: DocumentFragment;
   public props: Tprops;
   private eventBus: () => EventBus;
-  private wrap = "div";
   private id = "";
-  private class_style: string | undefined;
   private children: Tprops;
   private compileTemplate: compileTemplate | undefined;
 
-  constructor(wrap: string, propsAndChildren: Tprops = {}, class_style?: string) {
+  constructor(propsAndChildren: Tprops = {}) {
     const bus = new EventBus();
     this.eventBus = () => bus;
-    this.wrap = wrap;
-    this.class_style = class_style;
+
     const { children, props } = this.getChildren(propsAndChildren);
    
     this.props = this.makePropsProxy(props);
     this.children = children;
 
     this.registerEvents();
-    // if (props?.settings?.withInternalID) {
-    //   this.id = makeUUID();
-    //   this.props = this.makePropsProxy({ ...props, __id: this.id });
-    // }
     this.id = makeUUID();
     this.props = this.makePropsProxy({ ...props, __id: this.id });
  
@@ -66,13 +58,7 @@ abstract class Component {
   }
 
   private init(): void {
-    this.element = this.createResources(this.wrap);
-    if (this.class_style) {
-      this.element.classList.add(this.class_style);
-    }
-    // if (this.props?.settings?.withInternalID) {
-    //   this.element.setAttribute("data-id", this.id);
-    // }
+    this.element = new DocumentFragment();
     this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
@@ -83,20 +69,14 @@ abstract class Component {
 
   private renderTmp(): void {
     const block = this.render();
-    this.element.innerHTML = "";
-
-    if (typeof block === "string") {
-      this.element.innerHTML = block;
-    }
 
     if (block instanceof DocumentFragment) {
       this.element.append(block);
     }
-    
     this.addEvents();
   }
 
-  abstract render(): DocumentFragment | string;
+  abstract render(): DocumentFragment;
 
   public dispatchComponentDidMount(): void { // external call render
     this.eventBus().emit(Component.EVENTS.FLOW_CDM);
@@ -121,7 +101,7 @@ abstract class Component {
       propsAndStubs[key] = `div data-id="${child.id}"`;
     });
 
-    console.log(propsAndStubs)
+    // console.log(propsAndStubs)
     
     //return this.compileTemplate(propsAndStubs);
 
@@ -130,12 +110,13 @@ abstract class Component {
       this.compileTemplate = compile(template);
     }
     fragment.innerHTML = this.compileTemplate(propsAndStubs);
-
+     console.log(this.children)
     Object.values(this.children).forEach((child: Component) => {
       const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
 
       if (stub) {
         stub.replaceWith(child.getContent());
+        // console.log(child.getContent(), "kk")
       } else {
         console.log("заглушка не найдена");
       }
@@ -177,17 +158,21 @@ abstract class Component {
     });
   }
 
-  public getContent(): HTMLElement {
+  public getContent(): DocumentFragment {
     return this.element;
   }
 
-  public show(): void {
-    this.getContent().style.display = "block";
-  }
+  // public show(): void {
+  //   if (this.getContent()) {
+  //     this.getContent().textContent.style.display = "block";
+  //   }
+  // }
 
-  public hide(): void {
-    this.getContent().style.display = "none";
-  }
+  // public hide(): void {
+  //   if (this.getContent()) {
+  //     this.getContent().style.display = "none";
+  //   }
+  // }
 
   private addEvents(): void {
     /* eslint-disable */
