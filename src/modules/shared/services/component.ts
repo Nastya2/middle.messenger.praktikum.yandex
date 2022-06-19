@@ -1,8 +1,9 @@
 
 import { EventBus } from "./event-bus";
 import {v4 as makeUUID} from "uuid";
+import { compile, compileTemplate } from "pug";
 
-type Tprops = {[key: string]: any};
+type Tprops = Record<string, any>;
 
 
 abstract class Component {
@@ -19,21 +20,26 @@ abstract class Component {
   private wrap = "div";
   private id = "";
   private class_style: string | undefined;
+  private children: Tprops;
+  private compileTemplate: compileTemplate | undefined;
 
-  constructor(wrap: string, props: Tprops = {}, class_style?: string) {
+  constructor(wrap: string, propsAndChildren: Tprops = {}, class_style?: string) {
     const bus = new EventBus();
     this.eventBus = () => bus;
     this.wrap = wrap;
     this.class_style = class_style;
-
+    const { children, props } = this.getChildren(propsAndChildren);
    
     this.props = this.makePropsProxy(props);
+    this.children = children;
 
     this.registerEvents();
-    if (props?.settings?.withInternalID) {
-      this.id = makeUUID();
-      this.props = this.makePropsProxy({ ...props, __id: this.id });
-    }
+    // if (props?.settings?.withInternalID) {
+    //   this.id = makeUUID();
+    //   this.props = this.makePropsProxy({ ...props, __id: this.id });
+    // }
+    this.id = makeUUID();
+    this.props = this.makePropsProxy({ ...props, __id: this.id });
  
     this.eventBus().emit(Component.EVENTS.INIT);
   }
@@ -45,28 +51,52 @@ abstract class Component {
     this.eventBus().on(Component.EVENTS.FLOW_CDU, this.componentDidUpdate.bind(this));
   }
 
-  private init(): void {
-    this.createResources();
-    if (this.props?.settings?.withInternalID) {
-      this.element.setAttribute("data-id", this.id);
-    }
-    this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
+  private getChildren(propsAndChildren: Tprops): {props: Tprops, children: Tprops} {
+    const children: Tprops = {};
+    const props: Tprops = {};
+
+    Object.entries(propsAndChildren).forEach(([key, value]) => {
+      if (value instanceof Component) {
+        children[key] = value;
+      } else {
+        props[key] = value;
+      }
+    });
+    return {props, children};
   }
 
-  private createResources(): void {
-    this.element = document.createElement(this.wrap);
+  private init(): void {
+    this.element = this.createResources(this.wrap);
     if (this.class_style) {
       this.element.classList.add(this.class_style);
     }
+    // if (this.props?.settings?.withInternalID) {
+    //   this.element.setAttribute("data-id", this.id);
+    // }
+    this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
+  }
+
+  private createResources(tagName: string): HTMLElement {
+    const element = document.createElement(tagName);
+    return element;
   }
 
   private renderTmp(): void {
     const block = this.render();
-    this.element.innerHTML = block;
+    this.element.innerHTML = "";
+
+    if (typeof block === "string") {
+      this.element.innerHTML = block;
+    }
+
+    if (block instanceof DocumentFragment) {
+      this.element.append(block);
+    }
+    
     this.addEvents();
   }
 
-  abstract render(): string;
+  abstract render(): DocumentFragment | string;
 
   public dispatchComponentDidMount(): void { // external call render
     this.eventBus().emit(Component.EVENTS.FLOW_CDM);
@@ -82,6 +112,36 @@ abstract class Component {
     } else {
       return false;
     }
+  }
+
+  public compile(template: string, props: Tprops): DocumentFragment {
+    const propsAndStubs = { ...props };
+ 
+    Object.entries(this.children).forEach(([key, child]) => {
+      propsAndStubs[key] = `div data-id="${child.id}"`;
+    });
+
+    console.log(propsAndStubs)
+    
+    //return this.compileTemplate(propsAndStubs);
+
+    const fragment = this.createResources('template') as HTMLTemplateElement;
+    if(!this.compileTemplate) {
+      this.compileTemplate = compile(template);
+    }
+    fragment.innerHTML = this.compileTemplate(propsAndStubs);
+
+    Object.values(this.children).forEach((child: Component) => {
+      const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
+
+      if (stub) {
+        stub.replaceWith(child.getContent());
+      } else {
+        console.log("заглушка не найдена");
+      }
+    });
+
+    return fragment.content;
   }
 
   private componentDidUpdate() {
