@@ -1,328 +1,337 @@
-import Button from "../../shared/components/button/button";
-import { render } from "../../utils/renderDom";
+import { Button } from "../../shared/components/button/button";
 import { checkValidity } from "../../shared/validation-functions";
-import Input from "../../shared/components/input/input";
+import { Input } from "../../shared/components/input/input";
+import { Label } from "../../shared/components/label/label";
+import { Error } from "../../shared/components/error/error";
 import { regular_name, regular_login, regular_password, regular_email, regular_phone } from "../../shared/regular_expressions";
+import { Tprops } from "@types";
+import Component from "../../shared/services/component";
+import tmp from "./edit-profile.tmp";
 
+export class EditProfilePage extends Component {
+    constructor(props: Tprops) {
+        super(props);
+    }
 
-const button = new Button({
-    text: 'Сохранить',
-    classes: 'btn btn_width280',
-    event: {
-        click: function() {
-            getDataForm();
+    public render(): DocumentFragment {
+        return this.compile(tmp, this.props);
+    }
+}
+
+export const button = new Button({
+    text: "Сохранить",
+    classes: "btn btn_width280",
+    click: function() {
+        let data = {
+            login: (input_login.getContent().lastChild as HTMLInputElement).value,
+            old_password: (input_old_password.getContent().lastChild as HTMLInputElement).value,
+            new_password: (input_new_password.getContent().lastChild as HTMLInputElement).value,
+            new_password_repeat: (input_new_password_repeat.getContent().lastChild as HTMLInputElement).value,
+            email: (input_email.getContent().lastChild as HTMLInputElement).value,
+            first_name: (input_first_name.getContent().lastChild as HTMLInputElement).value,
+            second_name: (input_second_name.getContent().lastChild as HTMLInputElement).value,
+            phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
+            display_name: (input_display_name.getContent().lastChild as HTMLInputElement).value,
         }
+        console.log(data);
     }
 });
 
-const input_email = new Input({
-    text: "Почта",
+export const label_email = new Label({
+    class_label: "text-field-edit-info__label",
     for_label: "email",
+    text: "Email"
+});
+
+export const error_email = new Error({
+    error: ""
+});
+
+export const input_email = new Input({
+    text: "Почта",
     input_type: "email",
     input_name:"email",
-    input_id: "email",
-    input_placeholder: "Почта",
-    class_error: "error-email",
-    settings: {withInternalID: true},
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
+    class_input: "text-field-edit-info__input",
+    pattern: regular_email,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
+            error_email.setProps({
+                error: err
+            });
+            error_email.show();
+            
+        },
+        focus: function() {
+            error_email.hide();
+        }
+    }
 });
 
-const input_login = new Input({
-    text: "Логин",
+
+export const label_login = new Label({
+    class_label: "text-field-edit-info__label",
     for_label: "login",
+    text: "Логин"
+});
+
+export const error_login = new Error({
+    error: ""
+});
+
+export const input_login = new Input({
+    text: "Логин",
     input_type: "text",
     input_name:"login",
-    input_id: "login",
-    input_placeholder: "Логин",
-    class_error: "error-login",
-    settings: {withInternalID: true},
     min: "3",
     max: "20",
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
+    class_input: "text-field-edit-info__input",
+    pattern: regular_login,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
+            error_login.setProps({
+                error: err
+            });
+            error_login.show();
+            
+        },
+        focus: function() {
+            error_login.hide();
+        }
+    }
 });
 
-const input_first_name = new Input({
-    text: "Имя",
+export const label_first_name = new Label({
+    class_label: "text-field-edit-info__label",
     for_label: "first_name",
+    text: "Имя"
+});
+
+export const error_first_name = new Error({
+    error: ""
+});
+
+export const input_first_name = new Input({
+    text: "Имя",
     input_type: "text",
     input_name:"first_name",
-    input_id: "first_name",
-    input_placeholder: "Имя",
-    class_error: "error-first-name",
-    settings: {withInternalID: true},
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
+    class_input: "text-field-edit-info__input",
+    pattern: regular_name,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
+            error_first_name.setProps({
+                error: err
+            });
+            error_first_name.show();
+            
+        },
+        focus: function() {
+            error_first_name.hide();
+        }
+    }
 });
 
-const input_second_name = new Input({
-    text: "Фамилия",
+export const label_second_name = new Label({
+    class_label: "text-field-edit-info__label",
     for_label: "second_name",
+    text: "Фамилия"
+});
+
+export const error_second_name = new Error({
+    error: ""
+});
+
+export const input_second_name = new Input({
+    text: "Фамилия",
     input_type: "text",
     input_name:"second_name",
-    input_id: "second_name",
-    input_placeholder: "Фамилия",
-    class_error: "error-second-name",
-    settings: {withInternalID: true},
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
+    class_input: "text-field-edit-info__input",
+    pattern: regular_name,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
+            error_second_name.setProps({
+                error: err
+            });
+            error_second_name.show();
+            
+        },
+        focus: function() {
+            error_second_name.hide();
+        }
+    }
 });
 
-const input_display_name = new Input({
-    text: "Имя в чате",
-    for_label: "display_name",
-    input_type: "text",
-    input_name:"display_name",
-    input_id: "display_name",
-    input_placeholder: "Имя в чате",
-    class_error: "error-display_name",
-    settings: {withInternalID: true},
-    class_wrap: "text-field-edit-info",
+export const label_phone = new Label({
     class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
-});
-
-const input_phone = new Input({
-    text: "Телефон",
     for_label: "phone",
+    text: "Телефон"
+});
+
+export const error_phone = new Error({
+    error: ""
+});
+
+export const input_phone = new Input({
+    text: "Телефон",
     input_type: "phone",
     input_name:"phone",
-    input_id: "phone",
-    input_placeholder: "Телефон",
-    class_error: "error-phone",
-    settings: {withInternalID: true},
     min: "10",
     max: "15",
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
+    class_input: "text-field-edit-info__input",
+    pattern: regular_phone,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
+            error_phone.setProps({
+                error: err
+            });
+            error_phone.show(); 
+        },
+        focus: function() {
+            error_phone.hide();
+        }
+    }
 });
 
-const input_old_password = new Input({
-    text: "Старый пароль",
+export const label_old_password = new Label({
+    class_label: "text-field-edit-info__label",
     for_label: "old_password",
+    text: "Старый пароль"
+});
+
+export const error_old_password = new Error({
+    error: ""
+});
+
+export const input_old_password = new Input({
+    text: "Старый пароль",
     input_type: "old_password",
     input_name:"old_password",
-    input_id: "old_password",
-    input_placeholder: "Старый пароль",
-    class_error: "error-old-password",
-    settings: {withInternalID: true},
     min: "8",
     max: "40",
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
+    class_input: "text-field-edit-info__input",
+    pattern: regular_password,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            error_old_password.setProps({
+                error: err
+            });
+            error_old_password.show();
+            
+        },
+        focus: function() {
+            error_old_password.hide();
+        }
+    }
 });
 
-const input_new_password = new Input({
-    text: "Новый пароль",
+export const label_new_password = new Label({
+    class_label: "text-field-edit-info__label",
     for_label: "new_password",
+    text: "Новый пароль"
+});
+
+export const error_new_password = new Error({
+    error: ""
+});
+
+export const input_new_password = new Input({
+    text: "Новый пароль",
     input_type: "new_password",
     input_name:"new_password",
-    input_id: "new_password",
-    input_placeholder: "Новый пароль",
-    class_error: "error-new-password",
-    settings: {withInternalID: true},
     min: "8",
     max: "40",
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
+    class_input: "text-field-edit-info__input",
+    pattern: regular_password,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            error_new_password.setProps({
+                error: err
+            });
+            error_new_password.show();
+            
+        },
+        focus: function() {
+            error_new_password.hide();
+        }
+    }
 });
 
-const input_repeat_new_password = new Input({
-    text: "Повторите новый пароль",
-    for_label: "repeat_new_password",
-    input_type: "repeat_new_password",
-    input_name:"repeat_new_password",
-    input_id: "repeat_new_password",
-    input_placeholder: "Повторите новый пароль",
-    class_error: "error-repeat-new-password",
-    settings: {withInternalID: true},
+export const label_new_password_repeat = new Label({
+    class_label: "text-field-edit-info__label",
+    for_label: "new_password_repeat",
+    text: "Новый пароль"
+});
+
+export const error_new_password_repeat = new Error({
+    error: ""
+});
+
+export const input_new_password_repeat = new Input({
+    text: "Новый пароль (еще раз)",
+    input_type: "password",
+    input_name:"new_password_repeat",
     min: "8",
     max: "40",
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input"
+    class_input: "text-field-edit-info__input",
+    pattern: regular_password,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            error_new_password_repeat.setProps({
+                error: err
+            });
+            error_new_password_repeat.show();
+            
+        },
+        focus: function() {
+            error_new_password_repeat.hide();
+        }
+    }
 });
 
+export const label_display_name = new Label({
+    class_label: "text-field-edit-info__label",
+    for_label: "display_name",
+    text: "Никнейм"
+});
 
-render(".btn-action", button);
-render(".info", input_email);
-render(".info", input_login);
-render(".info", input_first_name);
-render(".info", input_second_name);
-render(".info", input_display_name);
-render(".info", input_phone);
-render(".info", input_old_password);
-render(".info", input_new_password);
-render(".info", input_repeat_new_password);
+export const error_display_name = new Error({
+    error: ""
+});
 
-const form = document.querySelector('.info') as HTMLFormElement;
-const error_first_name = form.querySelector('.error-first-name');
-const error_second_name = form.querySelector('.error-second-name');
-const error_login = form.querySelector('.error-login');
-const error_old_password = form.querySelector('.error-old-password');
-const error_new_password = form.querySelector('.error-new-password');
-const error_repeat_new_password = form.querySelector('.error-repeat-new-password');
-const error_email = form.querySelector('.error-email');
-const error_phone = form.querySelector('.error-phone');
-const first_name = form.elements.namedItem("first_name") as HTMLInputElement;
-const second_name = form.elements.namedItem("second_name") as HTMLInputElement;
-const login = form.elements.namedItem("login") as HTMLInputElement;
-const old_password = form.elements.namedItem("old_password") as HTMLInputElement;
-const new_password = form.elements.namedItem("new_password") as HTMLInputElement;
-const new_password_repeat = form.elements.namedItem("repeat_new_password") as HTMLInputElement;
-const email = form.elements.namedItem("email") as HTMLInputElement;
-const phone = form.elements.namedItem("phone") as HTMLInputElement;
-const display_name = form.elements.namedItem("display_name") as HTMLInputElement;
-
-addPattern();
-addEvent();
-
-function addEvent(): void {
-    first_name.addEventListener("focus", () => {
-        if (error_first_name) {
-            error_first_name.classList.add("none")
+export const input_display_name = new Input({
+    text: "Никнейм",
+    input_type: "text",
+    input_name: "display_name",
+    class_input: "text-field-edit-info__input",
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {});
+            error_display_name.setProps({
+                error: err
+            });
+            error_display_name.show();
+            
+        },
+        focus: function() {
+            error_display_name.hide();
         }
-    });
-    
-    first_name.addEventListener("blur", () => {
-        checkValidity(first_name, error_first_name, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
-    });
-    
-    second_name.addEventListener("focus", () => {
-        if (error_second_name) {
-            error_second_name.classList.add("none");
-        }
-    });
-    
-    second_name.addEventListener("blur", () => {
-        checkValidity(second_name, error_second_name, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
-    });
-
-    login.addEventListener("focus", () => {
-        if (error_login) {
-            error_login.classList.add("none");
-        }
-    });
-    
-    login.addEventListener("blur", () => {
-        checkValidity(login, error_login, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
-    });
-
-    old_password.addEventListener("focus", () => {
-        if (error_old_password) {
-            error_old_password.classList.add("none");
-        }
-    });
-    
-    old_password.addEventListener("blur", () => {
-        checkValidity(old_password, error_old_password, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    });
-
-    new_password.addEventListener("focus", () => {
-        if (error_new_password) {
-            error_new_password.classList.add("none");
-        }
-    });
-    
-    new_password.addEventListener("blur", () => {
-        checkValidity(new_password, error_new_password, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    });
-
-    new_password_repeat.addEventListener("focus", () => {
-        if (error_repeat_new_password) {
-            error_repeat_new_password.classList.add("none");
-        }
-    });
-    
-    new_password_repeat.addEventListener("blur", () => {
-        checkValidity(new_password_repeat, error_repeat_new_password, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    });
-
-
-
-    email.addEventListener("focus", () => {
-        if (error_email) {
-            error_email.classList.add("none");
-        }
-    });
-    
-    email.addEventListener("blur", () => {
-        checkValidity(email, error_email, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
-    });
-
-    phone.addEventListener("focus", () => {
-        if (error_phone) {
-            error_phone.classList.add("none");
-        }
-    });
-    
-    phone.addEventListener("blur", () => {
-        checkValidity(phone, error_phone, {patternMismatch: "Некорректный телефон"});
-    });
-    
-}
-
-function addPattern(): void {
-    if (first_name) {
-        first_name.setAttribute("pattern", regular_name);
-    }
-    
-    if (second_name) {
-        second_name.setAttribute("pattern", regular_name);
-    }
-    
-    if (login) {
-        login.setAttribute("pattern", regular_login);
     }
 
-    if (new_password_repeat) {
-        new_password_repeat.setAttribute("pattern", regular_password);
-    }
+});
 
-    if (old_password) {
-        old_password.setAttribute("pattern", regular_password);
-    }
-
-    if (new_password) {
-        new_password.setAttribute("pattern", regular_password);
-    }
-
-    if (phone) {
-        phone.setAttribute("pattern", regular_phone);
-    }
-
-    if (email) {
-        email.setAttribute("pattern", regular_email);
-    }
-}
-
-function getDataForm() {
-    const data = {
-        login: login.value,
-        old_password: old_password.value,
-        new_password: new_password.value,
-        new_password_repeat: new_password_repeat.value,
-        email: email.value,
-        first_name: first_name.value,
-        second_name: second_name.value,
-        phone: phone.value,
-        display_name: display_name.value
-    };
-    console.log(data);
-    checkValidity(first_name, error_first_name, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
-    checkValidity(second_name, error_second_name, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
-    checkValidity(login, error_login, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
-    checkValidity(old_password, error_old_password, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    checkValidity(new_password, error_new_password, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    checkValidity(new_password_repeat, error_repeat_new_password, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    checkValidity(email, error_email, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
-    checkValidity(phone, error_phone, {patternMismatch: "Некорректный телефон"});
-}

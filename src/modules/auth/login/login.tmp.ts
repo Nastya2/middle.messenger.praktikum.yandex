@@ -3,9 +3,11 @@ const template = `.wrap-auth
                     h1.auth-form__title Вход
                     .auth-form__field
                         .text-field
+                            #{label_login}
                             #{input_login}
                             #{error_login}
                         .text-field
+                            #{label_password}
                             #{input_password}
                             #{error_password}
                     .auth-form__action

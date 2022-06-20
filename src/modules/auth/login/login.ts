@@ -6,6 +6,7 @@ import { Input } from "../../shared/components/input/input";
 import Component from "../../shared/services/component";
 import template from "./login.tmp";
 import { Error } from "../../shared/components/error/error";
+import { Label } from "../../shared/components/label/label";
 
 export class LoginPage extends Component {
     constructor(props: Tprops) {
@@ -38,8 +39,20 @@ export const error_password = new Error({
     error: ""
 });
 
-export const error_login= new Error({
+export const error_login = new Error({
     error: ""
+});
+
+export const label_login = new Label({
+    class_label: "text-field__label",
+    for_label: "login",
+    text: "Логин"
+});
+
+export const label_password = new Label({
+    class_label: "text-field__label",
+    for_label: "password",
+    text: "Пароль"
 });
 
 export const input_login = new Input({
@@ -48,7 +61,6 @@ export const input_login = new Input({
     input_name:"login",
     min: "3",
     max: "20",
-    class_label: "text-field__label",
     class_input: "text-field__input",
     pattern: regular_login,
     event: {
@@ -74,7 +86,6 @@ export const input_password = new Input({
     input_name:"password",
     min: "8",
     max: "40",
-    class_label: "text-field__label",
     class_input: "text-field__input",
     pattern: regular_password,
     event: {
