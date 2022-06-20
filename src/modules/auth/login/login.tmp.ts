@@ -4,8 +4,10 @@ const template = `.wrap-auth
                     .auth-form__field
                         .text-field
                             #{input_login}
+                            #{error_login}
                         .text-field
                             #{input_password}
+                            #{error_password}
                     .auth-form__action
                         .btn-action
                             #{button}

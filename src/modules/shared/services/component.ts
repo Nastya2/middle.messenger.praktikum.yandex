@@ -13,7 +13,7 @@ abstract class Component {
     FLOW_CDU: "flow:component-did-update"
   };
 
-  private element: DocumentFragment;
+  private element: HTMLElement;
   public props: Tprops;
   private eventBus: () => EventBus;
   private id = "";
@@ -58,7 +58,7 @@ abstract class Component {
   }
 
   private init(): void {
-    this.element = new DocumentFragment();
+    this.element = this.createResources("div");
     this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
@@ -69,10 +69,8 @@ abstract class Component {
 
   private renderTmp(): void {
     const block = this.render();
-
-    if (block instanceof DocumentFragment) {
-      this.element.append(block);
-    }
+    this.element.innerHTML = "";
+    this.element.append(block);
     this.addEvents();
   }
 
@@ -101,22 +99,19 @@ abstract class Component {
       propsAndStubs[key] = `div data-id="${child.id}"`;
     });
 
-    // console.log(propsAndStubs)
     
-    //return this.compileTemplate(propsAndStubs);
 
     const fragment = this.createResources('template') as HTMLTemplateElement;
     if(!this.compileTemplate) {
       this.compileTemplate = compile(template);
     }
     fragment.innerHTML = this.compileTemplate(propsAndStubs);
-     console.log(this.children)
     Object.values(this.children).forEach((child: Component) => {
       const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
 
       if (stub) {
         stub.replaceWith(child.getContent());
-        // console.log(child.getContent(), "kk")
+        console.log(child.getContent(), "kk")
       } else {
         console.log("заглушка не найдена");
       }
@@ -158,21 +153,17 @@ abstract class Component {
     });
   }
 
-  public getContent(): DocumentFragment {
+  public getContent(): HTMLElement {
     return this.element;
   }
 
-  // public show(): void {
-  //   if (this.getContent()) {
-  //     this.getContent().textContent.style.display = "block";
-  //   }
-  // }
+  public show(): void {
+    this.getContent().style.display = "block";
+  }
 
-  // public hide(): void {
-  //   if (this.getContent()) {
-  //     this.getContent().style.display = "none";
-  //   }
-  // }
+  public hide(): void {
+    this.getContent().style.display = "none";
+  }
 
   private addEvents(): void {
     /* eslint-disable */
@@ -180,7 +171,7 @@ abstract class Component {
 
     if (events) {
       Object.keys(events).forEach(eventName => {
-        this.element.addEventListener(eventName, events[eventName]);
+        this.element.firstElementChild!.addEventListener(eventName, events[eventName]);
       });
     }
   }
@@ -189,7 +180,7 @@ abstract class Component {
     const events = this.props.event as any;
     if(events) {
       Object.keys(events).forEach(eventName => {
-        this.element.removeEventListener(eventName, events[eventName]);
+        this.element.firstElementChild!.removeEventListener(eventName, events[eventName]);
       });
     }
   }

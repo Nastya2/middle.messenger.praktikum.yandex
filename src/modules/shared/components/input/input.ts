@@ -10,7 +10,7 @@ export class Input extends Component {
     super(props);
   }
 
-  public render(): DocumentFragment{
+  public render(): DocumentFragment {
     return this.compile(template, this.props);
   }
 }
