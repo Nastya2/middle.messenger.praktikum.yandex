@@ -269,3 +269,29 @@ export const input_password_repeat = new Input({
         }
     }
 });
+
+export const Components = {
+    button,
+    input_email,
+    input_first_name,
+    input_login,
+    input_password,
+    input_password_repeat,
+    input_phone,
+    input_second_name,
+    label_email,
+    label_first_name,
+    label_login,
+    label_password,
+    label_password_repeat,
+    label_phone,
+    label_second_name,
+    error_email,
+    error_first_name,
+    error_login,
+    error_password,
+    error_password_repeat,
+    error_phone,
+    error_second_name
+};
+

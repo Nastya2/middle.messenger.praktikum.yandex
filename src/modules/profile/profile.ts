@@ -1,111 +1,127 @@
-import { render } from "../utils/renderDom";
-import Input from "../shared/components/input/input";
+
+import { Input } from "../shared/components/input/input";
+import { Label } from "../shared/components/label/label";
+import { Tprops } from "@types";
+import Component from "../shared/services/component";
+import tmp from "./profile.tmp";
+
+export class ProfilePage extends Component {
+    constructor(props: Tprops) {
+        super(props);
+    }
+
+    public render(): DocumentFragment {
+        return this.compile(tmp, this.props);
+    }
+}
+
+const label_email = new Label({
+    class_label: "text-field-edit-info__label",
+    for_label: "email",
+    text: "Email"
+});
 
 
 const input_email = new Input({
     text: "Почта",
-    for_label: "email",
     input_type: "email",
     input_name:"email",
-    input_id: "email",
-    input_placeholder: "Почта",
-    class_error: "error-email",
-    settings: {withInternalID: true},
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
     class_input: "text-field-edit-info__input",
-    value: "ya@yandex.ru",
-    readonly: true
+    readonly: true,
+    value: "ya.yandex.ru"
+});
+
+
+const label_login = new Label({
+    class_label: "text-field-edit-info__label",
+    for_label: "login",
+    text: "Логин"
 });
 
 const input_login = new Input({
     text: "Логин",
-    for_label: "login",
     input_type: "text",
     input_name:"login",
-    input_id: "login",
-    input_placeholder: "Логин",
-    class_error: "error-login",
-    settings: {withInternalID: true},
-    min: "3",
-    max: "20",
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
     class_input: "text-field-edit-info__input",
-    value: "Login",
-    readonly: true
+    readonly: true,
+    value: "Ivan007"
 });
+
+export const label_first_name = new Label({
+    class_label: "text-field-edit-info__label",
+    for_label: "first_name",
+    text: "Имя"
+});
+
 
 const input_first_name = new Input({
     text: "Имя",
-    for_label: "first_name",
     input_type: "text",
     input_name:"first_name",
-    input_id: "first_name",
-    input_placeholder: "Имя",
-    class_error: "error-first-name",
-    settings: {withInternalID: true},
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
     class_input: "text-field-edit-info__input",
-    value: "Ivan",
-    readonly: true
+    readonly: true,
+    value: "Ivan"
+});
+
+const label_second_name = new Label({
+    class_label: "text-field-edit-info__label",
+    for_label: "second_name",
+    text: "Фамилия"
 });
 
 const input_second_name = new Input({
     text: "Фамилия",
-    for_label: "second_name",
     input_type: "text",
     input_name:"second_name",
-    input_id: "second_name",
-    input_placeholder: "Фамилия",
-    class_error: "error-second-name",
-    settings: {withInternalID: true},
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
     class_input: "text-field-edit-info__input",
-    value: "Ivanov",
-    readonly: true
+    readonly: true,
+    value: "Ivanov"
 });
 
-const input_display_name = new Input({
-    text: "Имя в чате",
-    for_label: "display_name",
-    input_type: "text",
-    input_name:"display_name",
-    input_id: "display_name",
-    input_placeholder: "Имя в чате",
-    class_error: "error-display_name",
-    settings: {withInternalID: true},
-    class_wrap: "text-field-edit-info",
+const label_phone = new Label({
     class_label: "text-field-edit-info__label",
-    class_input: "text-field-edit-info__input",
-    value: "flash",
-    readonly: true
+    for_label: "phone",
+    text: "Телефон"
 });
+
 
 const input_phone = new Input({
     text: "Телефон",
-    for_label: "phone",
     input_type: "phone",
     input_name:"phone",
-    input_id: "phone",
-    input_placeholder: "Телефон",
-    class_error: "error-phone",
-    settings: {withInternalID: true},
-    min: "10",
-    max: "15",
-    class_wrap: "text-field-edit-info",
-    class_label: "text-field-edit-info__label",
     class_input: "text-field-edit-info__input",
-    value: "+79991457721",
-    readonly: true
+    readonly: true,
+    value: "+79991239839"
 });
 
+const label_display_name = new Label({
+    class_label: "text-field-edit-info__label",
+    for_label: "display_name",
+    text: "Никнейм"
+});
 
-render(".info", input_email);
-render(".info", input_login);
-render(".info", input_first_name);
-render(".info", input_second_name);
-render(".info", input_display_name);
-render(".info", input_phone);
+const input_display_name = new Input({
+    text: "Никнейм",
+    input_type: "text",
+    input_name: "display_name",
+    class_input: "text-field-edit-info__input",
+    readonly: true,
+    value: "Ivan007"
+});
+
+export const Components = {
+    input_display_name,
+    input_email,
+    input_first_name,
+    input_second_name,
+    input_login,
+    input_phone,
+    label_display_name,
+    label_email,
+    label_first_name,
+    label_login,
+    label_phone,
+    label_second_name
+}
+
+

@@ -21,19 +21,21 @@ export class EditProfilePage extends Component {
 export const button = new Button({
     text: "Сохранить",
     classes: "btn btn_width280",
-    click: function() {
-        let data = {
-            login: (input_login.getContent().lastChild as HTMLInputElement).value,
-            old_password: (input_old_password.getContent().lastChild as HTMLInputElement).value,
-            new_password: (input_new_password.getContent().lastChild as HTMLInputElement).value,
-            new_password_repeat: (input_new_password_repeat.getContent().lastChild as HTMLInputElement).value,
-            email: (input_email.getContent().lastChild as HTMLInputElement).value,
-            first_name: (input_first_name.getContent().lastChild as HTMLInputElement).value,
-            second_name: (input_second_name.getContent().lastChild as HTMLInputElement).value,
-            phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
-            display_name: (input_display_name.getContent().lastChild as HTMLInputElement).value,
+    event: {
+        click: function() {
+            let data = {
+                login: (input_login.getContent().lastChild as HTMLInputElement).value,
+                old_password: (input_old_password.getContent().lastChild as HTMLInputElement).value,
+                new_password: (input_new_password.getContent().lastChild as HTMLInputElement).value,
+                new_password_repeat: (input_new_password_repeat.getContent().lastChild as HTMLInputElement).value,
+                email: (input_email.getContent().lastChild as HTMLInputElement).value,
+                first_name: (input_first_name.getContent().lastChild as HTMLInputElement).value,
+                second_name: (input_second_name.getContent().lastChild as HTMLInputElement).value,
+                phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
+                display_name: (input_display_name.getContent().lastChild as HTMLInputElement).value,
+            }
+            console.log(data);
         }
-        console.log(data);
     }
 });
 
@@ -334,4 +336,35 @@ export const input_display_name = new Input({
     }
 
 });
+
+export const Components = {
+    button,
+    input_display_name,
+    input_email,
+    input_first_name,
+    input_login,
+    input_new_password,
+    input_new_password_repeat,
+    input_old_password,
+    input_phone,
+    input_second_name,
+    error_display_name,
+    error_email,
+    error_first_name,
+    error_login,
+    error_new_password,
+    error_new_password_repeat,
+    error_old_password,
+    error_phone,
+    error_second_name,
+    label_display_name,
+    label_email,
+    label_first_name,
+    label_login,
+    label_new_password,
+    label_new_password_repeat,
+    label_old_password,
+    label_phone,
+    label_second_name
+};
 

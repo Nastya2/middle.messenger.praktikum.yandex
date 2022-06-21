@@ -1,11 +1,12 @@
-const tmp = `.wrap.wrap_column
+
+ const tmp =  `.wrap
                 .control
-                    a(href="#")
-                        img(src="../../../../static/img/arrow.svg")
+                    a(href="../chats/chats.pug")
+                        img(src="../../../static/img/arrow.svg")
                 .profile-wrap
                     .profile-title
                         .avatar
-                            input(type="file", name="avatar")
+                            // img(src="/")
                         .name Иван
                     form.info
                         .text-field-edit-info
@@ -38,22 +39,10 @@ const tmp = `.wrap.wrap_column
                             div
                                 #{input_phone}
                                 #{error_phone}
-                        .text-field-edit-info
-                            #{label_old_password}
-                            div
-                                #{input_old_password}
-                                #{error_old_password}
-                        .text-field-edit-info
-                            #{label_new_password}
-                            div
-                                #{input_new_password}
-                                #{error_new_password}
-                        .text-field-edit-info
-                            #{label_new_password_repeat}
-                            div
-                                #{input_new_password_repeat}
-                                #{error_new_password_repeat}
-                .btn-action
-                    #{button}`
+                    .action
+                        .info-block
+                            a(href="./edit/edit-profile.pug").info-block__name.color-blue Изменить данные
+                        .info-block
+                            a(href="/").info-block__name.color-red Выйти`
 
 export default tmp;

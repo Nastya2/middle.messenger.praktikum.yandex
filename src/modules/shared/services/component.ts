@@ -59,6 +59,9 @@ abstract class Component {
 
   private init(): void {
     this.element = this.createResources("div");
+    if (this.props.class_position) {
+      this.element.classList.add(this.props.class_position);
+    }
     this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
@@ -99,19 +102,18 @@ abstract class Component {
       propsAndStubs[key] = `div data-id="${child.id}"`;
     });
 
-    
-
     const fragment = this.createResources('template') as HTMLTemplateElement;
     if(!this.compileTemplate) {
       this.compileTemplate = compile(template);
     }
+
     fragment.innerHTML = this.compileTemplate(propsAndStubs);
+
     Object.values(this.children).forEach((child: Component) => {
       const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
 
       if (stub) {
         stub.replaceWith(child.getContent());
-        console.log(child.getContent(), "kk")
       } else {
         console.log("заглушка не найдена");
       }

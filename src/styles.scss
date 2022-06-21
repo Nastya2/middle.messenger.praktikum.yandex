@@ -12,7 +12,7 @@
 }
 
 body,
-html, .app, .app div {
+html, .app, .app > div {
   font-family: Arial, sans-serif;
   width: 100%;
   height: 100%;
@@ -21,6 +21,7 @@ html, .app, .app div {
   font-size: 13px;
   font-weight: 500;
 }
+
 
 .wrap {
   display: flex;
@@ -89,7 +90,7 @@ html, .app, .app div {
   &__input {
     color: var(--gray-color);
     border: none;
-    width: 50%;
+    width: 100%;
     text-align: right;
 
     &:focus-visible {

@@ -1,18 +1,14 @@
+import { Tprops } from "@types";
 import Component from "../../../shared/services/component";
-import { compile, compileTemplate } from "pug";
 import template from "./message.tpm"
 
 
 export default class Message extends Component {
-  private fn: compileTemplate | undefined;
-  constructor(props: {[key: string]: any}) {
-    super("div", props, props.class_position);
+  constructor(props: Tprops) {
+    super(props);
   }
 
-  public render(): string {
-    if(!this.fn) {
-      this.fn = compile(template);
-    }
-    return this.fn(this.props);
+  public render(): DocumentFragment {
+    return this.compile(template, this.props);
   }
 }

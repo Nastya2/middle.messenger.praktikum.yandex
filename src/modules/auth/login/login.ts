@@ -16,7 +16,6 @@ export class LoginPage extends Component {
     public render(): DocumentFragment {
         return this.compile(template, this.props);
     }
-
 }
 
 export const button = new Button({
@@ -103,3 +102,13 @@ export const input_password = new Input({
         }
     }
 });
+
+export const Components = {
+    button,
+    input_login,
+    input_password,
+    error_login,
+    error_password,
+    label_login,
+    label_password
+};
