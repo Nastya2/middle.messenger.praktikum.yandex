@@ -6,19 +6,17 @@ html(lang="ru")
         meta(http-equiv="X-UA-Compatible", content="ie=edge")
         link(rel="stylesheet", href="styles.scss")
         title Навигация
-    body.app
+    body
         ul
             li
-                a(href="modules/auth/login/login.pug") Логин
+                a(href="./login") Логин
             li
-                a(href="modules/auth/sigin/sigin.pug") Регистрация
+                a(href="./sigin") Регистрация
             li
-                a(href="modules/profile/profile.pug") Профиль
+                a(href="./profile") Профиль
             li
-                a(href="modules/profile/edit/edit-profile.pug") Изменение профиля
+                a(href="./edit-profile") Изменение профиля
             li
-                a(href="modules/errors/error404.pug") 404
-            li
-                a(href="modules/errors/error500.pug") 500
-            li
-                a(href="modules/chats/chats.pug") Чаты
+                a(href="./chats") Чаты
+        .app
+        script(type="module", src="index.ts")

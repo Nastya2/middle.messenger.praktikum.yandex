@@ -1,10 +1,11 @@
+
 import { Tprops } from "@types";
-import Component from "../../../shared/services/component";
+import Component from "../../services/component";
+import template from "./label.tmp";
 
-import template from "./button.tmp"
 
+export class Label extends Component {
 
-export class Button extends Component {
   constructor(props: Tprops) {
     super(props);
   }

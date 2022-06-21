@@ -1,275 +1,297 @@
-import Button from "../../shared/components/button/button";
+import { regular_login, regular_password, regular_email, regular_name, regular_phone } from "../../shared/regular_expressions";
+import { Tprops } from "@types";
 import { checkValidity } from "../../shared/validation-functions";
-import { render } from "../../utils/renderDom";
-import { regular_name, regular_login, regular_password, regular_email, regular_phone } from "../../shared/regular_expressions";
-import Input from "../../shared/components/input/input";
+import { Button } from "../../shared/components/button/button";
+import { Input } from "../../shared/components/input/input";
+import Component from "../../shared/services/component";
+import template from "./sigin.tmp";
+import { Error } from "../../shared/components/error/error";
+import { Label } from "../../shared/components/label/label";
 
 
-const button = new Button({
-    text: 'Зарегистрироваться',
-    classes: 'btn btn_sigin-top-bottom',
+export class SigInPage extends Component {
+    constructor(props: Tprops) {
+        super(props);
+    }
+
+    public render(): DocumentFragment {
+        return this.compile(template, this.props);
+    }
+}
+
+export const button = new Button({
+    text: "Зарегистрироваться",
+    classes: "btn btn_sigin-top-bottom",
     event: {
         click: function() {
-            getDataForm();
+            let data = {
+                login: (input_login.getContent().lastChild as HTMLInputElement).value,
+                password: (input_password.getContent().lastChild as HTMLInputElement).value,
+                password_repeat: (input_password_repeat.getContent().lastChild as HTMLInputElement).value,
+                email: (input_email.getContent().lastChild as HTMLInputElement).value,
+                first_name: (input_first_name.getContent().lastChild as HTMLInputElement).value,
+                second_name: (input_second_name.getContent().lastChild as HTMLInputElement).value,
+                phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
+            }
+            console.log(data);
         }
-    }
+    },
 });
 
-const input_email = new Input({
-    text: "Почта",
+export const label_email = new Label({
+    class_label: "text-field__label",
     for_label: "email",
+    text: "Email"
+});
+
+export const error_email = new Error({
+    error: ""
+});
+
+export const input_email = new Input({
+    text: "Почта",
     input_type: "email",
     input_name:"email",
-    input_id: "email",
-    input_placeholder: "Почта",
-    class_error: "error-email",
-    settings: {withInternalID: true},
-    class_wrap: "text-field",
-    class_label: "text-field__label",
-    class_input: "text-field__input"
+    class_input: "text-field__input",
+    pattern: regular_email,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
+            error_email.setProps({
+                error: err
+            });
+            error_email.show();
+            
+        },
+        focus: function() {
+            error_email.hide();
+        }
+    }
 });
 
-const input_password = new Input({
-    text: "Пароль",
-    for_label: "password",
-    input_type: "password",
-    input_name:"password",
-    input_id: "password",
-    input_placeholder: "Пароль",
-    class_error: "error-password",
-    settings: {withInternalID: true},
-    min: "8",
-    max: "40",
-    class_wrap: "text-field",
-    class_label: "text-field__label",
-    class_input: "text-field__input"
-});
 
-const input_password_repeat = new Input({
-    text: "Пароль (еще раз)",
-    for_label: "password_repeat",
-    input_type: "password",
-    input_name:"password_repeat",
-    input_id: "password_repeat",
-    input_placeholder: "Пароль (еще раз)",
-    class_error: "error-password-repeat",
-    settings: {withInternalID: true},
-    min: "8",
-    max: "40",
-    class_wrap: "text-field",
+export const label_login = new Label({
     class_label: "text-field__label",
-    class_input: "text-field__input"
-});
-
-const input_login = new Input({
-    text: "Логин",
     for_label: "login",
+    text: "Логин"
+});
+
+export const error_login = new Error({
+    error: ""
+});
+
+export const input_login = new Input({
+    text: "Логин",
     input_type: "text",
     input_name:"login",
-    input_id: "login",
-    input_placeholder: "Логин",
-    class_error: "error-login",
-    settings: {withInternalID: true},
     min: "3",
     max: "20",
-    class_wrap: "text-field",
-    class_label: "text-field__label",
-    class_input: "text-field__input"
+    class_input: "text-field__input",
+    pattern: regular_login,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
+            error_login.setProps({
+                error: err
+            });
+            error_login.show();
+            
+        },
+        focus: function() {
+            error_login.hide();
+        }
+    }
 });
 
-const input_first_name = new Input({
-    text: "Имя",
+export const label_first_name = new Label({
+    class_label: "text-field__label",
     for_label: "first_name",
+    text: "Имя"
+});
+
+export const error_first_name = new Error({
+    error: ""
+});
+
+export const input_first_name = new Input({
+    text: "Имя",
     input_type: "text",
     input_name:"first_name",
-    input_id: "first_name",
-    input_placeholder: "Имя",
-    class_error: "error-first-name",
-    settings: {withInternalID: true},
-    class_wrap: "text-field",
-    class_label: "text-field__label",
-    class_input: "text-field__input"
+    class_input: "text-field__input",
+    pattern: regular_name,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
+            error_first_name.setProps({
+                error: err
+            });
+            error_first_name.show();
+            
+        },
+        focus: function() {
+            error_first_name.hide();
+        }
+    }
 });
 
-const input_second_name = new Input({
-    text: "Фамилия",
+export const label_second_name = new Label({
+    class_label: "text-field__label",
     for_label: "second_name",
+    text: "Фамилия"
+});
+
+export const error_second_name = new Error({
+    error: ""
+});
+
+export const input_second_name = new Input({
+    text: "Фамилия",
     input_type: "text",
     input_name:"second_name",
-    input_id: "second_name",
-    input_placeholder: "Фамилия",
-    class_error: "error-second-name",
-    settings: {withInternalID: true},
-    class_wrap: "text-field",
-    class_label: "text-field__label",
-    class_input: "text-field__input"
+    class_input: "text-field__input",
+    pattern: regular_name,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
+            error_second_name.setProps({
+                error: err
+            });
+            error_second_name.show();
+            
+        },
+        focus: function() {
+            error_second_name.hide();
+        }
+    }
 });
 
-const input_phone = new Input({
-    text: "Телефон",
+export const label_phone = new Label({
+    class_label: "text-field__label",
     for_label: "phone",
+    text: "Телефон"
+});
+
+export const error_phone = new Error({
+    error: ""
+});
+
+export const input_phone = new Input({
+    text: "Телефон",
     input_type: "phone",
     input_name:"phone",
-    input_id: "phone",
-    input_placeholder: "Телефон",
-    class_error: "error-phone",
-    settings: {withInternalID: true},
     min: "10",
     max: "15",
-    class_wrap: "text-field",
-    class_label: "text-field__label",
-    class_input: "text-field__input"
+    class_input: "text-field__input",
+    pattern: regular_phone,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
+            error_phone.setProps({
+                error: err
+            });
+            error_phone.show(); 
+        },
+        focus: function() {
+            error_phone.hide();
+        }
+    }
 });
 
+export const label_password = new Label({
+    class_label: "text-field__label",
+    for_label: "password",
+    text: "Пароль"
+});
 
+export const error_password = new Error({
+    error: ""
+});
 
-render(".btn-action", button);
-render(".auth-form__field", input_email);
-render(".auth-form__field", input_login);
-render(".auth-form__field", input_first_name);
-render(".auth-form__field", input_second_name);
-render(".auth-form__field", input_phone);
-render(".auth-form__field", input_password);
-render(".auth-form__field", input_password_repeat);
-
-const form = document.querySelector('.auth-form') as HTMLFormElement;
-const error_first_name = form.querySelector('.error-first-name');
-const error_second_name = form.querySelector('.error-second-name');
-const error_login = form.querySelector('.error-login');
-const error_password = form.querySelector('.error-password');
-const error_password_repeat = form.querySelector('.error-password-repeat');
-const error_email = form.querySelector('.error-email');
-const error_phone = form.querySelector('.error-phone');
-const first_name = form.elements.namedItem("first_name") as HTMLInputElement;
-const second_name = form.elements.namedItem("second_name") as HTMLInputElement;
-const login = form.elements.namedItem("login") as HTMLInputElement;
-const password = form.elements.namedItem("password") as HTMLInputElement;
-const password_repeat = form.elements.namedItem("password_repeat") as HTMLInputElement;
-const email = form.elements.namedItem("email") as HTMLInputElement;
-const phone = form.elements.namedItem("phone") as HTMLInputElement;
-
-addPattern();
-addEvent();
-
-function addEvent(): void {
-    first_name.addEventListener("focus", () => {
-        if (error_first_name) {
-            error_first_name.classList.add("none")
+export const input_password = new Input({
+    text: "Пароль",
+    input_type: "password",
+    input_name:"password",
+    min: "8",
+    max: "40",
+    class_input: "text-field__input",
+    pattern: regular_password,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            error_password.setProps({
+                error: err
+            });
+            error_password.show();
+            
+        },
+        focus: function() {
+            error_password.hide();
         }
-    });
-    
-    first_name.addEventListener("blur", () => {
-        checkValidity(first_name, error_first_name, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
-    });
-    
-    second_name.addEventListener("focus", () => {
-        if (error_second_name) {
-            error_second_name.classList.add("none");
+    }
+});
+
+export const label_password_repeat = new Label({
+    class_label: "text-field__label",
+    for_label: "password",
+    text: "Пароль"
+});
+
+export const error_password_repeat = new Error({
+    error: ""
+});
+
+export const input_password_repeat = new Input({
+    text: "Пароль (еще раз)",
+    input_type: "password",
+    input_name:"password_repeat",
+    min: "8",
+    max: "40",
+    class_input: "text-field__input",
+    pattern: regular_password,
+    event: {
+        blur: function(event: Event) {
+            let err = "";
+            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            error_password_repeat.setProps({
+                error: err
+            });
+            error_password_repeat.show();
+            
+        },
+        focus: function() {
+            error_password_repeat.hide();
         }
-    });
-    
-    second_name.addEventListener("blur", () => {
-        checkValidity(second_name, error_second_name, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
-    });
-
-    login.addEventListener("focus", () => {
-        if (error_login) {
-            error_login.classList.add("none");
-        }
-    });
-    
-    login.addEventListener("blur", () => {
-        checkValidity(login, error_login, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
-    });
-
-    password.addEventListener("focus", () => {
-        if (error_password) {
-            error_password.classList.add("none");
-        }
-    });
-    
-    password.addEventListener("blur", () => {
-        checkValidity(password, error_password, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    });
-
-    password_repeat.addEventListener("focus", () => {
-        if (error_password_repeat) {
-            error_password_repeat.classList.add("none");
-        }
-    });
-    
-    password_repeat.addEventListener("blur", () => {
-        checkValidity(password_repeat, error_password_repeat, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    });
-
-    email.addEventListener("focus", () => {
-        if (error_email) {
-            error_email.classList.add("none");
-        }
-    });
-    
-    email.addEventListener("blur", () => {
-        checkValidity(email, error_email, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
-    });
-
-    phone.addEventListener("focus", () => {
-        if (error_phone) {
-            error_phone.classList.add("none");
-        }
-    });
-    
-    phone.addEventListener("blur", () => {
-        checkValidity(phone, error_phone, {patternMismatch: "Некорректный телефон"});
-    });
-    
-}
-
-function addPattern(): void {
-    if (first_name) {
-        first_name.setAttribute("pattern", regular_name);
     }
-    
-    if (second_name) {
-        second_name.setAttribute("pattern", regular_name);
-    }
-    
-    if (login) {
-        login.setAttribute("pattern", regular_login);
-    }
+});
 
-    if (password) {
-        password.setAttribute("pattern", regular_password);
-    }
+export const Components = {
+    button,
+    input_email,
+    input_first_name,
+    input_login,
+    input_password,
+    input_password_repeat,
+    input_phone,
+    input_second_name,
+    label_email,
+    label_first_name,
+    label_login,
+    label_password,
+    label_password_repeat,
+    label_phone,
+    label_second_name,
+    error_email,
+    error_first_name,
+    error_login,
+    error_password,
+    error_password_repeat,
+    error_phone,
+    error_second_name
+};
 
-    if (password_repeat) {
-        password_repeat.setAttribute("pattern", regular_password);
-    }
-
-    if (phone) {
-        phone.setAttribute("pattern", regular_phone);
-    }
-
-    if (email) {
-        email.setAttribute("pattern", regular_email);
-    }
-}
-
-function getDataForm() {
-    const data = {
-        login: login.value,
-        password: password.value,
-        email: email.value,
-        first_name: first_name.value,
-        second_name: second_name.value,
-        phone: phone.value,
-        password_repeat: password_repeat.value,
-    };
-    console.log(data);
-    checkValidity(first_name, error_first_name, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
-    checkValidity(second_name, error_second_name, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
-    checkValidity(login, error_login, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
-    checkValidity(password, error_password, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    checkValidity(password_repeat, error_password_repeat, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-    checkValidity(email, error_email, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
-    checkValidity(phone, error_phone, {patternMismatch: "Некорректный телефон"});
-}

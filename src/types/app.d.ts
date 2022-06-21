@@ -1,0 +1,1 @@
+export type Tprops = Record<string, any>;

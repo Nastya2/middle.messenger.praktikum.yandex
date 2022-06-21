@@ -1,8 +1,8 @@
 
 import { EventBus } from "./event-bus";
 import {v4 as makeUUID} from "uuid";
-
-type Tprops = {[key: string]: any};
+import { compile, compileTemplate } from "pug";
+import { Tprops } from "@types";
 
 
 abstract class Component {
@@ -16,24 +16,22 @@ abstract class Component {
   private element: HTMLElement;
   public props: Tprops;
   private eventBus: () => EventBus;
-  private wrap = "div";
   private id = "";
-  private class_style: string | undefined;
+  private children: Tprops;
+  private compileTemplate: compileTemplate | undefined;
 
-  constructor(wrap: string, props: Tprops = {}, class_style?: string) {
+  constructor(propsAndChildren: Tprops = {}) {
     const bus = new EventBus();
     this.eventBus = () => bus;
-    this.wrap = wrap;
-    this.class_style = class_style;
 
+    const { children, props } = this.getChildren(propsAndChildren);
    
     this.props = this.makePropsProxy(props);
+    this.children = children;
 
     this.registerEvents();
-    if (props?.settings?.withInternalID) {
-      this.id = makeUUID();
-      this.props = this.makePropsProxy({ ...props, __id: this.id });
-    }
+    this.id = makeUUID();
+    this.props = this.makePropsProxy({ ...props, __id: this.id });
  
     this.eventBus().emit(Component.EVENTS.INIT);
   }
@@ -45,28 +43,41 @@ abstract class Component {
     this.eventBus().on(Component.EVENTS.FLOW_CDU, this.componentDidUpdate.bind(this));
   }
 
+  private getChildren(propsAndChildren: Tprops): {props: Tprops, children: Tprops} {
+    const children: Tprops = {};
+    const props: Tprops = {};
+
+    Object.entries(propsAndChildren).forEach(([key, value]) => {
+      if (value instanceof Component) {
+        children[key] = value;
+      } else {
+        props[key] = value;
+      }
+    });
+    return {props, children};
+  }
+
   private init(): void {
-    this.createResources();
-    if (this.props?.settings?.withInternalID) {
-      this.element.setAttribute("data-id", this.id);
+    this.element = this.createResources("div");
+    if (this.props.class_position) {
+      this.element.classList.add(this.props.class_position);
     }
     this.eventBus().emit(Component.EVENTS.FLOW_RENDER);
   }
 
-  private createResources(): void {
-    this.element = document.createElement(this.wrap);
-    if (this.class_style) {
-      this.element.classList.add(this.class_style);
-    }
+  private createResources(tagName: string): HTMLElement {
+    const element = document.createElement(tagName);
+    return element;
   }
 
   private renderTmp(): void {
     const block = this.render();
-    this.element.innerHTML = block;
+    this.element.innerHTML = "";
+    this.element.append(block);
     this.addEvents();
   }
 
-  abstract render(): string;
+  abstract render(): DocumentFragment;
 
   public dispatchComponentDidMount(): void { // external call render
     this.eventBus().emit(Component.EVENTS.FLOW_CDM);
@@ -82,6 +93,33 @@ abstract class Component {
     } else {
       return false;
     }
+  }
+
+  public compile(template: string, props: Tprops): DocumentFragment {
+    const propsAndStubs = { ...props };
+ 
+    Object.entries(this.children).forEach(([key, child]) => {
+      propsAndStubs[key] = `div data-id="${child.id}"`;
+    });
+
+    const fragment = this.createResources('template') as HTMLTemplateElement;
+    if(!this.compileTemplate) {
+      this.compileTemplate = compile(template);
+    }
+
+    fragment.innerHTML = this.compileTemplate(propsAndStubs);
+
+    Object.values(this.children).forEach((child: Component) => {
+      const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
+
+      if (stub) {
+        stub.replaceWith(child.getContent());
+      } else {
+        console.log("заглушка не найдена");
+      }
+    });
+
+    return fragment.content;
   }
 
   private componentDidUpdate() {
@@ -135,7 +173,7 @@ abstract class Component {
 
     if (events) {
       Object.keys(events).forEach(eventName => {
-        this.element.addEventListener(eventName, events[eventName]);
+        this.element.firstElementChild!.addEventListener(eventName, events[eventName]);
       });
     }
   }
@@ -144,7 +182,7 @@ abstract class Component {
     const events = this.props.event as any;
     if(events) {
       Object.keys(events).forEach(eventName => {
-        this.element.removeEventListener(eventName, events[eventName]);
+        this.element.firstElementChild!.removeEventListener(eventName, events[eventName]);
       });
     }
   }
