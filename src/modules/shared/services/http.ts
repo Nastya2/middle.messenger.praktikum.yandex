@@ -5,13 +5,12 @@ enum METHODS {
   DELETE = 'delete'
 }
 
-type stringObj = {[key:string]: string};
+type stringObj =  Record<string, string>;
 
 interface Options {
-  timeout: number;
-  method: METHODS;
-  data: {[key:string]: any} | undefined;
-  headers: {[key:string]: string} | undefined;
+  timeout?: number;
+  data?: Record<string, any>;
+  headers?: Record<string, string>;
 }
 
 function queryStringify(data: Options["data"]): string {
@@ -26,24 +25,24 @@ function queryStringify(data: Options["data"]): string {
 }
 
 class HTTPTransport {
-  get = (url: string, options: Options) => {
-    return this.request(url, {...options, method: METHODS.GET}, options.timeout);
+  public get = (url: string, options: Options) => {
+    return this.request(url, {...options }, METHODS.GET, options.timeout);
   };
 
-  post = (url: string, options: Options) => {	
-    return this.request(url, {...options, method: METHODS.POST}, options.timeout);
+  public post = (url: string, options: Options) => {	
+    return this.request(url, {...options }, METHODS.POST, options.timeout);
   };
 
-  put = (url: string, options: Options) => {	 
-    return this.request(url, {...options, method: METHODS.PUT}, options.timeout);
+  public put = (url: string, options: Options) => {	 
+    return this.request(url, {...options }, METHODS.PUT, options.timeout);
   };
 
-  delete = (url: string, options: Options) => {	 
-    return this.request(url, {...options, method: METHODS.DELETE}, options.timeout);
+  public delete = (url: string, options: Options) => {	 
+    return this.request(url, {...options }, METHODS.DELETE, options.timeout);
   };
 
-  request = (url: string, options: Options, timeout = 5000) => {
-      const {method, headers} = options;
+  private request = (url: string, options: Options, method: METHODS,timeout = 5000) => {
+      const headers = options.headers;
     
       let data: Options["data"];
       if(options.data) {

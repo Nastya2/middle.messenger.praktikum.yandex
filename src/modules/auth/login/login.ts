@@ -23,7 +23,7 @@ export const button = new Button({
     classes: 'btn btn_sigin-top-bottom',
     event: {
         click: function() {
-            let data = {
+            const data = {
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
             }

@@ -23,7 +23,7 @@ export const button = new Button({
     classes: "btn btn_width280",
     event: {
         click: function() {
-            let data = {
+            const data = {
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
                 old_password: (input_old_password.getContent().lastChild as HTMLInputElement).value,
                 new_password: (input_new_password.getContent().lastChild as HTMLInputElement).value,
