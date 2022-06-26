@@ -27,12 +27,12 @@ export const button = new Button({
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
             }
+
             console.log(data);
         }
     },
 
 });
-
 
 export const error_password = new Error({
     error: ""
