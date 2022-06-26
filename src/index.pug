@@ -9,16 +9,14 @@ html(lang="ru")
     body
         ul
             li
-                a(href="pages/home/modules/auth/login/login.pug") Логин
+                a(href="./login") Логин
             li
-                a(href="pages/home/modules/auth/sigin/sigin.pug") Регистрация
+                a(href="./sigin") Регистрация
             li
-                a(href="pages/home/modules/profile/profile.pug") Профиль
+                a(href="./profile") Профиль
             li
-                a(href="pages/home/modules/profile/edit-profile.pug") Изменение профиля
+                a(href="./edit-profile") Изменение профиля
             li
-                a(href="pages/home/modules/profile/edit-password.pug") Изменение пароля
-            li
-                a(href="pages/home/modules/errors/error404.pug") 404
-            li
-                a(href="pages/home/modules/errors/error500.pug") 500
+                a(href="./chats") Чаты
+        .app
+        script(type="module", src="index.ts")

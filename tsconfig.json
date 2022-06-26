@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strictNullChecks": true,
+        "moduleResolution": "node",
+        "outDir": "ts-built",
+        "rootDir": "./src",
+        "typeRoots": ["node_modules/@types", "types/app.d.ts"],
+        "paths": {
+            "@types": ["types/app"]
+        },
+        "baseUrl": "./src"
+    }
+}
