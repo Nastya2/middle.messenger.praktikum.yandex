@@ -5,7 +5,6 @@ enum METHODS {
   DELETE = 'delete'
 }
 
-type stringObj =  Record<string, string>;
 
 interface Options {
   timeout?: number;
@@ -24,7 +23,7 @@ function queryStringify(data: Options["data"]): string {
   return "?" + url;
 }
 
-class HTTPTransport {
+export class HTTPTransport {
   public get = (url: string, options: Options) => {
     return this.request(url, {...options }, METHODS.GET, options.timeout);
   };
@@ -41,8 +40,8 @@ class HTTPTransport {
     return this.request(url, {...options }, METHODS.DELETE, options.timeout);
   };
 
-  private request = (url: string, options: Options, method: METHODS,timeout = 5000) => {
-      const headers = options.headers;
+  private request = (url: string, options: Options, method: METHODS,timeout = 5000): Promise<any> => {
+      const headers = options.headers || {};
     
       let data: Options["data"];
       if(options.data) {
@@ -51,11 +50,15 @@ class HTTPTransport {
 
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
         xhr.timeout = timeout;
 
-        if(method === METHODS.GET) {
+        if(method === METHODS.GET && data) {
           url = url + queryStringify(data);
+        } else {
+          headers["content-type"] = 'application/json'
         }
+
         xhr.open(method, url);
         
         for(const key in headers) {
@@ -63,8 +66,12 @@ class HTTPTransport {
         }
         
         xhr.onload = function() {
-          console.log(xhr);
-          resolve(xhr);
+          console.log(xhr, "xhr in http");
+          if (xhr.status === 200) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            resolve(xhr);
+          }
         };
 
         xhr.onabort = function() {reject(new Error("abort"))}
