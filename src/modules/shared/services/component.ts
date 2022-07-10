@@ -48,12 +48,14 @@ abstract class Component {
     const props: Tprops = {};
 
     Object.entries(propsAndChildren).forEach(([key, value]) => {
-      if (value instanceof Component) {
+      if (value instanceof Component || Array.isArray(propsAndChildren[key])) {
         children[key] = value;
       } else {
         props[key] = value;
       }
     });
+
+    console.log(children, "c");
     return {props, children};
   }
 
@@ -97,10 +99,18 @@ abstract class Component {
 
   public compile(template: string, props: Tprops): DocumentFragment {
     const propsAndStubs = { ...props };
- 
     Object.entries(this.children).forEach(([key, child]) => {
-      propsAndStubs[key] = `div data-id="${child.id}"`;
+      if(Array.isArray(child)) {
+        propsAndStubs[key] = {};
+        Object.entries(child).forEach(([key2, child2]) => {
+          propsAndStubs[key][key2] = `div data-id="${child2.id}"`;
+        });
+      } else {
+        propsAndStubs[key] = `div data-id="${child.id}"`;
+      }
     });
+
+    //console.log(propsAndStubs, "propsAndStubs")
 
     const fragment = this.createResources('template') as HTMLTemplateElement;
     if(!this.compileTemplate) {
@@ -108,15 +118,30 @@ abstract class Component {
     }
 
     fragment.innerHTML = this.compileTemplate(propsAndStubs);
+    console.dir(fragment, "dldl")
 
     Object.values(this.children).forEach((child: Component) => {
-      const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
+      if(Array.isArray(child)) {
+        Object.values(child).forEach((c: Component) => {
+          console.log(child, "ccc", fragment.content)
+          const stub = fragment.content.querySelector(`[data-id="${c.id}"]`);
+          if (stub) {
+            stub.replaceWith(c.getContent());
+          } else {
+            console.log("заглушка не найдена");
+          }
+        });
 
-      if (stub) {
-        stub.replaceWith(child.getContent());
       } else {
-        console.log("заглушка не найдена");
+        const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
+
+        if (stub) {
+          stub.replaceWith(child.getContent());
+        } else {
+          console.log("заглушка не найдена");
+        }
       }
+     
     });
 
     return fragment.content;

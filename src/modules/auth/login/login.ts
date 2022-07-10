@@ -7,6 +7,9 @@ import Component from "../../shared/services/component";
 import template from "./login.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
+import { LoginService } from "./login.service";
+import { router } from "../../../index";
+const service = new LoginService();
 
 export class LoginPage extends Component {
     constructor(props: Tprops) {
@@ -28,7 +31,12 @@ export const button = new Button({
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
             }
 
-            console.log(data);
+            service.login(data).then((res) => {
+                if (res.status === 200) {
+                    router.go('/messenger');
+                }
+            }).catch(() => {});
+
         }
     },
 

@@ -40,6 +40,7 @@ export class Route {
     public render() {
         if (!this.block) {
             this.block = new this.blockClass(this.propsComponent);
+            console.log(this.propsComponent)
             renderDOM(this.props.rootQuery, this.block);
             return;
         }

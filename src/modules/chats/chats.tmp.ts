@@ -7,9 +7,10 @@ const tmp = `.wrap-chats
                         .left-chats__search
                             input(type="text", placeholder="Поиск").search
                     .chats
-                        #{chat_item_1}
-                        #{chat_item_2}
-                        #{chat_item_3}
+                        each val in chats
+                            #{val}
+                        else
+                            div No chats created
                 .right-chats
                     .right-chats-top
                         .right-chats__header

@@ -7,9 +7,11 @@ import Component from "../../shared/services/component";
 import template from "./sigin.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
-
+import { SignInService } from "./sigin.service";
+const service = new SignInService();
 
 export class SigInPage extends Component {
+
     constructor(props: Tprops) {
         super(props);
     }
@@ -24,6 +26,9 @@ export const button = new Button({
     classes: "btn btn_sigin-top-bottom",
     event: {
         click: function() {
+            service.getUser();
+            const form = document.querySelector(".auth-form") as HTMLFormElement;
+            form.reportValidity();
             const data = {
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
@@ -33,7 +38,10 @@ export const button = new Button({
                 second_name: (input_second_name.getContent().lastChild as HTMLInputElement).value,
                 phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
             }
-            console.log(data);
+
+            if (form.checkValidity()) {
+                service.signUp(data);
+            }
         }
     },
 });

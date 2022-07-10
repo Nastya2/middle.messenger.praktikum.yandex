@@ -14,6 +14,11 @@ export const router = new Router(".app")
 .use("/sigin",  SigInPage, SigInComponents)
 .use("/profile",  ProfilePage, ProfileComponents)
 .use("/edit-profile",  EditProfilePage, EditProfileComponents)
-.use("/chats",  ChatsPage, ChatsComponents);
+.use("/messenger",  ChatsPage, ChatsComponents);
+
+// export const router = new Router(".app")
+// .use("/messenger",  ChatsPage, ChatsComponents);
 
 router.start();
+
+
