@@ -4,6 +4,7 @@ import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./chats.tmp";
 import { ChatsService } from "./chats.service";
+import ChatItems from "./components/chat-items/chat-items";
 const service = new ChatsService();
 
 
@@ -16,6 +17,33 @@ export class ChatsPage extends Component {
         return this.compile(tmp, this.props);
     }
 }
+
+const chat_item_1 = new ChatItem({
+    name: "Андрей",
+    msg: "Друзья, у меня для вас особенный выпуск новостей!1",
+    time: "10:49",
+    count: "5",
+    event: {
+        click: function() {
+            console.log("click")
+        }
+    }
+});
+
+const chat_item_2 = new ChatItem({
+    name: "Андрей",
+    msg: "Друзья, у меня для вас особенный выпуск новостей!2",
+    time: "10:49",
+    count: "5",
+    event: {
+        click: function() {
+            console.log("click")
+        }
+    }
+});
+
+
+let chat_items = new ChatItems({chats: [chat_item_1, chat_item_2]});
 
 let chats: ChatItem[] = [];
 service.getAllChats().then((res) => {
@@ -32,37 +60,15 @@ service.getAllChats().then((res) => {
             }
         }));
     });
-    console.log(chats);
+
+   setTimeout(() => chat_items.setProps({chats: chats}), 3000);
+   // chat_items.setProps({chats: chats});
+    console.log(chats, "c");
 });
 
 
 
-
-const chat_item_1 = new ChatItem({
-    name: "Андрей",
-    msg: "Друзья, у меня для вас особенный выпуск новостей!",
-    time: "10:49",
-    count: "5",
-    event: {
-        click: function() {
-            console.log("click")
-        }
-    }
-});
-
-const chat_item_2 = new ChatItem({
-    name: "Андрей",
-    msg: "Друзья, у меня для вас особенный выпуск новостей!",
-    time: "10:49",
-    count: "5",
-    event: {
-        click: function() {
-            console.log("click")
-        }
-    }
-});
-
-chats = [chat_item_1,chat_item_2 ];
+//chats = [chat_item_1,chat_item_2 ];
 
 // const chat_item_3 = new ChatItem({
 //     name: "Андрей",
@@ -101,7 +107,7 @@ chats = [chat_item_1,chat_item_2 ];
 // });
 
 export const Components = {
-    chats
+    chat_items
 };
 
 

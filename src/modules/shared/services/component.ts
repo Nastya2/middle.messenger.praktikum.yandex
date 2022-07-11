@@ -24,7 +24,7 @@ abstract class Component {
     const bus = new EventBus();
     this.eventBus = () => bus;
 
-    const { children, props } = this.getChildren(propsAndChildren);
+    let { children, props } = this.getChildren(propsAndChildren);
    
     this.props = this.makePropsProxy(props);
     this.children = children;
@@ -55,7 +55,6 @@ abstract class Component {
       }
     });
 
-    console.log(children, "c");
     return {props, children};
   }
 
@@ -97,7 +96,7 @@ abstract class Component {
     }
   }
 
-  public compile(template: string, props: Tprops): DocumentFragment {
+  public compile(template: string, props: Tprops, component?:string): DocumentFragment {
     const propsAndStubs = { ...props };
     Object.entries(this.children).forEach(([key, child]) => {
       if(Array.isArray(child)) {
@@ -110,21 +109,18 @@ abstract class Component {
       }
     });
 
-    //console.log(propsAndStubs, "propsAndStubs")
 
     const fragment = this.createResources('template') as HTMLTemplateElement;
-    if(!this.compileTemplate) {
-      this.compileTemplate = compile(template);
-    }
+    this.compileTemplate = compile(template);
 
     fragment.innerHTML = this.compileTemplate(propsAndStubs);
-    console.dir(fragment, "dldl")
 
     Object.values(this.children).forEach((child: Component) => {
       if(Array.isArray(child)) {
         Object.values(child).forEach((c: Component) => {
-          console.log(child, "ccc", fragment.content)
+
           const stub = fragment.content.querySelector(`[data-id="${c.id}"]`);
+
           if (stub) {
             stub.replaceWith(c.getContent());
           } else {
@@ -134,7 +130,6 @@ abstract class Component {
 
       } else {
         const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
-
         if (stub) {
           stub.replaceWith(child.getContent());
         } else {
@@ -156,6 +151,9 @@ abstract class Component {
     if (!nextProps) {
       return;
     }
+
+    this.props = this.getChildren(nextProps).props;
+    this.children = this.getChildren(nextProps).children;
 
     this.removeListener();
 
