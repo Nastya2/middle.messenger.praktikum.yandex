@@ -8,7 +8,6 @@ const tmp = `.wrap-chats
                             input(type="text", placeholder="Поиск").search
                     #{chat_items}
                     .add_chat
-                        img(src="./../../src/static/img/add-chat.svg")
                 .right-chats
                     .right-chats-top
                         .right-chats__header

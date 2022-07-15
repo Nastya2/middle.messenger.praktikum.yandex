@@ -228,3 +228,13 @@
   margin-left: 14px;
   transform: rotate(180deg);
 }
+
+.add_chat {
+  content: "";
+  display: block;
+  background-image: url("./icons/add-chat.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100px;
+  height: 100px;   
+}

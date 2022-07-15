@@ -4,7 +4,6 @@ import {v4 as makeUUID} from "uuid";
 import { compile, compileTemplate } from "pug";
 import { Tprops } from "@types";
 
-
 abstract class Component {
   static EVENTS = {
     INIT: "init",
@@ -96,7 +95,7 @@ abstract class Component {
     }
   }
 
-  public compile(template: string, props: Tprops, component?:string): DocumentFragment {
+  public compile(template: string, props: Tprops): DocumentFragment {
     const propsAndStubs = { ...props };
     Object.entries(this.children).forEach(([key, child]) => {
       if(Array.isArray(child)) {
@@ -109,9 +108,11 @@ abstract class Component {
       }
     });
 
-
+  
     const fragment = this.createResources('template') as HTMLTemplateElement;
+
     this.compileTemplate = compile(template);
+
 
     fragment.innerHTML = this.compileTemplate(propsAndStubs);
 

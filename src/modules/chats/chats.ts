@@ -1,12 +1,12 @@
 import ChatItem from "./components/chat-item/chat-item";
-import Message from "./components/message/message";
+//import Message from "./components/message/message";
 import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./chats.tmp";
 import { ChatsService } from "./chats.service";
 import ChatItems from "./components/chat-items/chat-items";
-const service = new ChatsService();
 
+const service = new ChatsService();
 
 export class ChatsPage extends Component {
     constructor(props: Tprops) {
@@ -17,6 +17,7 @@ export class ChatsPage extends Component {
         return this.compile(tmp, this.props);
     }
 }
+
 
 const chat_item_1 = new ChatItem({
     name: "Андрей",
@@ -47,6 +48,7 @@ let chat_items = new ChatItems({chats: [chat_item_1, chat_item_2]});
 
 let chats: ChatItem[] = [];
 service.getAllChats().then((res) => {
+    console.log(res, "lflf")
     res.forEach((chat) => {
         chats.push(new ChatItem({
             name: chat.title,
