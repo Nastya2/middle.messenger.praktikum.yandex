@@ -8,16 +8,16 @@ import { ProfilePage, Components as ProfileComponents} from "./modules/profile/p
 import { Router } from "./modules/routing/router";
 
 
-// export const router = new Router(".app")
-// .use("/",  LoginPage, LoginComponents)
-// .use("/login",  LoginPage, LoginComponents)
-// .use("/sigin",  SigInPage, SigInComponents)
-// .use("/profile",  ProfilePage, ProfileComponents)
-// .use("/edit-profile",  EditProfilePage, EditProfileComponents)
-// .use("/messenger",  ChatsPage, ChatsComponents);
-
 export const router = new Router(".app")
+.use("/",  LoginPage, LoginComponents)
+.use("/login",  LoginPage, LoginComponents)
+.use("/sigin",  SigInPage, SigInComponents)
+.use("/profile",  ProfilePage, ProfileComponents)
+.use("/edit-profile",  EditProfilePage, EditProfileComponents)
 .use("/messenger",  ChatsPage, ChatsComponents);
+
+// export const router = new Router(".app")
+// .use("/messenger",  ChatsPage, ChatsComponents);
 
 router.start();
 

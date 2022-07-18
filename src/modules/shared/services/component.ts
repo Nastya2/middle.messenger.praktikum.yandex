@@ -153,12 +153,15 @@ abstract class Component {
       return;
     }
 
-    this.props = this.getChildren(nextProps).props;
-    this.children = this.getChildren(nextProps).children;
+    // this.props = this.getChildren(nextProps).props;
+    // this.children = this.getChildren(nextProps).children;
+    // console.log(this.props, "ldld", nextProps);
 
     this.removeListener();
 
     if(this._componentDidUpdate(this.props, nextProps)) {
+      this.props = this.getChildren(nextProps).props;
+      this.children = this.getChildren(nextProps).children;
       Object.assign(this.props, nextProps);
       this.eventBus().emit(Component.EVENTS.FLOW_CDU, nextProps, this.props);
     }

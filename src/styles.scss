@@ -120,6 +120,16 @@ html, .app, .app > div {
 .btn-action {
   width: 100%;
   text-align: center;
+
+  &.between {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+
+    & > div {
+      width: 20%;
+    }
+  }
 }
 
 .color-blue {
@@ -136,4 +146,14 @@ html, .app, .app > div {
 
 .error {
   color: red !important;
+}
+
+dialog {
+  border: none;
+  width: 40%;
+  border-radius: 5px;
+
+  h2 {
+    font-size: 16px;
+  }
 }

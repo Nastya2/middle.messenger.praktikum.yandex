@@ -24,7 +24,7 @@ export class ChatsService  {
     public createChat(data: TCreateChat): Promise<XMLHttpRequest> {
         const options = {
             data: {
-                data
+                ...data
             }
         }
         return http.post(`${url}/chats`, options);

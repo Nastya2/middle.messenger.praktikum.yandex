@@ -6,6 +6,7 @@
   .left-chats {
     width: 310px;
     background: #fbfbfb;
+    position: relative;
 
     &__header {
       padding-bottom: 10px;
@@ -235,6 +236,10 @@
   background-image: url("./icons/add-chat.svg");
   background-position: center;
   background-repeat: no-repeat;
-  width: 100px;
-  height: 100px;   
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
 }

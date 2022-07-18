@@ -66,10 +66,10 @@ export class HTTPTransport {
         }
         
         xhr.onload = function() {
-          console.log(xhr, "xhr in http");
           if (xhr.status === 200) {
             resolve(JSON.parse(xhr.response));
           } else {
+            console.log(xhr.status, JSON.parse(xhr.response).reason);
             resolve(xhr);
           }
         };

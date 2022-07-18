@@ -7,7 +7,7 @@ const tmp = `.wrap-chats
                         .left-chats__search
                             input(type="text", placeholder="Поиск").search
                     #{chat_items}
-                    .add_chat
+                    #{addChatIcon}
                 .right-chats
                     .right-chats-top
                         .right-chats__header
@@ -22,7 +22,8 @@ const tmp = `.wrap-chats
                     .right-chats__input
                         input(type="text", required, placeholder="Сообщение")
                         .submit-msg 
-                            img(src="../../../static/img/arrow.svg")`;
+                            img(src="../../../static/img/arrow.svg")
+                #{dialog}`;
 export default tmp;
 
     

@@ -1,5 +1,6 @@
 import { url } from "../../shared/consts";
 import { HTTPTransport } from "../../shared/services/http/http";
+import { router } from "./../../../index";
 
 const http = new HTTPTransport();
 
@@ -25,7 +26,9 @@ export class SignInService  {
 
     public getUser() {
         http.get(`${url}/auth/user`, {}).then((res) => {
+            console.log(res.response);
             localStorage.setItem("user", res.response);
+            router.go("/messenger");
         }).catch((err) => console.log(err, "err"));
     }
 
@@ -35,9 +38,10 @@ export class SignInService  {
 
 // avatar: null
 // display_name: null
-// email: "address11@yandex.ru"
-// first_name: "Kjdjfdjf"
-// id: 27214
-// login: "fdfdfdf"
-// phone: "89118490423"
-// second_name: "Kfdjfjjf"
+// email: "address12@yandex.ru"
+// first_name: "Nastya"
+// id: 315
+// login: "nastya30166"
+// phone: "89118472812"
+// second_name: "Dementeva"
+// 7825882L

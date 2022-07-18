@@ -5,6 +5,10 @@ import Component from "../shared/services/component";
 import tmp from "./chats.tmp";
 import { ChatsService } from "./chats.service";
 import ChatItems from "./components/chat-items/chat-items";
+import AddChatDialog from "./components/add-chat-dialog/add-chat";
+import AddChatIcon from "./components/add-chat/add-chat";
+import {input_name_chat, button_close, label_name_chat} from "./components/add-chat-dialog/add-chat";
+import { Button } from "../shared/components/button/button";
 
 const service = new ChatsService();
 
@@ -18,58 +22,54 @@ export class ChatsPage extends Component {
     }
 }
 
-
-const chat_item_1 = new ChatItem({
-    name: "Андрей",
-    msg: "Друзья, у меня для вас особенный выпуск новостей!1",
-    time: "10:49",
-    count: "5",
+export const button_action = new Button({
+    text: 'Добавить',
+    classes: 'btn',
     event: {
         click: function() {
-            console.log("click")
+          const value = (input_name_chat.getContent().lastChild as HTMLInputElement).value;
+          const data = {
+            title: value
+          }
+          service.createChat(data).then(() => getAllChatsAndUpdate());
+        }
+    },
+});
+
+const dialog = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action});
+
+const addChatIcon = new AddChatIcon({
+    event: {
+        click: function() {
+            const d = dialog.getContent().lastChild as HTMLDialogElement;
+            d?.showModal();
         }
     }
 });
 
-const chat_item_2 = new ChatItem({
-    name: "Андрей",
-    msg: "Друзья, у меня для вас особенный выпуск новостей!2",
-    time: "10:49",
-    count: "5",
-    event: {
-        click: function() {
-            console.log("click")
-        }
-    }
-});
+let chat_items = new ChatItems({chats: []});
 
-
-let chat_items = new ChatItems({chats: [chat_item_1, chat_item_2]});
-
-let chats: ChatItem[] = [];
-service.getAllChats().then((res) => {
-    console.log(res, "lflf")
-    res.forEach((chat) => {
-        chats.push(new ChatItem({
-            name: chat.title,
-            msg: "Друзья, у меня для вас особенный выпуск новостей!",
-            time: "10:49",
-            count: chat.unread_count,
-            event: {
-                click: function() {
-                    console.log("click")
+function getAllChatsAndUpdate() {
+    service.getAllChats().then((chats) => {
+       const all_chats = chats.map((chat) => {
+            return new ChatItem({
+                name: chat.title,
+                msg: chat.last_message,
+                time: "10:49",
+                count: chat.unread_count,
+                event: {
+                    click: function() {
+                        console.log("click")
+                    }
                 }
-            }
-        }));
+        })});
+
+        chat_items.setProps({chats: all_chats});
     });
-
-   setTimeout(() => chat_items.setProps({chats: chats}), 3000);
-   // chat_items.setProps({chats: chats});
-    console.log(chats, "c");
-});
+}
 
 
-
+getAllChatsAndUpdate();
 //chats = [chat_item_1,chat_item_2 ];
 
 // const chat_item_3 = new ChatItem({
@@ -109,7 +109,9 @@ service.getAllChats().then((res) => {
 // });
 
 export const Components = {
-    chat_items
+    chat_items,
+    dialog,
+    addChatIcon
 };
 
 

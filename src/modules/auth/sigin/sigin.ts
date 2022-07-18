@@ -25,8 +25,7 @@ export const button = new Button({
     text: "Зарегистрироваться",
     classes: "btn btn_sigin-top-bottom",
     event: {
-        click: function() {
-            service.getUser();
+        click: function() {;
             const form = document.querySelector(".auth-form") as HTMLFormElement;
             form.reportValidity();
             const data = {
@@ -64,8 +63,10 @@ export const input_email = new Input({
     pattern: regular_email,
     event: {
         blur: function(event: Event) {
+            console.log(event);
             let err = "";
             err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
+            console.log(err)
             error_email.setProps({
                 error: err
             });
