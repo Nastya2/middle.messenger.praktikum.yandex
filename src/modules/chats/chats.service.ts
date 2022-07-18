@@ -30,5 +30,9 @@ export class ChatsService  {
         return http.post(`${url}/chats`, options);
     }
 
+    public getChat(id: number): Promise<XMLHttpRequest> {
+        return http.get(`${url}/chats/${id}/common`, {});
+    }
+
 
 }

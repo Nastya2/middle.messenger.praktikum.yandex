@@ -11,7 +11,7 @@ type Tsigin = {
 export class LoginService  {
     public login(data: Tsigin): Promise<XMLHttpRequest> {
         const options = {
-            data: data,
+           data,
         }
         return http.post(`${url}/auth/sigin`, options);
     }

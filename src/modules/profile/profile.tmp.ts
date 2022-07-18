@@ -43,6 +43,6 @@
                         .info-block
                             a(href="./edit/edit-profile.pug").info-block__name.color-blue Изменить данные
                         .info-block
-                            a(href="/").info-block__name.color-red Выйти`
+                            #{logout}`
 
 export default tmp;

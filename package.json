@@ -4,7 +4,7 @@
   "scripts": {
     "start": "npm run build && node server.js",
     "build": "parcel build src/**/*.pug --dist-dir public --no-cache",
-    "dev": "parcel src/index.pug",
+    "dev": "parcel src/**/*.pug",
     "lint": "./node_modules/.bin/eslint . && npx stylelint '**/*.scss'",
     "lint-fix": "./node_modules/.bin/eslint . --fix && npx stylelint '**/*.scss' --fix"
   },

@@ -4,6 +4,8 @@ import { Label } from "../shared/components/label/label";
 import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./profile.tmp";
+import { Link } from "../shared/components/link/link";
+import { authService } from "../../index";
 
 export class ProfilePage extends Component {
     constructor(props: Tprops) {
@@ -109,6 +111,16 @@ const input_display_name = new Input({
     value: "Ivan007"
 });
 
+const logout = new Link({
+    text: "Выйти",
+    classes: "logout",
+    event: {
+        click: function() {
+            authService.logout();
+        }
+    }
+});
+
 export const Components = {
     input_display_name,
     input_email,
@@ -121,7 +133,8 @@ export const Components = {
     label_first_name,
     label_login,
     label_phone,
-    label_second_name
+    label_second_name,
+    logout
 }
 
 

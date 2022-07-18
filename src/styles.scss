@@ -111,6 +111,7 @@ html, .app, .app > div {
   font-weight: 500;
   font-size: 13px;
   line-height: 13px;
+  cursor: pointer;
 
   &_width280 {
     width: 280px;
@@ -156,4 +157,8 @@ dialog {
   h2 {
     font-size: 16px;
   }
+}
+
+.logout {
+  cursor: pointer;
 }

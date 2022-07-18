@@ -59,7 +59,7 @@ function getAllChatsAndUpdate() {
                 count: chat.unread_count,
                 event: {
                     click: function() {
-                        console.log("click")
+                        service.getChat(chat.id).then((res) => console.log(res, "ldld"))
                     }
                 }
         })});

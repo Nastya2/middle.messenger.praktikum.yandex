@@ -45,3 +45,31 @@ export class SignInService  {
 // phone: "89118472812"
 // second_name: "Dementeva"
 // 7825882L
+
+
+// email: "address55555@yandex.ru"
+// first_name: "Sss"
+// login: "sss"
+// password: "1234567L"
+// password_repeat: "1234567L"
+// phone: "89178328712"
+// second_name: "Sss"
+
+// avatar: null
+// display_name: null
+// email: "address55555@yandex.ru"
+// first_name: "Sss"
+// id: 832
+// login: "sss"
+// phone: "89178328712"
+// second_name: "Sss"
+
+
+// email: "address12221@yandex.ru"
+// first_name: "Kkkkk"
+// login: "kkkk"
+// password: "1234567Q"
+// password_repeat: "1234567Q"
+// phone: "89177482921"
+// second_name: "Kkkkk"
+// id: 862
