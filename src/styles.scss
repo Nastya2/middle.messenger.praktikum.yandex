@@ -162,3 +162,12 @@ dialog {
 .logout {
   cursor: pointer;
 }
+
+.no-chat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 25px;
+  font-weight: bold;
+}
