@@ -3,7 +3,7 @@ const tmp = `.wrap-chats
                 .left-chats
                     .left-chats__header
                         .left-chats__profile
-                            a(href="./../profile/profile.pug") Профиль
+                            #{linkProfile}
                         .left-chats__search
                             input(type="text", placeholder="Поиск").search
                     #{chat_items}

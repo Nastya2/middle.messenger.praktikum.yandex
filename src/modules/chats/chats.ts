@@ -11,6 +11,8 @@ import {input_name_chat, button_close, label_name_chat} from "./components/add-c
 import { Button } from "../shared/components/button/button";
 import {AddUserDialog, input_name_user, label_name_user, button_close_add_user} from "./components/add-user-dialog/add-user";
 import HeaderChat from "./components/header-chat/header-chat";
+import { Link } from "../shared/components/link/link";
+import { router } from "../../index";
 
 const service = new ChatsService();
 
@@ -110,6 +112,15 @@ function getAllChatsAndUpdate() {
     });
 }
 
+const linkProfile = new Link({
+    text: "Профиль",
+    event: {
+        click: function() {
+            router.go("/settings");
+        }
+    }
+});
+
 
 getAllChatsAndUpdate();
 //chats = [chat_item_1,chat_item_2 ];
@@ -156,7 +167,7 @@ export const Components = {
     addChatIcon,
     dialog_add_user,
     headerChat,
-    usersOpenChat
+    linkProfile
 };
 
 

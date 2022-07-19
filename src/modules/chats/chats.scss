@@ -26,14 +26,11 @@
       height: 50px;
       border-bottom: 1px solid #eaeaea;
       margin-right: 10px;
-
-      a {
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 12px;
-        text-align: right;
-        color: #999;
-      }
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 14px;
+      color: #999;  
     }
   }
 
@@ -179,6 +176,7 @@
     overflow: hidden;
     white-space: nowrap;
     padding-right: 10px;
+    line-height: 17px;
   }
 
   &__msg {
