@@ -9,6 +9,8 @@ import AddChatDialog from "./components/add-chat-dialog/add-chat";
 import AddChatIcon from "./components/add-chat/add-chat";
 import {input_name_chat, button_close, label_name_chat} from "./components/add-chat-dialog/add-chat";
 import { Button } from "../shared/components/button/button";
+import {AddUserDialog, input_name_user, label_name_user, button_close_add_user} from "./components/add-user-dialog/add-user";
+import HeaderChat from "./components/header-chat/header-chat";
 
 const service = new ChatsService();
 
@@ -21,6 +23,13 @@ export class ChatsPage extends Component {
         return this.compile(tmp, this.props);
     }
 }
+
+let selectedChatId = 0;
+let usersOpenChat = "";
+
+const headerChat = new HeaderChat({
+    name: usersOpenChat
+});
 
 export const button_action = new Button({
     text: 'Добавить',
@@ -36,7 +45,31 @@ export const button_action = new Button({
     },
 });
 
+const button_action_add_user = new Button({
+    text: 'Добавить',
+    classes: 'btn',
+    event: {
+        click: function() {
+          const value = (input_name_user.getContent().lastChild as HTMLInputElement).value;
+          const data1 = {
+            login: value
+          };
+
+          service.searchUser(data1).then((res) => {
+            if(res.length) {
+                const data2 = {
+                    users: [res[0].id],
+                    chatId: selectedChatId
+                };
+                service.addUsersToChat(data2).then(() => getAllChatsAndUpdate);
+            }
+          });
+        }
+    },
+});
+
 const dialog = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action});
+const dialog_add_user = new AddUserDialog({input_name_user, label_name_user, button_close_add_user, button_action_add_user});
 
 const addChatIcon = new AddChatIcon({
     event: {
@@ -59,7 +92,16 @@ function getAllChatsAndUpdate() {
                 count: chat.unread_count,
                 event: {
                     click: function() {
-                        service.getChat(chat.id).then((res) => console.log(res, "ldld"))
+                        // const d = dialog_add_user.getContent().lastChild as HTMLDialogElement;
+                        // selectedChatId = chat.id;
+                        // d?.showModal();
+                        //service.getChat(chat.id).then((res) => console.log(res, "ldld"))
+                        service.getUsersChat(chat.id).then((res) => {
+                            usersOpenChat = res.map((user) => {
+                                return user.login;
+                            }).join(",");
+                            headerChat.setProps({name: usersOpenChat})
+                        });
                     }
                 }
         })});
@@ -111,7 +153,10 @@ getAllChatsAndUpdate();
 export const Components = {
     chat_items,
     dialog,
-    addChatIcon
+    addChatIcon,
+    dialog_add_user,
+    headerChat,
+    usersOpenChat
 };
 
 

@@ -5,7 +5,7 @@ import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./profile.tmp";
 import { Link } from "../shared/components/link/link";
-import { authService } from "../../index";
+import { authService, router } from "../../index";
 
 export class ProfilePage extends Component {
     constructor(props: Tprops) {
@@ -116,7 +116,7 @@ const logout = new Link({
     classes: "logout",
     event: {
         click: function() {
-            authService.logout();
+            authService.logout().then(() => router.go("/login"));
         }
     }
 });

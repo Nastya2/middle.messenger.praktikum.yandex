@@ -13,7 +13,7 @@ export class LoginService  {
         const options = {
            data,
         }
-        return http.post(`${url}/auth/sigin`, options);
+        return http.post(`${url}/auth/signin`, options);
     }
 
 

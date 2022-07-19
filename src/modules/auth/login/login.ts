@@ -31,11 +31,10 @@ export const button = new Button({
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
             }
 
-            service.login(data).then((res) => {
-                if (res.status === 200) {
-                    router.go('/messenger');
-                }
-            }).catch(() => {});
+            service.login(data).then(() => {
+                console.log("kdkd")
+                router.go('/messenger');
+            });
 
         }
     },

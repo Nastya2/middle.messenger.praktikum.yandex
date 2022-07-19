@@ -31,7 +31,6 @@ export const button = new Button({
             const data = {
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
-                password_repeat: (input_password_repeat.getContent().lastChild as HTMLInputElement).value,
                 email: (input_email.getContent().lastChild as HTMLInputElement).value,
                 first_name: (input_first_name.getContent().lastChild as HTMLInputElement).value,
                 second_name: (input_second_name.getContent().lastChild as HTMLInputElement).value,

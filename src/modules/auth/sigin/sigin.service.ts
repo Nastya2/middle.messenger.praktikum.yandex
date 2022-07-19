@@ -16,7 +16,7 @@ type TsignUp = {
 export class SignInService  {
     public signUp(data: TsignUp) {
         const options = {
-            data: data,
+            data,
         }
 
         return http.post(`${url}/auth/signup`, options).then(() => {
@@ -26,8 +26,8 @@ export class SignInService  {
 
     public getUser() {
         http.get(`${url}/auth/user`, {}).then((res) => {
-            console.log(res.response);
-            localStorage.setItem("user", res.response);
+            console.log(res, "res user");
+            localStorage.setItem("user", res);
             router.go("/messenger");
         }).catch((err) => console.log(err, "err"));
     }
@@ -73,3 +73,23 @@ export class SignInService  {
 // phone: "89177482921"
 // second_name: "Kkkkk"
 // id: 862
+
+
+// {login: "nastya782", password: "1234567Q", password_repeat: "1234567Q",…}
+// email: "address123321@yandex.ru"
+// first_name: "Nastya"
+// login: "nastya782"
+// password: "1234567Q"
+// password_repeat: "1234567Q"
+// phone: "89184562341"
+// second_name: "Nastya"
+// id: 2141
+
+
+// email: "address654@yandex.ru"
+// first_name: "Nastya"
+// login: "nastya987"
+// password: "1234567Q"
+// phone: "89731234562"
+// second_name: "Dem"
+// id: 2178

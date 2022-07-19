@@ -8,22 +8,10 @@ const tmp = `.wrap-chats
                             input(type="text", placeholder="Поиск").search
                     #{chat_items}
                     #{addChatIcon}
-                .right-chats
-                    .right-chats-top
-                        .right-chats__header
-                            .right-chats__profile
-                                .avatar
-                                .right-chats__name Андрей
-                        .right-chats__msg
-                            #{msg_to_1}
-                            #{msg_to_2}
-                            #{msg_from_1}
-                            #{msg_from_2}
-                    .right-chats__input
-                        input(type="text", required, placeholder="Сообщение")
-                        .submit-msg 
-                            img(src="../../../static/img/arrow.svg")
-                #{dialog}`;
+
+                #{headerChat}
+                #{dialog}
+                #{dialog_add_user}`;
 export default tmp;
 
     
