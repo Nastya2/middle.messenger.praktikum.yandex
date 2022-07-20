@@ -37,9 +37,9 @@ export class Socket {
             console.log(`Код: ${event.code} | Причина: ${event.reason}`);
         });
           
-        this.socket.addEventListener('message', event => {
-            console.log('Получены данные', event.data);
-        });
+        // this.socket.addEventListener('message', event => {
+        //     console.log('Получены данные', event.data);
+        // });
         
         this.socket.addEventListener('error', event => {
             console.log('Ошибка', event);

@@ -27,6 +27,7 @@ export const button = new Button({
     event: {
         click: function() {;
             const form = document.querySelector(".auth-form") as HTMLFormElement;
+            service.getUser()
             form.reportValidity();
             const data = {
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,

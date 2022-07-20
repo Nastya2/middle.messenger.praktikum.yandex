@@ -27,7 +27,7 @@ export class SignInService  {
     public getUser() {
         http.get(`${url}/auth/user`, {}).then((res) => {
             console.log(res, "res user");
-            localStorage.setItem("user", res);
+            localStorage.setItem("user_id", JSON.stringify(res.id));
             router.go("/messenger");
         }).catch((err) => console.log(err, "err"));
     }

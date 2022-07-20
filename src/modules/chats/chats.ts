@@ -13,6 +13,7 @@ import {AddUserDialog, input_name_user, label_name_user, button_close_add_user} 
 import HeaderChat from "./components/header-chat/header-chat";
 import { Link } from "../shared/components/link/link";
 import { router } from "../../index";
+import { Socket } from "../shared/services/wss";
 
 const service = new ChatsService();
 
@@ -83,9 +84,11 @@ const addChatIcon = new AddChatIcon({
 });
 
 let chat_items = new ChatItems({chats: []});
-
+let chats_id: number[] = [];
 function getAllChatsAndUpdate() {
     service.getAllChats().then((chats) => {
+        chats_id = chats.map((chat) => chat.id);
+
        const all_chats = chats.map((chat) => {
             return new ChatItem({
                 name: chat.title,
@@ -98,17 +101,13 @@ function getAllChatsAndUpdate() {
                         // selectedChatId = chat.id;
                         // d?.showModal();
                         //service.getChat(chat.id).then((res) => console.log(res, "ldld"))
-                        service.getUsersChat(chat.id).then((res) => {
-                            usersOpenChat = res.map((user) => {
-                                return user.login;
-                            }).join(",");
-                            headerChat.setProps({name: usersOpenChat})
-                        });
+                        getUsersChatAndUpdate(chat.id);
                     }
                 }
         })});
 
         chat_items.setProps({chats: all_chats});
+        getTokenChat();
     });
 }
 
@@ -121,6 +120,54 @@ const linkProfile = new Link({
     }
 });
 
+function getUsersChatAndUpdate(chat_id: number): void {
+    service.getUsersChat(chat_id).then((res) => {
+        usersOpenChat = res.map((user) => {
+            return user.login;
+        }).join(",");
+        headerChat.setProps({name: usersOpenChat});
+    });
+}
+
+let chats_token:{token: string, chat_id: number}[] = [];
+function getTokenChat(): void {
+    let promise: Promise<{token: string, chat_id: number}>[] = [];
+    chats_id.forEach((id) => {
+        promise.push(service.getToken(id).then((res) => {
+            return {
+                chat_id: id,
+                token: res.token
+            }
+        }));
+    });
+
+    Promise.all(promise).then((res) => {
+        chats_token = res;
+        connectSockets();
+    })
+}
+
+let sockets: {socket:Socket, chat_id: number}[] = [];
+function connectSockets() {
+    chats_token.forEach((token) => {
+        const socket = new Socket();
+        const id = localStorage.getItem("user_id");
+        if (id) {
+            socket.socketConnect(id, token.chat_id, token.token);
+            sockets.push({socket: socket, chat_id: token.chat_id});
+        }
+    });
+    subSocket();
+    console.log(sockets);
+}
+
+function subSocket() {
+    sockets.forEach((socket) => {
+        socket.socket.getSocket().addEventListener('message', event => {
+            console.log('Получены данные', event.data, socket.chat_id);
+        });
+    });
+}
 
 getAllChatsAndUpdate();
 //chats = [chat_item_1,chat_item_2 ];

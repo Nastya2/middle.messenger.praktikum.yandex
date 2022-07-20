@@ -61,5 +61,9 @@ export class ChatsService  {
         return http.get(`${url}/chats/${id}/users`, {});
     }
 
+    public getToken(id: number): Promise<{token: string}> {
+        return http.post(`${url}/chats/token/${id}`, {});
+    }
+
 
 }
