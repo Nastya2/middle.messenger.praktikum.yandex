@@ -14,6 +14,7 @@ import HeaderChat from "./components/header-chat/header-chat";
 import { Link } from "../shared/components/link/link";
 import { router } from "../../index";
 import { Socket } from "../shared/services/wss";
+import { Input } from "../shared/components/input/input";
 
 const service = new ChatsService();
 
@@ -83,6 +84,13 @@ const addChatIcon = new AddChatIcon({
     }
 });
 
+const input_msg = new Input({
+    text: "Сообщение",
+    input_type: "text",
+    input_name:"msg",
+    class_input: "text-field__input",      
+});
+
 let chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
 function getAllChatsAndUpdate() {
@@ -142,6 +150,7 @@ function getTokenChat(): void {
     });
 
     Promise.all(promise).then((res) => {
+        console.log(res, "resto")
         chats_token = res;
         connectSockets();
     })
@@ -164,7 +173,7 @@ function connectSockets() {
 function subSocket() {
     sockets.forEach((socket) => {
         socket.socket.getSocket().addEventListener('message', event => {
-            console.log('Получены данные', event.data, socket.chat_id);
+            console.log('Получены данные', event, socket.chat_id,);
         });
     });
 }
@@ -214,7 +223,8 @@ export const Components = {
     addChatIcon,
     dialog_add_user,
     headerChat,
-    linkProfile
+    linkProfile,
+    input_msg
 };
 
 

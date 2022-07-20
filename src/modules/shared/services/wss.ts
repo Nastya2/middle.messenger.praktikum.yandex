@@ -2,13 +2,14 @@ export class Socket {
     private socket: WebSocket;
     constructor() {}
     
-    public socketConnect(user_id: number, chat_id:number, token: string) {
+    public socketConnect(user_id: string, chat_id:number, token: string) {
         this.socket = new WebSocket(`wss://ya-praktikum.tech/ws/chats/${user_id}/${chat_id}/${token}`);
         this.subSocket();
     }
 
     public sendMsg(msg: string) {
-        if (this.socket.OPEN) {
+        console.log(this.socket, this.socket.OPEN);
+        if (this.socket && this.socket.OPEN === 1) {
             this.socket.send(JSON.stringify({
                 content: msg,
                 type: 'message',
@@ -25,6 +26,7 @@ export class Socket {
     private subSocket(): void {
         this.socket.addEventListener('open', () => {
             console.log('Соединение установлено', this.socket.OPEN);
+            this.sendMsg("hello");
         });
           
         this.socket.addEventListener('close', event => {

@@ -117,6 +117,7 @@ const logout = new Link({
     event: {
         click: function() {
             authService.logout().then(() => router.go("/login"));
+            localStorage.clear();
         }
     }
 });

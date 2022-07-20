@@ -7,8 +7,8 @@ import Component from "../../shared/services/component";
 import template from "./sigin.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
-import { SignInService } from "./sigin.service";
-const service = new SignInService();
+import { authService } from "../../../index";
+
 
 export class SigInPage extends Component {
 
@@ -27,7 +27,6 @@ export const button = new Button({
     event: {
         click: function() {;
             const form = document.querySelector(".auth-form") as HTMLFormElement;
-            service.getUser()
             form.reportValidity();
             const data = {
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
@@ -39,7 +38,7 @@ export const button = new Button({
             }
 
             if (form.checkValidity()) {
-                service.signUp(data);
+                authService.signUp(data);
             }
         }
     },

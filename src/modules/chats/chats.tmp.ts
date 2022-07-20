@@ -10,6 +10,8 @@ const tmp = `.wrap-chats
                     #{addChatIcon}
 
                 #{headerChat}
+                    .right-chats__input
+                        #{input_msg}
                 #{dialog}
                 #{dialog_add_user}`;
 export default tmp;
