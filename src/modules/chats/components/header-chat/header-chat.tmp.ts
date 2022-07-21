@@ -3,8 +3,11 @@ export default  `.right-chats
                         .right-chats-top
                             .right-chats__header
                                 .right-chats__profile
-                                    .avatar
-                                    .right-chats__name #{name}
+                                    .right-chats__info
+                                        .avatar
+                                        .right-chats__name #{name}
+                                    .right-chats__action
+                                        #{add_user_icon}
                         .right-chats__msg
                             #{all_messages}
                         .right-chats__input

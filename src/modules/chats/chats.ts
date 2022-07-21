@@ -17,6 +17,8 @@ import { Socket } from "../shared/services/wss";
 import { Input } from "../shared/components/input/input";
 import Message from "./components/message/message";
 import Messages from "./components/messages/messages";
+import AddUserIcon from "./components/add-user/add-user";
+import { Error } from "../shared/components/error/error";
 
 const service = new ChatsService();
 
@@ -30,11 +32,31 @@ export class ChatsPage extends Component {
     }
 }
 
-let selectedChatId = 0;
 let usersOpenChat = "";
 let chat_id_active: number | null = null;
 let messages: Message[] = [];
+let chat_items = new ChatItems({chats: []});
+let chats_id: number[] = [];
+let sockets: {socket:Socket, chat_id: number}[] = [];
+let chats_token:{token: string, chat_id: number}[] = [];
 
+const linkProfile = new Link({
+    text: "Профиль",
+    event: {
+        click: function() {
+            router.go("/settings");
+        }
+    }
+});
+
+const addChatIcon = new AddChatIcon({
+    event: {
+        click: function() {
+            const d = dialog_add_chat.getContent().lastChild as HTMLDialogElement;
+            d?.showModal();
+        }
+    }
+});
 
 const input_msg = new Input({
     text: "Сообщение",
@@ -64,14 +86,25 @@ const btnSubmit = new Button({
 
 const all_messages = new Messages({messages: []});
 
+const add_user_icon = new AddUserIcon({
+    event: {
+        click: function() {
+            const d = dialog_add_user.getContent().lastChild as HTMLDialogElement;
+            d?.showModal();
+            //service.getChat(chat.id).then((res) => console.log(res, "ldld"))
+        }
+    }
+});
+
 const headerChat = new HeaderChat({
     name: usersOpenChat,
     input_msg,
     btnSubmit,
-    all_messages
+    all_messages,
+    add_user_icon
 });
 
-export const button_action = new Button({
+const button_action_add_chat = new Button({
     text: 'Добавить',
     classes: 'btn',
     event: {
@@ -85,6 +118,10 @@ export const button_action = new Button({
     },
 });
 
+const error_add_user = new Error({
+    error: ""
+});
+
 const button_action_add_user = new Button({
     text: 'Добавить',
     classes: 'btn',
@@ -96,33 +133,26 @@ const button_action_add_user = new Button({
           };
 
           service.searchUser(data1).then((res) => {
-            if(res.length) {
+            if(res.length && chat_id_active) {
                 const data2 = {
                     users: [res[0].id],
-                    chatId: selectedChatId
+                    chatId: chat_id_active
                 };
                 service.addUsersToChat(data2).then(() => getAllChatsAndUpdate);
+            } else {
+                error_add_user.setProps({error: "Пользователь не найден"});
+                setTimeout(() => error_add_user.setProps({error: ""}), 3000);
             }
           });
         }
     },
 });
 
-const dialog = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action});
-const dialog_add_user = new AddUserDialog({input_name_user, label_name_user, button_close_add_user, button_action_add_user});
-
-const addChatIcon = new AddChatIcon({
-    event: {
-        click: function() {
-            const d = dialog.getContent().lastChild as HTMLDialogElement;
-            d?.showModal();
-        }
-    }
-});
+const dialog_add_chat = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action_add_chat});
+const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, label_name_user, button_close_add_user, button_action_add_user});
 
 
-let chat_items = new ChatItems({chats: []});
-let chats_id: number[] = [];
+
 function getAllChatsAndUpdate() {
     service.getAllChats().then((chats) => {
         chats_id = chats.map((chat) => chat.id);
@@ -135,10 +165,6 @@ function getAllChatsAndUpdate() {
                 count: chat.unread_count,
                 event: {
                     click: function() {
-                        // const d = dialog_add_user.getContent().lastChild as HTMLDialogElement;
-                        // selectedChatId = chat.id;
-                        // d?.showModal();
-                        //service.getChat(chat.id).then((res) => console.log(res, "ldld"))
                         chat_id_active = chat.id;
                         getUsersChatAndUpdate(chat.id);
                     }
@@ -150,25 +176,16 @@ function getAllChatsAndUpdate() {
     });
 }
 
-const linkProfile = new Link({
-    text: "Профиль",
-    event: {
-        click: function() {
-            router.go("/settings");
-        }
-    }
-});
 
 function getUsersChatAndUpdate(chat_id: number): void {
     service.getUsersChat(chat_id).then((res) => {
         usersOpenChat = res.map((user) => {
             return user.login;
         }).join(",");
-        headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages});
+        headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon});
     });
 }
 
-let chats_token:{token: string, chat_id: number}[] = [];
 function getTokenChat(): void {
     let promise: Promise<{token: string, chat_id: number}>[] = [];
     chats_id.forEach((id) => {
@@ -187,7 +204,6 @@ function getTokenChat(): void {
     })
 }
 
-let sockets: {socket:Socket, chat_id: number}[] = [];
 function connectSockets() {
     chats_token.forEach((token) => {
         const socket = new Socket();
@@ -223,7 +239,7 @@ function subSocket() {
             console.log(messages);
 
             all_messages.setProps({messages: [...messages]});
-            headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages: all_messages});
+            headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon});
             console.log('Получены данные', event.data, socket.chat_id,);
         });
     });
@@ -233,13 +249,11 @@ getAllChatsAndUpdate();
 
 export const Components = {
     chat_items,
-    dialog,
+    dialog_add_chat,
     addChatIcon,
     dialog_add_user,
     headerChat,
     linkProfile,
-    input_msg,
-    btnSubmit
 };
 
 
