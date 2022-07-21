@@ -9,7 +9,7 @@ import AddChatDialog from "./components/add-chat-dialog/add-chat";
 import AddChatIcon from "./components/add-chat/add-chat";
 import {input_name_chat, button_close, label_name_chat} from "./components/add-chat-dialog/add-chat";
 import { Button } from "../shared/components/button/button";
-import {AddUserDialog, input_name_user, label_name_user, button_close_add_user} from "./components/add-user-dialog/add-user";
+import {AddUserDialog, input_name_user, label_name_user, button_close_add_user, error_add_user, closeAddUser} from "./components/add-user-dialog/add-user";
 import HeaderChat from "./components/header-chat/header-chat";
 import { Link } from "../shared/components/link/link";
 import { router } from "../../index";
@@ -18,7 +18,7 @@ import { Input } from "../shared/components/input/input";
 import Message from "./components/message/message";
 import Messages from "./components/messages/messages";
 import AddUserIcon from "./components/add-user/add-user";
-import { Error } from "../shared/components/error/error";
+
 
 const service = new ChatsService();
 
@@ -118,10 +118,6 @@ const button_action_add_chat = new Button({
     },
 });
 
-const error_add_user = new Error({
-    error: ""
-});
-
 const button_action_add_user = new Button({
     text: 'Добавить',
     classes: 'btn',
@@ -138,10 +134,10 @@ const button_action_add_user = new Button({
                     users: [res[0].id],
                     chatId: chat_id_active
                 };
-                service.addUsersToChat(data2).then(() => getAllChatsAndUpdate);
+                service.addUsersToChat(data2).then(() => getUsersChatAndUpdate(data2.chatId, true));
             } else {
                 error_add_user.setProps({error: "Пользователь не найден"});
-                setTimeout(() => error_add_user.setProps({error: ""}), 3000);
+                setTimeout(() => error_add_user.setProps({error: ""}), 2000);
             }
           });
         }
@@ -177,12 +173,15 @@ function getAllChatsAndUpdate() {
 }
 
 
-function getUsersChatAndUpdate(chat_id: number): void {
+function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
     service.getUsersChat(chat_id).then((res) => {
         usersOpenChat = res.map((user) => {
             return user.login;
         }).join(",");
         headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon});
+        if (add_user) {
+            closeAddUser();
+        }
     });
 }
 
