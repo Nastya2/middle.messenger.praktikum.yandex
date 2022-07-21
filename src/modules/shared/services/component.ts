@@ -153,9 +153,7 @@ abstract class Component {
       return;
     }
 
-    // this.props = this.getChildren(nextProps).props;
-    // this.children = this.getChildren(nextProps).children;
-    // console.log(this.props, "ldld", nextProps);
+    console.log(this.props, nextProps)
 
     this.removeListener();
 

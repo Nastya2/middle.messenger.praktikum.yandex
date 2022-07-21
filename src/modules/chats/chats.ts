@@ -15,6 +15,8 @@ import { Link } from "../shared/components/link/link";
 import { router } from "../../index";
 import { Socket } from "../shared/services/wss";
 import { Input } from "../shared/components/input/input";
+import Message from "./components/message/message";
+import Messages from "./components/messages/messages";
 
 const service = new ChatsService();
 
@@ -30,9 +32,43 @@ export class ChatsPage extends Component {
 
 let selectedChatId = 0;
 let usersOpenChat = "";
+let chat_id_active: number | null = null;
+let messages: Message[] = [];
+
+
+const input_msg = new Input({
+    text: "Сообщение",
+    input_type: "text",
+    input_name:"msg",     
+});
+
+const btnSubmit = new Button({
+    text: 'Отправить',
+    classes: 'btn',
+    event: {
+        click: function() {
+            const msg = (input_msg.getContent().lastChild as HTMLInputElement).value;
+            const socket_active = sockets.find((socket) => socket.chat_id === chat_id_active);
+            if (socket_active && msg) {
+                socket_active.socket.sendMsg(msg);
+                input_msg.setProps({ 
+                    text: "Сообщение",
+                    input_type: "text",
+                    input_name:"msg", value: ""})
+            }
+            
+        }
+    },
+
+});
+
+const all_messages = new Messages({messages: []});
 
 const headerChat = new HeaderChat({
-    name: usersOpenChat
+    name: usersOpenChat,
+    input_msg,
+    btnSubmit,
+    all_messages
 });
 
 export const button_action = new Button({
@@ -84,12 +120,6 @@ const addChatIcon = new AddChatIcon({
     }
 });
 
-const input_msg = new Input({
-    text: "Сообщение",
-    input_type: "text",
-    input_name:"msg",
-    class_input: "text-field__input",      
-});
 
 let chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
@@ -109,6 +139,7 @@ function getAllChatsAndUpdate() {
                         // selectedChatId = chat.id;
                         // d?.showModal();
                         //service.getChat(chat.id).then((res) => console.log(res, "ldld"))
+                        chat_id_active = chat.id;
                         getUsersChatAndUpdate(chat.id);
                     }
                 }
@@ -133,7 +164,7 @@ function getUsersChatAndUpdate(chat_id: number): void {
         usersOpenChat = res.map((user) => {
             return user.login;
         }).join(",");
-        headerChat.setProps({name: usersOpenChat});
+        headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages});
     });
 }
 
@@ -173,49 +204,32 @@ function connectSockets() {
 function subSocket() {
     sockets.forEach((socket) => {
         socket.socket.getSocket().addEventListener('message', event => {
-            console.log('Получены данные', event, socket.chat_id,);
+            const data = JSON.parse(event.data);
+            console.log(data.user_id, localStorage.getItem("user_id"))
+            if(data.user_id == localStorage.getItem("user_id")) {
+                messages.push(new Message({
+                    text: data.content,
+                    time: new Date(Date.parse(data.time)),
+                    class_position: "msg_from"
+                }));
+            } else {
+                messages.push(new Message({
+                    text: data.content,
+                    time: new Date(Date.parse(data.time)),
+                    class_position: "msg_to"
+                }));
+            }
+
+            console.log(messages);
+
+            all_messages.setProps({messages: [...messages]});
+            headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages: all_messages});
+            console.log('Получены данные', event.data, socket.chat_id,);
         });
     });
 }
 
 getAllChatsAndUpdate();
-//chats = [chat_item_1,chat_item_2 ];
-
-// const chat_item_3 = new ChatItem({
-//     name: "Андрей",
-//     msg: "Друзья, у меня для вас особенный выпуск новостей!",
-//     time: "10:49",
-//     count: "5",
-//     event: {
-//         click: function() {
-//             console.log("click")
-//         }
-//     }
-// });
-
-// const msg_to_1 = new Message({
-//     text: "Привет! Смотри, тут всплыл интересный кусок лунной космической истории — НАСА в какой-то момент попросила Хассельблад адаптировать модель SWC для полетов на Луну. Сейчас мы все знаем что астронавты летали с моделью 500 EL — и к слову говоря, все тушки этих камер все еще находятся на поверхности Луны, так как астронавты с собой забрали только кассеты с пленкой.",
-//     time: "10:49",
-//     class_position: "msg_from"
-// });
-
-// const msg_to_2 = new Message({
-//     text: "Привет!",
-//     time: "14:49",
-//     class_position: "msg_to"
-// });
-
-// const msg_from_1 = new Message({
-//     text: "Привет! Как дела?",
-//     time: "15:49",
-//     class_position: "msg_from"
-// });
-
-// const msg_from_2 = new Message({
-//     text: "Ау!",
-//     time: "15:58",
-//     class_position: "msg_to"
-// });
 
 export const Components = {
     chat_items,
@@ -224,7 +238,9 @@ export const Components = {
     dialog_add_user,
     headerChat,
     linkProfile,
-    input_msg
+    input_msg,
+    btnSubmit
 };
+
 
 

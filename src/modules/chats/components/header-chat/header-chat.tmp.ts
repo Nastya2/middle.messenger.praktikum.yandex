@@ -5,12 +5,11 @@ export default  `.right-chats
                                 .right-chats__profile
                                     .avatar
                                     .right-chats__name #{name}
-                            .right-chats__msg
-                                
+                        .right-chats__msg
+                            #{all_messages}
                         .right-chats__input
-                            input(type="text", required, placeholder="Сообщение")
-                            .submit-msg 
-                                img(src="../../../static/img/arrow.svg")
+                            #{input_msg}
+                            #{btnSubmit}
                                 
                     else
                         .no-chat Выберите чат`

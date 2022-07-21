@@ -8,16 +8,16 @@ import { AuthService } from "./modules/shared/services/http/auth";
 
 export const authService = new AuthService();
 
-export const router = new Router(".app")
-.use("/",  LoginPage, LoginComponents)
-.use("/login",  LoginPage, LoginComponents)
-.use("/sign-up",  SigInPage, SigInComponents)
-.use("/settings",  ProfilePage, ProfileComponents)
-.use("/edit-profile",  EditProfilePage, EditProfileComponents)
-.use("/messenger",  ChatsPage, ChatsComponents);
-
 // export const router = new Router(".app")
+// .use("/",  LoginPage, LoginComponents)
+// .use("/login",  LoginPage, LoginComponents)
+// .use("/sign-up",  SigInPage, SigInComponents)
+// .use("/settings",  ProfilePage, ProfileComponents)
+// .use("/edit-profile",  EditProfilePage, EditProfileComponents)
 // .use("/messenger",  ChatsPage, ChatsComponents);
+
+export const router = new Router(".app")
+.use("/messenger",  ChatsPage, ChatsComponents);
 
 router.start();
 

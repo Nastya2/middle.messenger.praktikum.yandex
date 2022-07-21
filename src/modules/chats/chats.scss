@@ -70,12 +70,16 @@
     }
 
     &__input {
+
       margin-bottom: 15px;
-      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
+
+      & > div:first-child {
+        width: 94%;
+      }
+
 
       input {
         background: #efefef;
