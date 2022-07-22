@@ -37,10 +37,9 @@ export class ChatsPage extends Component {
 let usersOpenChat = "";
 let infoUsersOpenChat: {login: string, user_id: number}[];
 let chat_id_active: number | null = null;
-let messages: Message[] = [];
 let chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
-let sockets: {socket:Socket, chat_id: number}[] = [];
+let sockets: {socket:Socket, chat_id: number, messages: Message[]}[] = [];
 let chats_token:{token: string, chat_id: number}[] = [];
 
 const linkProfile = new Link({
@@ -64,8 +63,29 @@ const addChatIcon = new AddChatIcon({
 const input_msg = new Input({
     text: "Сообщение",
     input_type: "text",
-    input_name:"msg",     
+    input_name:"msg",
+    event: {
+        change: function() {
+            const msg = (input_msg.getContent().lastChild as HTMLInputElement).value;
+            updateInputMsg(msg);
+        }
+    }
 });
+
+function updateInputMsg(value: string): void {
+    input_msg.setProps({ 
+        text: "Сообщение",
+        input_type: "text",
+        input_name:"msg",
+        value: value,
+        event: {
+            change: function() {
+                const msg = (input_msg.getContent().lastChild as HTMLInputElement).value;
+                updateInputMsg(msg);
+            }
+        }
+    });
+}
 
 const btnSubmit = new Button({
     text: 'Отправить',
@@ -74,12 +94,10 @@ const btnSubmit = new Button({
         click: function() {
             const msg = (input_msg.getContent().lastChild as HTMLInputElement).value;
             const socket_active = sockets.find((socket) => socket.chat_id === chat_id_active);
+
             if (socket_active && msg) {
                 socket_active.socket.sendMsg(msg);
-                input_msg.setProps({ 
-                    text: "Сообщение",
-                    input_type: "text",
-                    input_name:"msg", value: ""})
+                updateInputMsg("");
             }
             
         }
@@ -115,6 +133,19 @@ const headerChat = new HeaderChat({
     add_user_icon,
     delete_user_icon
 });
+
+function updateHeaderChat(): void {
+    headerChat.setProps({
+        name: usersOpenChat,
+        input_msg,
+        btnSubmit,
+        all_messages,
+        add_user_icon,
+        delete_user_icon
+    });
+
+    setScrollPosition();
+}
 
 const button_action_add_chat = new Button({
     text: 'Добавить',
@@ -199,6 +230,7 @@ function getAllChatsAndUpdate() {
                     click: function() {
                         chat_id_active = chat.id;
                         getUsersChatAndUpdate(chat.id);
+                        updateChat();
                     }
                 }
         })});
@@ -208,6 +240,14 @@ function getAllChatsAndUpdate() {
     });
 }
 
+function updateChat(): void {
+    const active_msg = sockets.find((msg) => msg.chat_id === chat_id_active);
+    if (active_msg) {
+        all_messages.setProps({messages: [...active_msg.messages]});
+        updateHeaderChat();
+    }
+}
+
 
 function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
     service.getUsersChat(chat_id).then((res) => {
@@ -215,7 +255,7 @@ function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
         usersOpenChat = res.map((user) => {
             return user.login;
         }).join(",");
-        headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon, delete_user_icon});
+        updateHeaderChat();
         if (add_user) {
             closeAddUser();
         }
@@ -234,7 +274,6 @@ function getTokenChat(): void {
     });
 
     Promise.all(promise).then((res) => {
-        console.log(res, "resto")
         chats_token = res;
         connectSockets();
     })
@@ -246,32 +285,31 @@ function connectSockets() {
         const id = localStorage.getItem("user_id");
         if (id) {
             socket.socketConnect(id, token.chat_id, token.token);
-            sockets.push({socket: socket, chat_id: token.chat_id});
+            sockets.push({socket: socket, chat_id: token.chat_id, messages: []});
         }
     });
     subSocket();
-    console.log(sockets);
 }
 
 function subSocket() {
     sockets.forEach((socket) => {
         socket.socket.getSocket().addEventListener('message', event => {
             const info = JSON.parse(event.data);
+
             if (Array.isArray(info)) {
                 info.reverse();
                 info.forEach((data) => {
                     if (data.type === "message") {
-                        messages.push(createMsg(data));
+                        socket.messages.push(createMsg(data));   
                     }
                 });
             } else {
                 if (info.type === "message") {
-                    messages.push(createMsg(info));
+                    socket.messages.push(createMsg(info));  
                 }
             }
-          
-            all_messages.setProps({messages: [...messages]});
-            headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon, delete_user_icon});
+
+            updateChat();
             console.log('Получены данные', event.data, socket.chat_id,);
         });
     });
@@ -294,6 +332,14 @@ function createMsg(data: {user_id: number, time: string, content: string}): Mess
 }
 
 getAllChatsAndUpdate();
+
+
+function setScrollPosition():void {
+    const block_msgs = document.querySelector(".right-chats__msg");
+    if (block_msgs) {
+        block_msgs.scrollTop = block_msgs.scrollHeight;
+    }
+}
 
 export const Components = {
     chat_items,

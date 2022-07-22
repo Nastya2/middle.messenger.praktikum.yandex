@@ -153,12 +153,11 @@ abstract class Component {
       return;
     }
 
-    this.removeListener();
-
     if(this._componentDidUpdate(this.props, nextProps)) {
       this.props = this.getChildren(nextProps).props;
       this.children = this.getChildren(nextProps).children;
       Object.assign(this.props, nextProps);
+      this.removeListener();
       this.eventBus().emit(Component.EVENTS.FLOW_CDU, nextProps, this.props);
     }
   };
@@ -193,7 +192,6 @@ abstract class Component {
   private addEvents(): void {
     /* eslint-disable */
     const events = this.props.event as any;
-
     if (events) {
       Object.keys(events).forEach(eventName => {
         this.element.firstElementChild!.addEventListener(eventName, events[eventName]);
