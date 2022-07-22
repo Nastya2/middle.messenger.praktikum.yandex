@@ -1,4 +1,3 @@
-
 const tmp = `.wrap-chats 
                 .left-chats
                     .left-chats__header
@@ -10,7 +9,8 @@ const tmp = `.wrap-chats
                 #{headerChat}
 
                 #{dialog_add_chat}
-                #{dialog_add_user}`;
+                #{dialog_add_user}
+                #{dialog_delete_user}`;
 export default tmp;
 
     

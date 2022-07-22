@@ -65,5 +65,12 @@ export class ChatsService  {
         return http.post(`${url}/chats/token/${id}`, {});
     }
 
+    public deleteUsers(data: {users: number[], chatId: number}): Promise<string> {
+        const options = {
+            data
+        }
+        return http.delete(`${url}/chats/users`, options);
+    }
+
 
 }

@@ -153,8 +153,6 @@ abstract class Component {
       return;
     }
 
-    console.log(this.props, nextProps)
-
     this.removeListener();
 
     if(this._componentDidUpdate(this.props, nextProps)) {

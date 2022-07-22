@@ -18,6 +18,8 @@ import { Input } from "../shared/components/input/input";
 import Message from "./components/message/message";
 import Messages from "./components/messages/messages";
 import AddUserIcon from "./components/add-user/add-user";
+import { DeleteUserDialog, input_name_user_delete, button_close_user_delete, label_name_user_delete, error_user_delete, closeDeleteUser } from "./components/delete-user-dialog/delete-user-dialog";
+import DeleteUserIcon from "./components/delete-user/delete-user";
 
 
 const service = new ChatsService();
@@ -33,6 +35,7 @@ export class ChatsPage extends Component {
 }
 
 let usersOpenChat = "";
+let infoUsersOpenChat: {login: string, user_id: number}[];
 let chat_id_active: number | null = null;
 let messages: Message[] = [];
 let chat_items = new ChatItems({chats: []});
@@ -91,7 +94,15 @@ const add_user_icon = new AddUserIcon({
         click: function() {
             const d = dialog_add_user.getContent().lastChild as HTMLDialogElement;
             d?.showModal();
-            //service.getChat(chat.id).then((res) => console.log(res, "ldld"))
+        }
+    }
+});
+
+const delete_user_icon = new DeleteUserIcon({
+    event: {
+        click: function() {
+            const d = dialog_delete_user.getContent().lastChild as HTMLDialogElement;
+            d?.showModal();
         }
     }
 });
@@ -101,7 +112,8 @@ const headerChat = new HeaderChat({
     input_msg,
     btnSubmit,
     all_messages,
-    add_user_icon
+    add_user_icon,
+    delete_user_icon
 });
 
 const button_action_add_chat = new Button({
@@ -144,9 +156,33 @@ const button_action_add_user = new Button({
     },
 });
 
+const button_action_user_delete = new Button({
+    text: 'Удалить',
+    classes: 'btn',
+    event: {
+        click: function() {
+          const value = (input_name_user_delete.getContent().lastChild as HTMLInputElement).value;
+          const user = infoUsersOpenChat.find((user) => user.login.trim() === value);
+          if (user && chat_id_active) {
+            const data = {users: [user.user_id], chatId: chat_id_active}
+            service.deleteUsers(data).then(() => {
+                if (chat_id_active) {
+                    getUsersChatAndUpdate(chat_id_active);
+                    closeDeleteUser();
+                }
+            });
+          } else {
+            error_user_delete.setProps({error: "Пользователь не найден"});
+            setTimeout(() => error_user_delete.setProps({error: ""}), 2000);
+          }
+         
+        }
+    },
+});
+
 const dialog_add_chat = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action_add_chat});
 const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, label_name_user, button_close_add_user, button_action_add_user});
-
+const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_user_delete, label_name_user_delete, button_close_user_delete, button_action_user_delete});
 
 
 function getAllChatsAndUpdate() {
@@ -175,10 +211,11 @@ function getAllChatsAndUpdate() {
 
 function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
     service.getUsersChat(chat_id).then((res) => {
+        infoUsersOpenChat = res.map((user) => ({login: user.login, user_id: user.id}));
         usersOpenChat = res.map((user) => {
             return user.login;
         }).join(",");
-        headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon});
+        headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon, delete_user_icon});
         if (add_user) {
             closeAddUser();
         }
@@ -238,7 +275,7 @@ function subSocket() {
             console.log(messages);
 
             all_messages.setProps({messages: [...messages]});
-            headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon});
+            headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon, delete_user_icon});
             console.log('Получены данные', event.data, socket.chat_id,);
         });
     });
@@ -253,6 +290,7 @@ export const Components = {
     dialog_add_user,
     headerChat,
     linkProfile,
+    dialog_delete_user
 };
 
 

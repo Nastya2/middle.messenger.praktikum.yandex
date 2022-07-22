@@ -43,6 +43,11 @@
     justify-content: space-between;
     height: 100%;
 
+    &__action {
+      display: flex;
+      align-items: center;
+    }
+
     &__info {
       display: flex;
       align-items: center;
@@ -266,4 +271,16 @@
   width: 30px;
   height: 30px;
   cursor: pointer;
+}
+
+.delete_user {
+  content: "";
+  display: block;
+  background-image: url("./icons/delete-user.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  margin-left: 20px;
 }
