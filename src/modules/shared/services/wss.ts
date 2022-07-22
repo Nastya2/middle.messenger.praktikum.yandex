@@ -7,12 +7,11 @@ export class Socket {
         this.subSocket();
     }
 
-    public sendMsg(msg: string) {
-        console.log(this.socket, this.socket.OPEN);
+    public sendMsg(msg: string, type = 'message') {
         if (this.socket && this.socket.OPEN === 1) {
             this.socket.send(JSON.stringify({
                 content: msg,
-                type: 'message',
+                type: type,
             }));
         } else {
             console.log("соединение не установлено");
@@ -26,7 +25,7 @@ export class Socket {
     private subSocket(): void {
         this.socket.addEventListener('open', () => {
             console.log('Соединение установлено', this.socket.OPEN);
-            this.sendMsg("hello");
+            this.sendMsg("0", "get old");
         });
           
         this.socket.addEventListener('close', event => {
@@ -38,11 +37,7 @@ export class Socket {
         
             console.log(`Код: ${event.code} | Причина: ${event.reason}`);
         });
-          
-        // this.socket.addEventListener('message', event => {
-        //     console.log('Получены данные', event.data);
-        // });
-        
+                
         this.socket.addEventListener('error', event => {
             console.log('Ошибка', event);
         }); 

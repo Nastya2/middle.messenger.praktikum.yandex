@@ -256,29 +256,41 @@ function connectSockets() {
 function subSocket() {
     sockets.forEach((socket) => {
         socket.socket.getSocket().addEventListener('message', event => {
-            const data = JSON.parse(event.data);
-            console.log(data.user_id, localStorage.getItem("user_id"))
-            if(data.user_id == localStorage.getItem("user_id")) {
-                messages.push(new Message({
-                    text: data.content,
-                    time: new Date(Date.parse(data.time)),
-                    class_position: "msg_from"
-                }));
+            const info = JSON.parse(event.data);
+            if (Array.isArray(info)) {
+                info.reverse();
+                info.forEach((data) => {
+                    if (data.type === "message") {
+                        messages.push(createMsg(data));
+                    }
+                });
             } else {
-                messages.push(new Message({
-                    text: data.content,
-                    time: new Date(Date.parse(data.time)),
-                    class_position: "msg_to"
-                }));
+                if (info.type === "message") {
+                    messages.push(createMsg(info));
+                }
             }
-
-            console.log(messages);
-
+          
             all_messages.setProps({messages: [...messages]});
             headerChat.setProps({name: usersOpenChat, btnSubmit, input_msg, all_messages, add_user_icon, delete_user_icon});
             console.log('Получены данные', event.data, socket.chat_id,);
         });
     });
+}
+
+function createMsg(data: {user_id: number, time: string, content: string}): Message {
+    if(String(data.user_id) === localStorage.getItem("user_id")) {
+        return new Message({
+            text: data.content,
+            time: new Date(Date.parse(data.time)),
+            class_position: "msg_from"
+        });
+    } else {
+       return new Message({
+            text: data.content,
+            time: new Date(Date.parse(data.time)),
+            class_position: "msg_to"
+        });
+    }
 }
 
 getAllChatsAndUpdate();

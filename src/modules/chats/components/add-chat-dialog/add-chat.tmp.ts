@@ -4,7 +4,7 @@ export default  `dialog(aria-labeledby="subscribe-header", aria-describedby="sub
                     #{label_name_chat}
                     #{input_name_chat}
                 .btn-action.between
-                    #{button_action}
+                    #{button_action_add_chat}
                     #{button_close}`
 
 
