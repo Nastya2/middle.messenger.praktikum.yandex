@@ -33,6 +33,6 @@ const template = `.wrap-auth
                     .auth-form__action
                         .btn-action
                             #{button}
-                        a(href='#').auth-form__href Войти`
+                        a(href='/login').auth-form__href Войти`
 
 export default template;

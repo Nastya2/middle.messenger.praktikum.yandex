@@ -1,4 +1,6 @@
+import { router } from "../../index";
 import { Route } from "./route";
+import { authService } from "../../index";
 
 export class Router {
     static instance: Router;
@@ -17,7 +19,7 @@ export class Router {
     public use(pathname: string, block: any, props: any) {
         const route = new Route(pathname, block, {rootQuery: this.rootQuery}, props);
         this.routes.push(route);
-        return this;
+        return this; 
     }
 
     public start() {
@@ -30,14 +32,26 @@ export class Router {
     }
 
     private onRoute(pathname: string): void {
+        // if(authService.checkAutorization() && (pathname === "/login" || pathname === "/sign-up")) {
+        //     router.go("/not-found");
+        //     return;
+        // }
+
+        // if(!authService.checkAutorization() && pathname !== "/login" && pathname !== "/sign-up" && pathname !== "/") {
+        //     router.go("/not-found");
+        //     return;
+        // }
+ 
         const route = this.getRoute(pathname);
-      
+            
         if (route) {
             if (this.currentRoute) {
                 this.currentRoute.leave();
             }
             this.currentRoute = route;
             route.render();
+        } else {
+            router.go("/not-found");
         }
     }
 

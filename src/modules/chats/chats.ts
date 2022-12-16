@@ -12,7 +12,7 @@ import { Button } from "../shared/components/button/button";
 import {AddUserDialog, input_name_user, label_name_user, button_close_add_user, error_add_user, closeAddUser} from "./components/add-user-dialog/add-user";
 import HeaderChat from "./components/header-chat/header-chat";
 import { Link } from "../shared/components/link/link";
-import { router } from "../../index";
+import { authService, router } from "../../index";
 import { Socket } from "../shared/services/wss";
 import { Input } from "../shared/components/input/input";
 import Message from "./components/message/message";
@@ -331,7 +331,9 @@ function createMsg(data: {user_id: number, time: string, content: string}): Mess
     }
 }
 
-getAllChatsAndUpdate();
+if(window.location.pathname === "/messenger") {
+    getAllChatsAndUpdate(); 
+}
 
 
 function setScrollPosition():void {
