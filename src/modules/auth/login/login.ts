@@ -7,7 +7,8 @@ import Component from "../../shared/services/component";
 import template from "./login.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
-import { authService } from "../../../index";
+import { authService, router } from "../../../index";
+import { Link } from "../../shared/components/link/link";
 
 
 export class LoginPage extends Component {
@@ -108,6 +109,16 @@ export const input_password = new Input({
     }
 });
 
+const link_sing_up = new Link({
+    text: "Нет аккаунта?",
+    event: {
+        click: function() {
+            router.go("/sign-up");
+        }
+    },
+    classes: "auth-form__href"
+}); 
+
 export const Components = {
     button,
     input_login,
@@ -115,5 +126,6 @@ export const Components = {
     error_login,
     error_password,
     label_login,
-    label_password
+    label_password,
+    link_sing_up
 };

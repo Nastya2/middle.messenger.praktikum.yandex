@@ -1,25 +1,24 @@
 import ChatItem from "./components/chat-item/chat-item";
-//import Message from "./components/message/message";
 import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./chats.tmp";
 import { ChatsService } from "./chats.service";
 import ChatItems from "./components/chat-items/chat-items";
 import AddChatDialog from "./components/add-chat-dialog/add-chat";
-import AddChatIcon from "./components/add-chat/add-chat";
 import {input_name_chat, button_close, label_name_chat} from "./components/add-chat-dialog/add-chat";
 import { Button } from "../shared/components/button/button";
 import {AddUserDialog, input_name_user, label_name_user, button_close_add_user, error_add_user, closeAddUser} from "./components/add-user-dialog/add-user";
 import HeaderChat from "./components/header-chat/header-chat";
 import { Link } from "../shared/components/link/link";
-import { authService, router } from "../../index";
-import { Socket } from "../shared/services/wss";
+import { router } from "../../index";
+import { WSTransport, WSTransportEvents } from "../shared/services/wss";
 import { Input } from "../shared/components/input/input";
 import Message from "./components/message/message";
 import Messages from "./components/messages/messages";
 import AddUserIcon from "./components/add-user/add-user";
 import { DeleteUserDialog, input_name_user_delete, button_close_user_delete, label_name_user_delete, error_user_delete, closeDeleteUser } from "./components/delete-user-dialog/delete-user-dialog";
 import DeleteUserIcon from "./components/delete-user/delete-user";
+import Icon from "../shared/components/icon/icon";
 
 
 const service = new ChatsService();
@@ -39,7 +38,7 @@ let infoUsersOpenChat: {login: string, user_id: number}[];
 let chat_id_active: number | null = null;
 let chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
-let sockets: {socket:Socket, chat_id: number, messages: Message[]}[] = [];
+let sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
 let chats_token:{token: string, chat_id: number}[] = [];
 
 const linkProfile = new Link({
@@ -51,13 +50,14 @@ const linkProfile = new Link({
     }
 });
 
-const addChatIcon = new AddChatIcon({
+const addChatIcon = new Icon({
     event: {
         click: function() {
             const d = dialog_add_chat.getContent().lastChild as HTMLDialogElement;
             d?.showModal();
         }
-    }
+    },
+    classes: "add_chat"
 });
 
 const input_msg = new Input({
@@ -96,7 +96,7 @@ const btnSubmit = new Button({
             const socket_active = sockets.find((socket) => socket.chat_id === chat_id_active);
 
             if (socket_active && msg) {
-                socket_active.socket.sendMsg(msg);
+                socket_active.socket.send(msg, "message");
                 updateInputMsg("");
             }
             
@@ -242,6 +242,7 @@ function getAllChatsAndUpdate() {
 
 function updateChat(): void {
     const active_msg = sockets.find((msg) => msg.chat_id === chat_id_active);
+    console.log(active_msg)
     if (active_msg) {
         all_messages.setProps({messages: [...active_msg.messages]});
         updateHeaderChat();
@@ -280,40 +281,42 @@ function getTokenChat(): void {
 }
 
 function connectSockets() {
-    chats_token.forEach((token) => {
-        const socket = new Socket();
-        const id = localStorage.getItem("user_id");
-        if (id) {
-            socket.socketConnect(id, token.chat_id, token.token);
-            sockets.push({socket: socket, chat_id: token.chat_id, messages: []});
-        }
-    });
-    subSocket();
+    const user_id = localStorage.getItem("user_id");
+    if (user_id) {
+        chats_token.forEach((token) => {
+            if(sockets.find((s) => s.chat_id === token.chat_id)) {
+                return;
+            }
+            const socket = new WSTransport(`wss://ya-praktikum.tech/ws/chats/${user_id}/${token.chat_id}/${token.token}`, token.chat_id);
+            socket.connect().then(() => {
+                sockets.push({socket: socket, chat_id: token.chat_id, messages: []});
+                subSocket(socket);
+            });
+        });
+    }
 }
 
-function subSocket() {
-    sockets.forEach((socket) => {
-        socket.socket.getSocket().addEventListener('message', event => {
-            const info = JSON.parse(event.data);
-
-            if (Array.isArray(info)) {
-                info.reverse();
-                info.forEach((data) => {
-                    if (data.type === "message") {
-                        socket.messages.push(createMsg(data));   
+function subSocket(socket: WSTransport) {
+    const socketMessage = sockets.find((soc) => soc.chat_id === socket.id);
+        socket.on(WSTransportEvents.Message, (data: any) => {
+            console.log(data, "kdkdk")
+            if (Array.isArray(data)) {
+                data.reverse();
+                data.forEach((d) => {
+                    if (socketMessage) {
+                        socketMessage.messages.push(createMsg(d));
                     }
                 });
             } else {
-                if (info.type === "message") {
-                    socket.messages.push(createMsg(info));  
+                if (socketMessage) {
+                    socketMessage.messages.push(createMsg(data));
                 }
             }
-
+    
             updateChat();
-            console.log('Получены данные', event.data, socket.chat_id,);
         });
-    });
 }
+
 
 function createMsg(data: {user_id: number, time: string, content: string}): Message {
     if(String(data.user_id) === localStorage.getItem("user_id")) {
@@ -331,7 +334,7 @@ function createMsg(data: {user_id: number, time: string, content: string}): Mess
     }
 }
 
-if(window.location.pathname === "/messenger") {
+if(window.location.pathname === "/messenger" && service.checkAutorization()) {
     getAllChatsAndUpdate(); 
 }
 

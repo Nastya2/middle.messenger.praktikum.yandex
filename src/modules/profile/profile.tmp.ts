@@ -1,8 +1,7 @@
 
  const tmp =  `.wrap
                 .control
-                    a(href="/messenger")
-                        img(src="../../icons/arrow.svg")
+                    #{arrowIcon}
                 .profile-wrap
                     .profile-title
                         .avatar
@@ -41,7 +40,7 @@
                                 #{error_phone}
                     .action
                         .info-block
-                            a(href="/edit-profile").info-block__name.color-blue Изменить данные
+                            #{link_edit_profile}
                         .info-block
                             #{logout}`
 

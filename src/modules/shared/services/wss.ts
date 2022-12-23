@@ -1,47 +1,80 @@
-export class Socket {
-    private socket: WebSocket;
-    constructor() {}
-    
-    public socketConnect(user_id: string, chat_id:number, token: string) {
-        this.socket = new WebSocket(`wss://ya-praktikum.tech/ws/chats/${user_id}/${chat_id}/${token}`);
-        this.subSocket();
+import { EventBus } from './event-bus';
+
+export enum WSTransportEvents {
+  Connected = 'connected',
+  Error = 'error',
+  Message = 'message',
+  Close = 'close',
+}
+
+export  class WSTransport extends EventBus {
+  private socket: WebSocket | null = null;
+  private idInterval: NodeJS.Timer;
+
+  constructor(private url: string, public id: number) {
+    super();
+  }
+
+  public send(data: unknown, type?: string) {
+    if (!this.socket) {
+      throw new Error('Socket is not connected');
     }
 
-    public sendMsg(msg: string, type = 'message') {
-        if (this.socket && this.socket.OPEN === 1) {
-            this.socket.send(JSON.stringify({
-                content: msg,
-                type: type,
-            }));
-        } else {
-            console.log("соединение не установлено");
-        }
-    }
+    this.socket.send(JSON.stringify({
+                        content: data,
+                        type: type,
+                    }))
+  }
 
-    public getSocket(): WebSocket {
-        return this.socket;
-    }
+  public connect(): Promise<void> {
+    this.socket = new WebSocket(this.url);
 
-    private subSocket(): void {
-        this.socket.addEventListener('open', () => {
-            console.log('Соединение установлено', this.socket.OPEN);
-            this.sendMsg("0", "get old");
-        });
-          
-        this.socket.addEventListener('close', event => {
-        if (event.wasClean) {
-            console.log('Соединение закрыто чисто');
-        } else {
-            console.log('Обрыв соединения');
-        }
-        
-            console.log(`Код: ${event.code} | Причина: ${event.reason}`);
-        });
-                
-        this.socket.addEventListener('error', event => {
-            console.log('Ошибка', event);
-        }); 
-    }
+    this.subscribe(this.socket);
+
+    this.setupPing();
+
+    return new Promise((resolve) => {
+      this.on(WSTransportEvents.Connected, () => {
+        resolve();
+      });
+    });
+  }
+
+  public close() {
+    this.socket?.close();
+  }
+
+  private setupPing() {
+    this.idInterval = setInterval(() => {
+      this.send(0, "ping");
+    }, 5000)
+
+    this.on(WSTransportEvents.Close, () => {
+      clearInterval(this.idInterval);
+    })
+  }
+
+  private subscribe(socket: WebSocket) {
+    socket.addEventListener('open', () => {
+      this.send("0", "get old");
+      this.emit(WSTransportEvents.Connected)
+    });
+    socket.addEventListener('close', () => {
+      this.emit(WSTransportEvents.Close)
+    });
+
+    socket.addEventListener('error', (e) => {
+      this.emit(WSTransportEvents.Error, e)
+    });
+
+    socket.addEventListener('message', (message) => {
+      const data = JSON.parse(message.data);
+      if (!data?.content?.type && data.type === "message") {
+        this.emit(WSTransportEvents.Message, data);
+      }
+
+    });
+  }
 }
 
 

@@ -25,7 +25,8 @@ type TUser = {
     email: string;
     phone: string;
     avatar: string;
-  }
+}
+
 
 export class ChatsService  {
     public getAllChats(): Promise<TInitChat[]> {
@@ -70,6 +71,10 @@ export class ChatsService  {
             data
         }
         return http.delete(`${url}/chats/users`, options);
+    }
+
+    public checkAutorization(): boolean {
+        return !!localStorage.getItem("user_id");
     }
 
 

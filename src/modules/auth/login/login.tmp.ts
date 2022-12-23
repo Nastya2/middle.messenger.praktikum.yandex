@@ -13,6 +13,6 @@ const template = `.wrap-auth
                     .auth-form__action
                         .btn-action
                             #{button}
-                        a(href='/sign-up').auth-form__href Нет аккаунта?`
+                        #{link_sing_up}`
 
 export default template;

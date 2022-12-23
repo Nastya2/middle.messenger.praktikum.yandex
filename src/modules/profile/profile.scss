@@ -37,6 +37,7 @@
 
     &__name {
       color: var(--gray-color);
+      cursor: pointer;
     }
   }
 }
@@ -45,7 +46,7 @@
   margin-top: 50px;
 }
 
-.control {
+.control > div {
   position: absolute;
   width: 64px;
   height: 100%;
@@ -53,6 +54,24 @@
   top: 0;
   background: #fbfbfb;
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
+  position: absolute;
+}
+
+.logout {
+  cursor: pointer;
+}
+
+.back {
+  content: "";
+  display: block;
+  background-image: url("./icons/arrow.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  cursor: pointer;
 }

@@ -1,4 +1,3 @@
-import { router } from "../../index";
 import { Route } from "./route";
 import { authService } from "../../index";
 
@@ -32,18 +31,17 @@ export class Router {
     }
 
     private onRoute(pathname: string): void {
-        // if(authService.checkAutorization() && (pathname === "/login" || pathname === "/sign-up")) {
-        //     router.go("/not-found");
-        //     return;
-        // }
+        let route = this.getRoute(pathname);
+        if(authService.checkAutorization() && (pathname === "/login" || pathname === "/sign-up")) {
+            route = this.getRoute("/messenger");
+            window.location.href = "/messenger";
+        }
 
-        // if(!authService.checkAutorization() && pathname !== "/login" && pathname !== "/sign-up" && pathname !== "/") {
-        //     router.go("/not-found");
-        //     return;
-        // }
- 
-        const route = this.getRoute(pathname);
-            
+        if(!authService.checkAutorization() && pathname !== "/login" && pathname !== "/sign-up" && pathname !== "/") {
+            route = this.getRoute("/login");
+            window.location.href = "/login";
+        }
+        
         if (route) {
             if (this.currentRoute) {
                 this.currentRoute.leave();
@@ -51,7 +49,12 @@ export class Router {
             this.currentRoute = route;
             route.render();
         } else {
-            router.go("/not-found");
+            if (this.currentRoute) {
+                this.currentRoute.leave();
+            }
+            route = this.getRoute("/not-found");
+            this.currentRoute = route || null;
+            route?.render();
         }
     }
 

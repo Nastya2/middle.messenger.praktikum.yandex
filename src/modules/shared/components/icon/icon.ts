@@ -1,8 +1,8 @@
-import Component from "../../../shared/services/component";
-import template from "./add-chat.tmp";
+import Component from "../../services/component";
+import template from "./icon.tmp";
 import { Tprops } from "@types";
 
-export default class AddChatIcon extends Component {
+export default class Icon extends Component {
   constructor(props: Tprops) {
     super(props);
   }

@@ -7,7 +7,8 @@ import Component from "../../shared/services/component";
 import template from "./sigin.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
-import { authService } from "../../../index";
+import { authService, router } from "../../../index";
+import { Link } from "../../shared/components/link/link";
 
 
 export class SigInPage extends Component {
@@ -62,10 +63,8 @@ export const input_email = new Input({
     pattern: regular_email,
     event: {
         blur: function(event: Event) {
-            console.log(event);
             let err = "";
             err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
-            console.log(err)
             error_email.setProps({
                 error: err
             });
@@ -278,6 +277,16 @@ export const input_password_repeat = new Input({
     }
 });
 
+const link_sing_in = new Link({
+    text: "Войти",
+    event: {
+        click: function() {
+            router.go("/login");
+        }
+    },
+    classes: "auth-form__href"
+}); 
+
 export const Components = {
     button,
     input_email,
@@ -300,6 +309,7 @@ export const Components = {
     error_password,
     error_password_repeat,
     error_phone,
-    error_second_name
+    error_second_name,
+    link_sing_in
 };
 

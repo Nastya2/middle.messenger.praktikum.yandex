@@ -6,6 +6,10 @@ import Component from "../shared/services/component";
 import tmp from "./profile.tmp";
 import { Link } from "../shared/components/link/link";
 import { authService, router } from "../../index";
+import Icon from "../shared/components/icon/icon";
+import { ProfileService, TUser, TUserAvatar } from "./profile.service";
+
+const service = new ProfileService();
 
 export class ProfilePage extends Component {
     constructor(props: Tprops) {
@@ -30,8 +34,19 @@ const input_email = new Input({
     input_name:"email",
     class_input: "text-field-edit-info__input",
     readonly: true,
-    value: "ya.yandex.ru"
+    value: ""
 });
+
+function setEmail() {
+    input_email.setProps({
+        text: "Почта",
+        input_type: "email",
+        input_name:"email",
+        class_input: "text-field-edit-info__input",
+        readonly: true,
+        value: userInfo.email
+    });
+}
 
 
 const label_login = new Label({
@@ -46,8 +61,19 @@ const input_login = new Input({
     input_name:"login",
     class_input: "text-field-edit-info__input",
     readonly: true,
-    value: "Ivan007"
+    value: ""
 });
+
+function setLogin() {
+    input_login.setProps({
+        text: "Логин",
+        input_type: "text",
+        input_name:"login",
+        class_input: "text-field-edit-info__input",
+        readonly: true,
+        value: userInfo.login
+    });
+}
 
 export const label_first_name = new Label({
     class_label: "text-field-edit-info__label",
@@ -62,8 +88,19 @@ const input_first_name = new Input({
     input_name:"first_name",
     class_input: "text-field-edit-info__input",
     readonly: true,
-    value: "Ivan"
+    value: ""
 });
+
+function setNameUser() {
+    input_first_name.setProps({
+        text: "Имя",
+        input_type: "text",
+        input_name:"first_name",
+        class_input: "text-field-edit-info__input",
+        readonly: true,
+        value: userInfo.first_name
+    });
+}
 
 const label_second_name = new Label({
     class_label: "text-field-edit-info__label",
@@ -77,8 +114,19 @@ const input_second_name = new Input({
     input_name:"second_name",
     class_input: "text-field-edit-info__input",
     readonly: true,
-    value: "Ivanov"
+    value: ""
 });
+
+function setSecondName() {
+    input_second_name.setProps({
+        text: "Фамилия",
+        input_type: "text",
+        input_name:"second_name",
+        class_input: "text-field-edit-info__input",
+        readonly: true,
+        value: userInfo.second_name
+    });
+}
 
 const label_phone = new Label({
     class_label: "text-field-edit-info__label",
@@ -96,6 +144,17 @@ const input_phone = new Input({
     value: "+79991239839"
 });
 
+function setPhone() {
+    input_phone.setProps({
+        text: "Телефон",
+        input_type: "phone",
+        input_name:"phone",
+        class_input: "text-field-edit-info__input",
+        readonly: true,
+        value: userInfo.phone
+    });
+}
+
 const label_display_name = new Label({
     class_label: "text-field-edit-info__label",
     for_label: "display_name",
@@ -108,8 +167,19 @@ const input_display_name = new Input({
     input_name: "display_name",
     class_input: "text-field-edit-info__input",
     readonly: true,
-    value: "Ivan007"
+    value: ""
 });
+
+function setDisplayName() {
+    input_display_name.setProps({
+        text: "Никнейм",
+        input_type: "text",
+        input_name: "display_name",
+        class_input: "text-field-edit-info__input",
+        readonly: true,
+        value: userInfo.display_name
+    });
+}
 
 const logout = new Link({
     text: "Выйти",
@@ -121,6 +191,44 @@ const logout = new Link({
         }
     }
 });
+
+const link_edit_profile = new Link({
+    text: "Изменить данные",
+    event: {
+        click: function() {
+            router.go("/edit-profile");
+        }
+    },
+    classes: "info-block__name"
+});
+
+const arrowIcon = new Icon({
+    event: {
+        click: function() {
+            router.go("/messenger");
+        }
+    },
+    classes: "back"
+});
+
+let userInfo: TUser & TUserAvatar;
+function getUserInfo() {
+    service.getUserInfo().then((info) => {
+        userInfo = info;
+        localStorage.setItem("userInfo", JSON.stringify(info));
+        setNameUser();
+        setDisplayName();
+        setEmail();
+        setLogin();
+        setPhone();
+        setSecondName();
+    });
+}
+
+if(window.location.pathname === "/settings") {
+    getUserInfo(); 
+}
+
 
 export const Components = {
     input_display_name,
@@ -135,7 +243,9 @@ export const Components = {
     label_login,
     label_phone,
     label_second_name,
-    logout
+    logout,
+    link_edit_profile,
+    arrowIcon
 }
 
 

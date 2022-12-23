@@ -1,4 +1,4 @@
-import { EditProfilePage, Components as EditProfileComponents } from "./modules/profile/edit/edit-profile";
+import { EditProfilePage, Components as EditProfileComponents } from "./modules/profile/edit-profile/edit-profile";
 import { SigInPage, Components as SigInComponents } from "./modules/auth/sigin/sigin";
 import { LoginPage, Components as LoginComponents} from "./modules/auth/login/login";
 import { ChatsPage, Components as ChatsComponents } from "./modules/chats/chats";
@@ -8,7 +8,6 @@ import { AuthService } from "./modules/shared/services/http/auth";
 import { ErrorPage } from "./modules/errors/error";
 
 export const authService = new AuthService();
-console.log(authService, "au")
 
 export const router = new Router(".app")
 .use("/",  LoginPage, LoginComponents)
