@@ -185,6 +185,10 @@ abstract class Component {
     this.getContent().style.display = "block";
   }
 
+  public clear() {
+    this.element.innerHTML = "";
+  }
+
   public hide(): void {
     this.getContent().style.display = "none";
   }

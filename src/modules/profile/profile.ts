@@ -5,11 +5,15 @@ import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./profile.tmp";
 import { Link } from "../shared/components/link/link";
-import { authService, router } from "../../index";
+import { router } from "../../index";
 import Icon from "../shared/components/icon/icon";
-import { ProfileService, TUser, TUserAvatar } from "./profile.service";
+import { TUser, TUserAvatar } from "./profile.service";
+import authService from "../auth/auth.service";
+import store from "../shared/store";
+import { StoreEvent } from "../shared/store";
+import { Avatar } from "../shared/components/avatar/avatar";
+import { url } from "../shared/consts";
 
-const service = new ProfileService();
 
 export class ProfilePage extends Component {
     constructor(props: Tprops) {
@@ -17,9 +21,13 @@ export class ProfilePage extends Component {
     }
 
     public render(): DocumentFragment {
+        updateUser();
+        authService.getUser();
         return this.compile(tmp, this.props);
     }
 }
+
+export const avatar = new Avatar({src_img:""});
 
 const label_email = new Label({
     class_label: "text-field-edit-info__label",
@@ -186,8 +194,8 @@ const logout = new Link({
     classes: "logout",
     event: {
         click: function() {
-            authService.logout().then(() => router.go("/login"));
-            localStorage.clear();
+           authService.logout().then(() => router.go("/login"));
+           localStorage.clear();
         }
     }
 });
@@ -197,6 +205,16 @@ const link_edit_profile = new Link({
     event: {
         click: function() {
             router.go("/edit-profile");
+        }
+    },
+    classes: "info-block__name"
+});
+
+const link_edit_password = new Link({
+    text: "Изменить пароль",
+    event: {
+        click: function() {
+            router.go("/edit-password");
         }
     },
     classes: "info-block__name"
@@ -212,23 +230,20 @@ const arrowIcon = new Icon({
 });
 
 let userInfo: TUser & TUserAvatar;
-function getUserInfo() {
-    service.getUserInfo().then((info) => {
-        userInfo = info;
-        localStorage.setItem("userInfo", JSON.stringify(info));
+function updateUser() {
+    store.on(StoreEvent.Updated, () => {
+        userInfo = store.getState().user || {};
+        avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
+        console.log("store update");
         setNameUser();
         setDisplayName();
         setEmail();
         setLogin();
         setPhone();
         setSecondName();
+        console.log(userInfo);
     });
 }
-
-if(window.location.pathname === "/settings") {
-    getUserInfo(); 
-}
-
 
 export const Components = {
     input_display_name,
@@ -245,7 +260,9 @@ export const Components = {
     label_second_name,
     logout,
     link_edit_profile,
-    arrowIcon
+    arrowIcon,
+    avatar,
+    link_edit_password
 }
 
 

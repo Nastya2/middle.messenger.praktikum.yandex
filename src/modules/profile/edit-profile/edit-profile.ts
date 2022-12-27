@@ -1,5 +1,5 @@
 import { Button } from "../../shared/components/button/button";
-import { checkValidity } from "../../shared/validation-functions";
+import { checkValidityElement } from "../../shared/validation-functions";
 import { Input } from "../../shared/components/input/input";
 import { Label } from "../../shared/components/label/label";
 import { Error } from "../../shared/components/error/error";
@@ -10,6 +10,12 @@ import tmp from "./edit-profile.tmp";
 import { TUser, TUserAvatar } from "../profile.service";
 import Icon from "../../shared/components/icon/icon";
 import { router } from "../../../index";
+import profileService from "../profile.service";
+import store, { StoreEvent } from "../../shared/store";
+import authService from "../../auth/auth.service";
+import { AvatarUpload } from "../../shared/components/avatar-upload/avatar-upload";
+import { Avatar } from "../../shared/components/avatar/avatar";
+import { url } from "../../shared/consts";
 
 export class EditProfilePage extends Component {
     constructor(props: Tprops) {
@@ -17,11 +23,30 @@ export class EditProfilePage extends Component {
     }
 
     public render(): DocumentFragment {
+        authService.getUser();
+        updateComponents();
         return this.compile(tmp, this.props);
     }
 }
 
+export const avatar_upload = new AvatarUpload({});
+export const avatar = new Avatar({src_img:""});
 
+export const button_change_file = new Button({
+    text: "Поменять",
+    classes: "btn btn_width280",
+    event: {
+        click: function() {
+            const avatar = document.getElementById('form-avatar') as HTMLFormElement;
+            if (avatar) {
+                let form = new FormData(avatar);
+                profileService.changeAvatar(form).then(() => authService.getUser());
+            }
+            
+            
+        }
+    }
+});
 
 export const button = new Button({
     text: "Сохранить",
@@ -30,16 +55,14 @@ export const button = new Button({
         click: function() {
             const data = {
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
-                // old_password: (input_old_password.getContent().lastChild as HTMLInputElement).value,
-                // new_password: (input_new_password.getContent().lastChild as HTMLInputElement).value,
-                // new_password_repeat: (input_new_password_repeat.getContent().lastChild as HTMLInputElement).value,
                 email: (input_email.getContent().lastChild as HTMLInputElement).value,
                 first_name: (input_first_name.getContent().lastChild as HTMLInputElement).value,
                 second_name: (input_second_name.getContent().lastChild as HTMLInputElement).value,
                 phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
                 display_name: (input_display_name.getContent().lastChild as HTMLInputElement).value,
+                id: userInfo?.id || 0
             }
-            console.log(data);
+            profileService.changeUserInfo(data);
         }
     }
 });
@@ -63,7 +86,7 @@ export const input_email = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
             error_email.setProps({
                 error: err
             });
@@ -86,7 +109,7 @@ function setEmail() {
         event: {
             blur: function(event: Event) {
                 let err = "";
-                err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
+                err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
                 error_email.setProps({
                     error: err
                 });
@@ -122,7 +145,7 @@ export const input_login = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
             error_login.setProps({
                 error: err
             });
@@ -147,7 +170,7 @@ function setLogin() {
         event: {
             blur: function(event: Event) {
                 let err = "";
-                err = checkValidity(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
+                err = checkValidityElement(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
                 error_login.setProps({
                     error: err
                 });
@@ -180,7 +203,7 @@ export const input_first_name = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
             error_first_name.setProps({
                 error: err
             });
@@ -203,7 +226,7 @@ function setName() {
         event: {
             blur: function(event: Event) {
                 let err = "";
-                err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
+                err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
                 error_first_name.setProps({
                     error: err
                 });
@@ -236,7 +259,7 @@ export const input_second_name = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
             error_second_name.setProps({
                 error: err
             });
@@ -259,7 +282,7 @@ function setSecondName() {
         event: {
             blur: function(event: Event) {
                 let err = "";
-                err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
+                err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
                 error_second_name.setProps({
                     error: err
                 });
@@ -294,7 +317,7 @@ export const input_phone = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
             error_phone.setProps({
                 error: err
             });
@@ -318,7 +341,7 @@ function setPhone() {
         event: {
             blur: function(event: Event) {
                 let err = "";
-                err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
+                err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
                 error_phone.setProps({
                     error: err
                 });
@@ -352,7 +375,7 @@ function setPhone() {
 //     event: {
 //         blur: function(event: Event) {
 //             let err = "";
-//             err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+//             err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
 //             error_old_password.setProps({
 //                 error: err
 //             });
@@ -386,7 +409,7 @@ function setPhone() {
 //     event: {
 //         blur: function(event: Event) {
 //             let err = "";
-//             err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+//             err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
 //             error_new_password.setProps({
 //                 error: err
 //             });
@@ -420,7 +443,7 @@ function setPhone() {
 //     event: {
 //         blur: function(event: Event) {
 //             let err = "";
-//             err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+//             err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
 //             error_new_password_repeat.setProps({
 //                 error: err
 //             });
@@ -451,7 +474,7 @@ export const input_display_name = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {});
+            err = checkValidityElement(event.target as HTMLInputElement, {});
             error_display_name.setProps({
                 error: err
             });
@@ -466,7 +489,7 @@ export const input_display_name = new Input({
 });
 
 function setDisplayName() {
-    input_display_name .setProps({
+    input_display_name.setProps({
         value: userInfo?.display_name,
         input_type: "text",
         input_name: "display_name",
@@ -474,7 +497,7 @@ function setDisplayName() {
         event: {
             blur: function(event: Event) {
                 let err = "";
-                err = checkValidity(event.target as HTMLInputElement, {});
+                err = checkValidityElement(event.target as HTMLInputElement, {});
                 error_display_name.setProps({
                     error: err
                 });
@@ -498,18 +521,20 @@ const arrowIcon = new Icon({
     classes: "back"
 });
 
-let userInfo: TUser & TUserAvatar | null = null;
-if(window.location.pathname === "/edit-profile") {
-    const info = localStorage.getItem("userInfo");
-    if (info) {
-        userInfo = JSON.parse(info);
-    }
-    setDisplayName();
-    setEmail();
-    setLogin();
-    setName();
-    setPhone();
-    setSecondName();
+let userInfo: TUser & TUserAvatar;
+
+function updateComponents() {
+    store.on(StoreEvent.Updated, () => { 
+        userInfo = store.getState().user || {};
+        avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
+        console.log("store update");
+        setName();
+        setDisplayName();
+        setEmail();
+        setLogin();
+        setPhone();
+        setSecondName();
+    });
 }
 
 export const Components = {
@@ -541,6 +566,15 @@ export const Components = {
     // label_new_password_repeat,
     // label_old_password,
     label_phone,
-    label_second_name
+    label_second_name,
+    avatar,
+    avatar_upload,
+    button_change_file
 };
 
+// разобраться с инитом роута чтобы методы работали сейчас дисплей блок или дисплей нон и код не обновляется при загрузке
+// 401 мб куки протухли нуден редирект
+// при ошибке ответа от сервера на страницу 500 редирект сделать
+// хранилище
+// загрузка аватара
+// изменение паспорта

@@ -1,5 +1,5 @@
 import { Route } from "./route";
-import { authService } from "../../index";
+import authService from "../auth/auth.service";
 
 export class Router {
     static instance: Router;

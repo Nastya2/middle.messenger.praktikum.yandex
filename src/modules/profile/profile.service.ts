@@ -1,7 +1,6 @@
 import { url } from "../shared/consts";
-import { HTTPTransport } from "../shared/services/http/http";
+import http from "../shared/services/http/http";
 
-const http = new HTTPTransport();
 
 type TUserPassword = {
     oldPassword: string;
@@ -41,4 +40,17 @@ export class ProfileService  {
         return http.put(`${url}/user/password`, options);
     }
 
+    public changeAvatar(data: FormData): Promise<TUser & TUserAvatar> {
+        const options = {
+            data
+        }
+        return http.put(`${url}/user/profile/avatar`, options);
+    }
+
+    public getAvatar(path: string): Promise<any> {
+        return http.get(`${url}/resources/${path}`, {});
+    }
+
 }
+
+export default new ProfileService();

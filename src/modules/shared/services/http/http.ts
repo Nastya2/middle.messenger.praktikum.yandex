@@ -1,3 +1,5 @@
+import authService from "../../../auth/auth.service";
+
 enum METHODS {
   GET = 'get',
   POST = 'post',
@@ -55,7 +57,7 @@ export class HTTPTransport {
 
         if(method === METHODS.GET && data) {
           url = url + queryStringify(data);
-        } else {
+        } else if (!(data instanceof FormData)) {
           headers["content-type"] = 'application/json'
         }
 
@@ -66,17 +68,28 @@ export class HTTPTransport {
         }
         
         xhr.onload = function() {
-          if (xhr.status === 200) {
-            if(xhr.response === "OK") {
+          if (xhr.status === 200)  {
+            if(xhr.response === "OK" || xhr.getResponseHeader("content-type") === "image/jpeg") {
               resolve(xhr.response);
             } else {
               resolve(JSON.parse(xhr.response));
             }
           } else {
+            if(xhr.status === 401) {
+              if(localStorage.getItem("user_id")) {
+                authService.logout();
+                localStorage.clear();
+              }
+            }
+            if(xhr.status === 400) {
+              reject(JSON.parse(xhr.response).reason);
+            }
             console.log(xhr.status, JSON.parse(xhr.response).reason);
             //resolve(xhr);
           }
         };
+
+        console.log(data, data instanceof FormData);
 
         xhr.onabort = function() {reject(new Error("abort"))}
         xhr.onerror = function() {reject(new Error("error"))}
@@ -84,9 +97,13 @@ export class HTTPTransport {
 
         if (method === METHODS.GET || !data) {
           xhr.send();
+        } else if(data instanceof FormData) {
+          xhr.send(data);
         } else {
           xhr.send(JSON.stringify(data));
         }
       });
   };
 }
+
+export default new HTTPTransport();

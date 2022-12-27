@@ -1,7 +1,5 @@
 import { url } from "../shared/consts";
-import { HTTPTransport } from "../shared/services/http/http";
-
-const http = new HTTPTransport();
+import http from "../shared/services/http/http";
 
 type TCreateChat = {
     title: string;
@@ -76,6 +74,6 @@ export class ChatsService  {
     public checkAutorization(): boolean {
         return !!localStorage.getItem("user_id");
     }
-
-
 }
+
+export default new ChatsService();

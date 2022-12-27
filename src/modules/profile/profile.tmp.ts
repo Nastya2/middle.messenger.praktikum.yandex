@@ -4,9 +4,7 @@
                     #{arrowIcon}
                 .profile-wrap
                     .profile-title
-                        .avatar
-                            // img(src="/")
-                        .name Иван
+                        #{avatar}
                     form.info
                         .text-field-edit-info
                             #{label_email}
@@ -41,6 +39,8 @@
                     .action
                         .info-block
                             #{link_edit_profile}
+                        .info-block
+                            #{link_edit_password}
                         .info-block
                             #{logout}`
 

@@ -4,7 +4,7 @@ interface ErrorValidity {
     min?: number;
 }
 
-export function checkValidity(check_elem: HTMLInputElement, error_text: ErrorValidity): string {
+export function checkValidityElement(check_elem: HTMLInputElement, error_text: ErrorValidity): string {
     if (check_elem) {
         if(check_elem.validity.patternMismatch) {
            return error_text.patternMismatch || "Некорректное поле.";
@@ -27,4 +27,8 @@ export function checkValidity(check_elem: HTMLInputElement, error_text: ErrorVal
     }
 
     return "";
+}
+
+export function checkValidityForm(obj: {[key:string]: boolean}): boolean {
+    return !Object.values(obj).includes(true);
 }

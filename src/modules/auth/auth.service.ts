@@ -1,8 +1,9 @@
-import { url } from "../../consts";
-import { HTTPTransport } from "../../services/http/http";
-import { router } from "../../../../index";
+import { url } from "../shared/consts";
+import http from "../shared/services/http/http";
+import store, { StoreEvent } from "../shared/store";
+import { TUser, TUserAvatar } from "../profile/profile.service";
 
-type TsignUp = {
+type TSignUp = {
     first_name: string,
     second_name: string,
     login: string,
@@ -11,12 +12,10 @@ type TsignUp = {
     phone: string
 };
 
-type TsignIn = {
+type TSignIn = {
     login: string,
     password: string,
 };
-
-const http = new HTTPTransport();
 
 
 export class AuthService  {
@@ -28,31 +27,35 @@ export class AuthService  {
         return !!localStorage.getItem("user_id");
     }
 
-    public signUp(data: TsignUp) {
+    public signUp(data: TSignUp) {
         const options = {
             data,
         }
 
         return http.post(`${url}/auth/signup`, options).then(() => {
-            this.getUser();
+            return this.getUser();
         }).catch((err) => console.log(err, "err"));
     }
 
     public getUser() {
-        http.get(`${url}/auth/user`, {}).then((res) => {
+        return http.get(`${url}/auth/user`, {}).then((res: TUser & TUserAvatar) => {
+            store.set("user", res);
             localStorage.setItem("user_id", JSON.stringify(res.id));
-            router.go("/messenger");
         }).catch((err) => console.log(err, "err"));
     }
 
-    public login(data: TsignIn): Promise<any> {
+    public login(data: TSignIn): Promise<any> {
         const options = {
            data,
         }
         return http.post(`${url}/auth/signin`, options).then(() => {
-            this.getUser();
+            store.on(StoreEvent.Updated, () => console.log(store.getState()));
+            return this.getUser();
         }).catch((err) => console.log(err, "err"));
     }
 
 
 }
+
+
+export default new AuthService();

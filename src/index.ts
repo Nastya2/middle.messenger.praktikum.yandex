@@ -4,10 +4,8 @@ import { LoginPage, Components as LoginComponents} from "./modules/auth/login/lo
 import { ChatsPage, Components as ChatsComponents } from "./modules/chats/chats";
 import { ProfilePage, Components as ProfileComponents} from "./modules/profile/profile";
 import { Router } from "./modules/routing/router";
-import { AuthService } from "./modules/shared/services/http/auth";
 import { ErrorPage } from "./modules/errors/error";
-
-export const authService = new AuthService();
+import { EditPasswordPage, Components as EditPasswordComponents} from "./modules/profile/edit-password/edit-password";
 
 export const router = new Router(".app")
 .use("/",  LoginPage, LoginComponents)
@@ -15,6 +13,7 @@ export const router = new Router(".app")
 .use("/sign-up",  SigInPage, SigInComponents)
 .use("/settings",  ProfilePage, ProfileComponents)
 .use("/edit-profile",  EditProfilePage, EditProfileComponents)
+.use("/edit-password",  EditPasswordPage, EditPasswordComponents)
 .use("/messenger",  ChatsPage, ChatsComponents)
 .use("/not-found",  ErrorPage, []);
 

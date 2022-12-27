@@ -1,14 +1,15 @@
 import { regular_login, regular_password } from "../../shared/regular_expressions";
 import { Tprops } from "@types";
-import { checkValidity } from "../../shared/validation-functions";
+import { checkValidityElement } from "../../shared/validation-functions";
 import { Button } from "../../shared/components/button/button";
 import { Input } from "../../shared/components/input/input";
 import Component from "../../shared/services/component";
 import template from "./login.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
-import { authService, router } from "../../../index";
+import { router } from "../../../index";
 import { Link } from "../../shared/components/link/link";
+import authService from "../auth.service";
 
 
 export class LoginPage extends Component {
@@ -31,9 +32,7 @@ export const button = new Button({
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
             }
 
-            authService.login(data).then((res) => {
-                console.log(res);
-            });
+            authService.login(data).then(() => router.go("/messenger"));
 
         }
     },
@@ -71,7 +70,7 @@ export const input_login = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
             error_login.setProps({
                 error: err
             });
@@ -96,7 +95,7 @@ export const input_password = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
             error_password.setProps({
                 error: err
             });

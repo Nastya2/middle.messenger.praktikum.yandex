@@ -1,14 +1,15 @@
 import { regular_login, regular_password, regular_email, regular_name, regular_phone } from "../../shared/regular_expressions";
 import { Tprops } from "@types";
-import { checkValidity } from "../../shared/validation-functions";
+import { checkValidityElement } from "../../shared/validation-functions";
 import { Button } from "../../shared/components/button/button";
 import { Input } from "../../shared/components/input/input";
 import Component from "../../shared/services/component";
 import template from "./sigin.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
-import { authService, router } from "../../../index";
+import { router } from "../../../index";
 import { Link } from "../../shared/components/link/link";
+import authService from "../auth.service";
 
 
 export class SigInPage extends Component {
@@ -38,8 +39,8 @@ export const button = new Button({
                 phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
             }
 
-            if (form.checkValidity()) {
-                authService.signUp(data);
+            if (form.checkValidityElement()) {
+                authService.signUp(data).then(() => router.go("/messenger"));
             }
         }
     },
@@ -64,7 +65,7 @@ export const input_email = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
             error_email.setProps({
                 error: err
             });
@@ -99,7 +100,7 @@ export const input_login = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
             error_login.setProps({
                 error: err
             });
@@ -131,7 +132,7 @@ export const input_first_name = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
             error_first_name.setProps({
                 error: err
             });
@@ -163,7 +164,7 @@ export const input_second_name = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
             error_second_name.setProps({
                 error: err
             });
@@ -197,7 +198,7 @@ export const input_phone = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
             error_phone.setProps({
                 error: err
             });
@@ -230,7 +231,7 @@ export const input_password = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
             error_password.setProps({
                 error: err
             });
@@ -264,7 +265,7 @@ export const input_password_repeat = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
             error_password_repeat.setProps({
                 error: err
             });

@@ -2,7 +2,6 @@ import ChatItem from "./components/chat-item/chat-item";
 import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./chats.tmp";
-import { ChatsService } from "./chats.service";
 import ChatItems from "./components/chat-items/chat-items";
 import AddChatDialog from "./components/add-chat-dialog/add-chat";
 import {input_name_chat, button_close, label_name_chat} from "./components/add-chat-dialog/add-chat";
@@ -19,9 +18,8 @@ import AddUserIcon from "./components/add-user/add-user";
 import { DeleteUserDialog, input_name_user_delete, button_close_user_delete, label_name_user_delete, error_user_delete, closeDeleteUser } from "./components/delete-user-dialog/delete-user-dialog";
 import DeleteUserIcon from "./components/delete-user/delete-user";
 import Icon from "../shared/components/icon/icon";
+import chatsService from "./chats.service";
 
-
-const service = new ChatsService();
 
 export class ChatsPage extends Component {
     constructor(props: Tprops) {
@@ -156,7 +154,7 @@ const button_action_add_chat = new Button({
           const data = {
             title: value
           }
-          service.createChat(data).then(() => getAllChatsAndUpdate());
+          chatsService.createChat(data).then(() => getAllChatsAndUpdate());
         }
     },
 });
@@ -171,13 +169,13 @@ const button_action_add_user = new Button({
             login: value
           };
 
-          service.searchUser(data1).then((res) => {
+          chatsService.searchUser(data1).then((res) => {
             if(res.length && chat_id_active) {
                 const data2 = {
                     users: [res[0].id],
                     chatId: chat_id_active
                 };
-                service.addUsersToChat(data2).then(() => getUsersChatAndUpdate(data2.chatId, true));
+                chatsService.addUsersToChat(data2).then(() => getUsersChatAndUpdate(data2.chatId, true));
             } else {
                 error_add_user.setProps({error: "Пользователь не найден"});
                 setTimeout(() => error_add_user.setProps({error: ""}), 2000);
@@ -196,7 +194,7 @@ const button_action_user_delete = new Button({
           const user = infoUsersOpenChat.find((user) => user.login.trim() === value);
           if (user && chat_id_active) {
             const data = {users: [user.user_id], chatId: chat_id_active}
-            service.deleteUsers(data).then(() => {
+            chatsService.deleteUsers(data).then(() => {
                 if (chat_id_active) {
                     getUsersChatAndUpdate(chat_id_active);
                     closeDeleteUser();
@@ -217,7 +215,7 @@ const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_u
 
 
 function getAllChatsAndUpdate() {
-    service.getAllChats().then((chats) => {
+    chatsService.getAllChats().then((chats) => {
         chats_id = chats.map((chat) => chat.id);
 
        const all_chats = chats.map((chat) => {
@@ -251,7 +249,7 @@ function updateChat(): void {
 
 
 function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
-    service.getUsersChat(chat_id).then((res) => {
+    chatsService.getUsersChat(chat_id).then((res) => {
         infoUsersOpenChat = res.map((user) => ({login: user.login, user_id: user.id}));
         usersOpenChat = res.map((user) => {
             return user.login;
@@ -266,7 +264,7 @@ function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
 function getTokenChat(): void {
     let promise: Promise<{token: string, chat_id: number}>[] = [];
     chats_id.forEach((id) => {
-        promise.push(service.getToken(id).then((res) => {
+        promise.push(chatsService.getToken(id).then((res) => {
             return {
                 chat_id: id,
                 token: res.token
@@ -334,7 +332,7 @@ function createMsg(data: {user_id: number, time: string, content: string}): Mess
     }
 }
 
-if(window.location.pathname === "/messenger" && service.checkAutorization()) {
+if(window.location.pathname === "/messenger" && chatsService.checkAutorization()) {
     getAllChatsAndUpdate(); 
 }
 

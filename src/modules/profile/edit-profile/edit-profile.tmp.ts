@@ -3,9 +3,9 @@ const tmp = `.wrap.wrap_column
                     #{arrowIcon}
                 .profile-wrap
                     .profile-title
-                        .avatar
-                            input(type="file", name="avatar")
-                        .name Иван
+                        #{avatar}
+                        #{avatar_upload}
+                        #{button_change_file}
                     form.info
                         .text-field-edit-info
                             #{label_email}

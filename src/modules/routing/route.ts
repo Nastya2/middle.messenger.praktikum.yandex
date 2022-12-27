@@ -23,13 +23,16 @@ export class Route {
     public navigate(pathname: string) {
         if (this.match(pathname)) {
             this.pathname = pathname;
+            this.leave();
             this.render();
         }
     }
 
     public leave() {
-        if (this.block) {
-            this.block.hide();
+        this.block = "";
+        const container = document.querySelector(".app");
+        if (container) {
+            container.innerHTML = "";
         }
     }
 
@@ -43,7 +46,5 @@ export class Route {
             renderDOM(this.props.rootQuery, this.block);
             return;
         }
-
-        this.block.show();
     }
 }
