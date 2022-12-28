@@ -1,12 +1,11 @@
 const tmp = `.wrap.wrap_column
                 .control
-                    a(href="#")
-                        img(src="../../../../static/img/arrow.svg")
+                    #{arrowIcon}
                 .profile-wrap
                     .profile-title
-                        .avatar
-                            input(type="file", name="avatar")
-                        .name Иван
+                        #{avatar}
+                        #{avatar_upload}
+                        #{button_change_file}
                     form.info
                         .text-field-edit-info
                             #{label_email}
@@ -38,22 +37,25 @@ const tmp = `.wrap.wrap_column
                             div
                                 #{input_phone}
                                 #{error_phone}
-                        .text-field-edit-info
-                            #{label_old_password}
-                            div
-                                #{input_old_password}
-                                #{error_old_password}
-                        .text-field-edit-info
-                            #{label_new_password}
-                            div
-                                #{input_new_password}
-                                #{error_new_password}
-                        .text-field-edit-info
-                            #{label_new_password_repeat}
-                            div
-                                #{input_new_password_repeat}
-                                #{error_new_password_repeat}
                 .btn-action
                     #{button}`
 
 export default tmp;
+
+
+
+// .text-field-edit-info
+// #{label_old_password}
+// div
+//     #{input_old_password}
+//     #{error_old_password}
+// .text-field-edit-info
+// #{label_new_password}
+// div
+//     #{input_new_password}
+//     #{error_new_password}
+// .text-field-edit-info
+// #{label_new_password_repeat}
+// div
+//     #{input_new_password_repeat}
+//     #{error_new_password_repeat}

@@ -30,9 +30,10 @@ const template = `.wrap-auth
                             #{label_password_repeat}
                             #{input_password_repeat}
                             #{error_password_repeat}
+                    #{hint_auth}
                     .auth-form__action
                         .btn-action
                             #{button}
-                        a(href='#').auth-form__href Войти`
+                        #{link_sing_in}`
 
 export default template;

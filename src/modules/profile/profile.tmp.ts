@@ -1,13 +1,10 @@
 
  const tmp =  `.wrap
                 .control
-                    a(href="../chats/chats.pug")
-                        img(src="../../../static/img/arrow.svg")
+                    #{arrowIcon}
                 .profile-wrap
                     .profile-title
-                        .avatar
-                            // img(src="/")
-                        .name Иван
+                        #{avatar}
                     form.info
                         .text-field-edit-info
                             #{label_email}
@@ -41,8 +38,10 @@
                                 #{error_phone}
                     .action
                         .info-block
-                            a(href="./edit/edit-profile.pug").info-block__name.color-blue Изменить данные
+                            #{link_edit_profile}
                         .info-block
-                            a(href="/").info-block__name.color-red Выйти`
+                            #{link_edit_password}
+                        .info-block
+                            #{logout}`
 
 export default tmp;

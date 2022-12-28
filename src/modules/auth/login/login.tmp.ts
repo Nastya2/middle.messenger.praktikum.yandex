@@ -10,9 +10,10 @@ const template = `.wrap-auth
                             #{label_password}
                             #{input_password}
                             #{error_password}
+                    #{hint_auth}
                     .auth-form__action
                         .btn-action
                             #{button}
-                        a(href='#').auth-form__href Нет аккаунта?`
+                        #{link_sing_up}`
 
 export default template;

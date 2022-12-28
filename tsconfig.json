@@ -10,9 +10,9 @@
         "outDir": "ts-built",
         "rootDir": "./src",
         "typeRoots": ["node_modules/@types", "types/app.d.ts"],
-        "baseUrl": "./src",
         "paths": {
-            "@types": ["types/app"],
-        }
+            "@types": ["types/app"]
+        },
+        "baseUrl": "./src"
     }
 }

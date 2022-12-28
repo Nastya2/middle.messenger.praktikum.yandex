@@ -6,6 +6,11 @@
   .left-chats {
     width: 310px;
     background: #fbfbfb;
+    position: relative;
+
+    & + div {
+      width: 100%;
+    }
 
     &__header {
       padding-bottom: 10px;
@@ -21,14 +26,11 @@
       height: 50px;
       border-bottom: 1px solid #eaeaea;
       margin-right: 10px;
-
-      a {
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 12px;
-        text-align: right;
-        color: #999;
-      }
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 14px;
+      color: #999;
     }
   }
 
@@ -39,6 +41,17 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 100%;
+
+    &__action {
+      display: flex;
+      align-items: center;
+    }
+
+    &__info {
+      display: flex;
+      align-items: center;
+    }
 
     &__header {
       border-bottom: 1px solid #eaeaea;
@@ -50,6 +63,7 @@
     &__profile {
       display: flex;
       align-items: center;
+      justify-content: space-between;
     }
 
     &__name {
@@ -64,15 +78,18 @@
       display: flex;
       flex-direction: column;
       padding-top: 20px;
+      overflow-y: scroll;
     }
 
     &__input {
       margin-bottom: 15px;
-      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
+
+      & > div:first-child {
+        width: 94%;
+      }
 
       input {
         background: #efefef;
@@ -173,6 +190,7 @@
     overflow: hidden;
     white-space: nowrap;
     padding-right: 10px;
+    line-height: 17px;
   }
 
   &__msg {
@@ -194,6 +212,7 @@
   font-size: 9px;
   line-height: 13px;
   color: #999;
+  overflow: hidden;
 
   &_rigth {
     text-align: right;
@@ -227,4 +246,41 @@
 .submit-msg {
   margin-left: 14px;
   transform: rotate(180deg);
+}
+
+.add_chat {
+  content: "";
+  display: block;
+  background-image: url("./icons/add-chat.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.add_user {
+  content: "";
+  display: block;
+  background-image: url("./icons/add-user.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.delete_user {
+  content: "";
+  display: block;
+  background-image: url("./icons/delete-user.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  margin-left: 20px;
 }

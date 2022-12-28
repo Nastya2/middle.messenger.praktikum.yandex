@@ -16,6 +16,7 @@
   padding-right: 30px;
   padding-bottom: 30px;
   font-weight: 500;
+  margin: auto;
 
   &__username {
     margin-bottom: 30px;
@@ -35,6 +36,7 @@
     font-size: 11px;
     line-height: 11px;
     color: var(--blue-color);
+    cursor: pointer;
   }
 
   &__field {
