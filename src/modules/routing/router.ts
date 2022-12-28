@@ -6,7 +6,7 @@ export class Router {
     private routes: Route[] = [];
     private history = window.history;
     private currentRoute: null | Route = null;
-    private rootQuery: string = "";
+    private rootQuery = "";
     constructor(rootQuery: string) {
         if (!Router.instance) {
             this.rootQuery = rootQuery;

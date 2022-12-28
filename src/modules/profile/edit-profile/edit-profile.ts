@@ -3,7 +3,7 @@ import { checkValidityElement } from "../../shared/validation-functions";
 import { Input } from "../../shared/components/input/input";
 import { Label } from "../../shared/components/label/label";
 import { Error } from "../../shared/components/error/error";
-import { regular_name, regular_login, regular_password, regular_email, regular_phone } from "../../shared/regular_expressions";
+import { regular_name, regular_login, regular_email, regular_phone } from "../../shared/regular_expressions";
 import { Tprops } from "@types";
 import Component from "../../shared/services/component";
 import tmp from "./edit-profile.tmp";
@@ -12,7 +12,6 @@ import Icon from "../../shared/components/icon/icon";
 import { router } from "../../../index";
 import profileService from "../profile.service";
 import store, { StoreEvent } from "../../shared/store";
-import authService from "../../auth/auth.service";
 import { AvatarUpload } from "../../shared/components/avatar-upload/avatar-upload";
 import { Avatar } from "../../shared/components/avatar/avatar";
 import { url } from "../../shared/consts";
@@ -23,7 +22,7 @@ export class EditProfilePage extends Component {
     }
 
     public render(): DocumentFragment {
-        authService.getUser();
+        profileService.getUser();
         updateComponents();
         return this.compile(tmp, this.props);
     }
@@ -39,8 +38,8 @@ export const button_change_file = new Button({
         click: function() {
             const avatar = document.getElementById('form-avatar') as HTMLFormElement;
             if (avatar) {
-                let form = new FormData(avatar);
-                profileService.changeAvatar(form).then(() => authService.getUser());
+                const form = new FormData(avatar);
+                profileService.changeAvatar(form).then(() => profileService.getUser());
             }
             
             
@@ -354,108 +353,6 @@ function setPhone() {
     });
 }
 
-// export const label_old_password = new Label({
-//     class_label: "text-field-edit-info__label",
-//     for_label: "old_password",
-//     text: "Старый пароль"
-// });
-
-// export const error_old_password = new Error({
-//     error: ""
-// });
-
-// export const input_old_password = new Input({
-//     text: "Старый пароль",
-//     input_type: "old_password",
-//     input_name:"old_password",
-//     min: "8",
-//     max: "40",
-//     class_input: "text-field-edit-info__input",
-//     pattern: regular_password,
-//     event: {
-//         blur: function(event: Event) {
-//             let err = "";
-//             err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-//             error_old_password.setProps({
-//                 error: err
-//             });
-//             error_old_password.show();
-            
-//         },
-//         focus: function() {
-//             error_old_password.hide();
-//         }
-//     }
-// });
-
-// export const label_new_password = new Label({
-//     class_label: "text-field-edit-info__label",
-//     for_label: "new_password",
-//     text: "Новый пароль"
-// });
-
-// export const error_new_password = new Error({
-//     error: ""
-// });
-
-// export const input_new_password = new Input({
-//     text: "Новый пароль",
-//     input_type: "new_password",
-//     input_name:"new_password",
-//     min: "8",
-//     max: "40",
-//     class_input: "text-field-edit-info__input",
-//     pattern: regular_password,
-//     event: {
-//         blur: function(event: Event) {
-//             let err = "";
-//             err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-//             error_new_password.setProps({
-//                 error: err
-//             });
-//             error_new_password.show();
-            
-//         },
-//         focus: function() {
-//             error_new_password.hide();
-//         }
-//     }
-// });
-
-// export const label_new_password_repeat = new Label({
-//     class_label: "text-field-edit-info__label",
-//     for_label: "new_password_repeat",
-//     text: "Новый пароль"
-// });
-
-// export const error_new_password_repeat = new Error({
-//     error: ""
-// });
-
-// export const input_new_password_repeat = new Input({
-//     text: "Новый пароль (еще раз)",
-//     input_type: "password",
-//     input_name:"new_password_repeat",
-//     min: "8",
-//     max: "40",
-//     class_input: "text-field-edit-info__input",
-//     pattern: regular_password,
-//     event: {
-//         blur: function(event: Event) {
-//             let err = "";
-//             err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
-//             error_new_password_repeat.setProps({
-//                 error: err
-//             });
-//             error_new_password_repeat.show();
-            
-//         },
-//         focus: function() {
-//             error_new_password_repeat.hide();
-//         }
-//     }
-// });
-
 export const label_display_name = new Label({
     class_label: "text-field-edit-info__label",
     for_label: "display_name",
@@ -544,37 +441,21 @@ export const Components = {
     input_first_name,
     input_login,
     arrowIcon,
-    // input_new_password,
-    // input_new_password_repeat,
-    // input_old_password,
     input_phone,
     input_second_name,
     error_display_name,
     error_email,
     error_first_name,
     error_login,
-    // error_new_password,
-    // error_new_password_repeat,
-    // error_old_password,
     error_phone,
     error_second_name,
     label_display_name,
     label_email,
     label_first_name,
     label_login,
-    // label_new_password,
-    // label_new_password_repeat,
-    // label_old_password,
     label_phone,
     label_second_name,
     avatar,
     avatar_upload,
     button_change_file
 };
-
-// разобраться с инитом роута чтобы методы работали сейчас дисплей блок или дисплей нон и код не обновляется при загрузке
-// 401 мб куки протухли нуден редирект
-// при ошибке ответа от сервера на страницу 500 редирект сделать
-// хранилище
-// загрузка аватара
-// изменение паспорта

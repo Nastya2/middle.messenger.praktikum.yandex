@@ -1,7 +1,7 @@
 import { Indexed } from "@types";
 
 export function merge(lhs: Indexed, rhs: any): Indexed {
-    for (let p in rhs) {
+    for (const p in rhs) {
         if (!rhs.hasOwnProperty(p)) {
             continue;
         }

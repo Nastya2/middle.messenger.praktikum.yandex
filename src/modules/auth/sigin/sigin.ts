@@ -1,6 +1,6 @@
 import { regular_login, regular_password, regular_email, regular_name, regular_phone } from "../../shared/regular_expressions";
 import { Tprops } from "@types";
-import { checkValidityElement } from "../../shared/validation-functions";
+import { checkValidityElement, checkValidityForm } from "../../shared/validation-functions";
 import { Button } from "../../shared/components/button/button";
 import { Input } from "../../shared/components/input/input";
 import Component from "../../shared/services/component";
@@ -19,15 +19,30 @@ export class SigInPage extends Component {
     }
 
     public render(): DocumentFragment {
+        hint_auth.hide();
         return this.compile(template, this.props);
     }
 }
+
+const error_form = {
+    email: true,
+    login: true,
+    password: true,
+    first_name: true,
+    second_name: true,
+    password_repeat: true,
+    phone: true
+}
+
+export const hint_auth = new Error({
+    error: "Введите корректные данные!"
+});
 
 export const button = new Button({
     text: "Зарегистрироваться",
     classes: "btn btn_sigin-top-bottom",
     event: {
-        click: function() {;
+        click: function() {
             const form = document.querySelector(".auth-form") as HTMLFormElement;
             form.reportValidity();
             const data = {
@@ -39,8 +54,11 @@ export const button = new Button({
                 phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
             }
 
-            if (form.checkValidityElement()) {
+            if (checkValidityForm(error_form)) {
                 authService.signUp(data).then(() => router.go("/messenger"));
+            } else {
+                hint_auth.show();
+                setTimeout(() => hint_auth.hide(), 3000);
             }
         }
     },
@@ -69,6 +87,7 @@ export const input_email = new Input({
             error_email.setProps({
                 error: err
             });
+            error_form.email = !!err;
             error_email.show();
             
         },
@@ -104,6 +123,7 @@ export const input_login = new Input({
             error_login.setProps({
                 error: err
             });
+            error_form.login = !!err;
             error_login.show();
             
         },
@@ -136,6 +156,7 @@ export const input_first_name = new Input({
             error_first_name.setProps({
                 error: err
             });
+            error_form.first_name = !!err;
             error_first_name.show();
             
         },
@@ -168,6 +189,7 @@ export const input_second_name = new Input({
             error_second_name.setProps({
                 error: err
             });
+            error_form.second_name = !!err;
             error_second_name.show();
             
         },
@@ -202,6 +224,7 @@ export const input_phone = new Input({
             error_phone.setProps({
                 error: err
             });
+            error_form.phone = !!err;
             error_phone.show(); 
         },
         focus: function() {
@@ -235,6 +258,7 @@ export const input_password = new Input({
             error_password.setProps({
                 error: err
             });
+            error_form.password= !!err;
             error_password.show();
             
         },
@@ -269,6 +293,7 @@ export const input_password_repeat = new Input({
             error_password_repeat.setProps({
                 error: err
             });
+            error_form.password_repeat = !!err;
             error_password_repeat.show();
             
         },
@@ -311,6 +336,7 @@ export const Components = {
     error_password_repeat,
     error_phone,
     error_second_name,
-    link_sing_in
+    link_sing_in,
+    hint_auth
 };
 

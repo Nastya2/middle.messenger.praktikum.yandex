@@ -7,7 +7,7 @@ type TpropsRoute = {
 }
 
 export class Route {
-    private pathname: string = "";
+    private pathname = "";
     private blockClass: any;
     private block: any;
     private props:any;

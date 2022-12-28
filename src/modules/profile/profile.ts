@@ -8,12 +8,12 @@ import { Link } from "../shared/components/link/link";
 import { router } from "../../index";
 import Icon from "../shared/components/icon/icon";
 import { TUser, TUserAvatar } from "./profile.service";
-import authService from "../auth/auth.service";
 import store from "../shared/store";
 import { StoreEvent } from "../shared/store";
 import { Avatar } from "../shared/components/avatar/avatar";
 import { url } from "../shared/consts";
-
+import profileService from "./profile.service";
+import authService from "../auth/auth.service";
 
 export class ProfilePage extends Component {
     constructor(props: Tprops) {
@@ -22,7 +22,7 @@ export class ProfilePage extends Component {
 
     public render(): DocumentFragment {
         updateUser();
-        authService.getUser();
+        profileService.getUser();
         return this.compile(tmp, this.props);
     }
 }
@@ -234,14 +234,12 @@ function updateUser() {
     store.on(StoreEvent.Updated, () => {
         userInfo = store.getState().user || {};
         avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
-        console.log("store update");
         setNameUser();
         setDisplayName();
         setEmail();
         setLogin();
         setPhone();
         setSecondName();
-        console.log(userInfo);
     });
 }
 

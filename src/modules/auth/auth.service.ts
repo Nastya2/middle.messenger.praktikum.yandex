@@ -1,6 +1,5 @@
 import { url } from "../shared/consts";
 import http from "../shared/services/http/http";
-import store, { StoreEvent } from "../shared/store";
 import { TUser, TUserAvatar } from "../profile/profile.service";
 
 type TSignUp = {
@@ -39,7 +38,6 @@ export class AuthService  {
 
     public getUser() {
         return http.get(`${url}/auth/user`, {}).then((res: TUser & TUserAvatar) => {
-            store.set("user", res);
             localStorage.setItem("user_id", JSON.stringify(res.id));
         }).catch((err) => console.log(err, "err"));
     }
@@ -49,7 +47,6 @@ export class AuthService  {
            data,
         }
         return http.post(`${url}/auth/signin`, options).then(() => {
-            store.on(StoreEvent.Updated, () => console.log(store.getState()));
             return this.getUser();
         }).catch((err) => console.log(err, "err"));
     }

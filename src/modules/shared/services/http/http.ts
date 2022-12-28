@@ -85,11 +85,8 @@ export class HTTPTransport {
               reject(JSON.parse(xhr.response).reason);
             }
             console.log(xhr.status, JSON.parse(xhr.response).reason);
-            //resolve(xhr);
           }
         };
-
-        console.log(data, data instanceof FormData);
 
         xhr.onabort = function() {reject(new Error("abort"))}
         xhr.onerror = function() {reject(new Error("error"))}

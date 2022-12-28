@@ -27,6 +27,7 @@ export class ChatsPage extends Component {
     }
 
     public render(): DocumentFragment {
+        getAllChatsAndUpdate();
         return this.compile(tmp, this.props);
     }
 }
@@ -34,9 +35,9 @@ export class ChatsPage extends Component {
 let usersOpenChat = "";
 let infoUsersOpenChat: {login: string, user_id: number}[];
 let chat_id_active: number | null = null;
-let chat_items = new ChatItems({chats: []});
+const chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
-let sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
+const sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
 let chats_token:{token: string, chat_id: number}[] = [];
 
 const linkProfile = new Link({
@@ -155,6 +156,8 @@ const button_action_add_chat = new Button({
             title: value
           }
           chatsService.createChat(data).then(() => getAllChatsAndUpdate());
+          const d = document.querySelector("dialog");
+          d?.close();
         }
     },
 });
@@ -176,6 +179,8 @@ const button_action_add_user = new Button({
                     chatId: chat_id_active
                 };
                 chatsService.addUsersToChat(data2).then(() => getUsersChatAndUpdate(data2.chatId, true));
+                const d = document.querySelector("dialog");
+                d?.close();
             } else {
                 error_add_user.setProps({error: "Пользователь не найден"});
                 setTimeout(() => error_add_user.setProps({error: ""}), 2000);
@@ -213,34 +218,36 @@ const dialog_add_chat = new AddChatDialog({input_name_chat, button_close, label_
 const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, label_name_user, button_close_add_user, button_action_add_user});
 const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_user_delete, label_name_user_delete, button_close_user_delete, button_action_user_delete});
 
-
+let count_chats = 0;
 function getAllChatsAndUpdate() {
     chatsService.getAllChats().then((chats) => {
-        chats_id = chats.map((chat) => chat.id);
-
-       const all_chats = chats.map((chat) => {
-            return new ChatItem({
-                name: chat.title,
-                msg: chat.last_message,
-                time: "10:49",
-                count: chat.unread_count,
-                event: {
-                    click: function() {
-                        chat_id_active = chat.id;
-                        getUsersChatAndUpdate(chat.id);
-                        updateChat();
+        if (count_chats !== chats.length) {
+            count_chats = chats.length;
+            chats_id = chats.map((chat) => chat.id);
+    
+           const all_chats = chats.map((chat) => {
+                return new ChatItem({
+                    name: chat.title,
+                    msg: chat?.last_message?.content || "",
+                    time: chat?.last_message?.time ?  new Date(Date.parse(chat?.last_message?.time || "")) : "",
+                    count: chat.unread_count,
+                    event: {
+                        click: function() {
+                            chat_id_active = chat.id;
+                            getUsersChatAndUpdate(chat.id);
+                            updateChat();
+                        }
                     }
-                }
-        })});
-
-        chat_items.setProps({chats: all_chats});
-        getTokenChat();
+            })});
+    
+            chat_items.setProps({chats: all_chats});
+            getTokenChat();
+        }
     });
 }
 
 function updateChat(): void {
     const active_msg = sockets.find((msg) => msg.chat_id === chat_id_active);
-    console.log(active_msg)
     if (active_msg) {
         all_messages.setProps({messages: [...active_msg.messages]});
         updateHeaderChat();
@@ -262,7 +269,7 @@ function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
 }
 
 function getTokenChat(): void {
-    let promise: Promise<{token: string, chat_id: number}>[] = [];
+    const promise: Promise<{token: string, chat_id: number}>[] = [];
     chats_id.forEach((id) => {
         promise.push(chatsService.getToken(id).then((res) => {
             return {
@@ -288,16 +295,15 @@ function connectSockets() {
             const socket = new WSTransport(`wss://ya-praktikum.tech/ws/chats/${user_id}/${token.chat_id}/${token.token}`, token.chat_id);
             socket.connect().then(() => {
                 sockets.push({socket: socket, chat_id: token.chat_id, messages: []});
-                subSocket(socket);
+                subSocket(socket, token.chat_id);
             });
         });
     }
 }
 
-function subSocket(socket: WSTransport) {
+function subSocket(socket: WSTransport, chat_id: number) {
     const socketMessage = sockets.find((soc) => soc.chat_id === socket.id);
         socket.on(WSTransportEvents.Message, (data: any) => {
-            console.log(data, "kdkdk")
             if (Array.isArray(data)) {
                 data.reverse();
                 data.forEach((d) => {
@@ -312,6 +318,13 @@ function subSocket(socket: WSTransport) {
             }
     
             updateChat();
+        });
+
+        socket.on(WSTransportEvents.Close, () => {
+            const index = sockets.findIndex((soc) => soc.chat_id === chat_id);
+            if (index !== -1) {
+                sockets.splice(index,1);
+            }
         });
 }
 
@@ -331,11 +344,6 @@ function createMsg(data: {user_id: number, time: string, content: string}): Mess
         });
     }
 }
-
-if(window.location.pathname === "/messenger" && chatsService.checkAutorization()) {
-    getAllChatsAndUpdate(); 
-}
-
 
 function setScrollPosition():void {
     const block_msgs = document.querySelector(".right-chats__msg");

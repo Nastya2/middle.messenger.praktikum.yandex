@@ -23,7 +23,7 @@ abstract class Component {
     const bus = new EventBus();
     this.eventBus = () => bus;
 
-    let { children, props } = this.getChildren(propsAndChildren);
+    const { children, props } = this.getChildren(propsAndChildren);
    
     this.props = this.makePropsProxy(props);
     this.children = children;

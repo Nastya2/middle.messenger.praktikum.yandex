@@ -10,6 +10,7 @@ const template = `.wrap-auth
                             #{label_password}
                             #{input_password}
                             #{error_password}
+                    #{hint_auth}
                     .auth-form__action
                         .btn-action
                             #{button}

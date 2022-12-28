@@ -9,7 +9,7 @@ type TInitChat = {
     avatar: null | string;
     created_by: number;
     id: number;
-    last_message: null | string;
+    last_message: null | {time: string, content:string, id: number};
     title: string;
     unread_count: number;
 }

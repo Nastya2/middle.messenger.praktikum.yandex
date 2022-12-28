@@ -23,7 +23,7 @@ export class EditPasswordPage extends Component {
 }
 
 
-let error_form = {
+const error_form = {
     new_password: false,
     old_password: false,
     new_password_repeat: false

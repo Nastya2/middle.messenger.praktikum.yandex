@@ -1,6 +1,6 @@
 import { regular_login, regular_password } from "../../shared/regular_expressions";
 import { Tprops } from "@types";
-import { checkValidityElement } from "../../shared/validation-functions";
+import { checkValidityElement, checkValidityForm } from "../../shared/validation-functions";
 import { Button } from "../../shared/components/button/button";
 import { Input } from "../../shared/components/input/input";
 import Component from "../../shared/services/component";
@@ -18,9 +18,19 @@ export class LoginPage extends Component {
     }
 
     public render(): DocumentFragment {
+        hint_auth.hide();
         return this.compile(template, this.props);
     }
 }
+
+const error_form = {
+    login: true,
+    password: true,
+}
+
+export const hint_auth = new Error({
+    error: "Введите корректные данные!"
+});
 
 export const button = new Button({
     text: 'Вход',
@@ -31,8 +41,12 @@ export const button = new Button({
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
             }
-
-            authService.login(data).then(() => router.go("/messenger"));
+            if (checkValidityForm(error_form)) {
+                authService.login(data).then(() => router.go("/messenger"));
+            } else {
+                hint_auth.show();
+                setTimeout(() => hint_auth.hide(), 3000);
+            }
 
         }
     },
@@ -74,6 +88,7 @@ export const input_login = new Input({
             error_login.setProps({
                 error: err
             });
+            error_form.login = !!err;
             error_login.show();
             
         },
@@ -99,6 +114,7 @@ export const input_password = new Input({
             error_password.setProps({
                 error: err
             });
+            error_form.password = !!err;
             error_password.show();
             
         },
@@ -126,5 +142,6 @@ export const Components = {
     error_password,
     label_login,
     label_password,
-    link_sing_up
+    link_sing_up,
+    hint_auth
 };

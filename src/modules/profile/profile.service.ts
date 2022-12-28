@@ -1,3 +1,4 @@
+import store from "../shared/store";
 import { url } from "../shared/consts";
 import http from "../shared/services/http/http";
 
@@ -49,6 +50,12 @@ export class ProfileService  {
 
     public getAvatar(path: string): Promise<any> {
         return http.get(`${url}/resources/${path}`, {});
+    }
+
+    public getUser() {
+        return http.get(`${url}/auth/user`, {}).then((res: TUser & TUserAvatar) => {
+            store.set("user", res);
+        }).catch((err) => console.log(err, "err"));
     }
 
 }
