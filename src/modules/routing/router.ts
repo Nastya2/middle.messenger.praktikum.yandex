@@ -1,5 +1,4 @@
 import { Route } from "./route";
-import authService from "../auth/auth.service";
 
 export class Router {
     static instance: Router;
@@ -32,15 +31,6 @@ export class Router {
 
     private onRoute(pathname: string): void {
         let route = this.getRoute(pathname);
-        if(authService.checkAutorization() && (pathname === "/login" || pathname === "/sign-up")) {
-            route = this.getRoute("/messenger");
-            window.location.href = "/messenger";
-        }
-
-        if(!authService.checkAutorization() && pathname !== "/login" && pathname !== "/sign-up" && pathname !== "/") {
-            route = this.getRoute("/login");
-            window.location.href = "/login";
-        }
         
         if (route) {
             if (this.currentRoute) {
@@ -75,3 +65,5 @@ export class Router {
         return this.routes.find(route => route.match(pathname));
     }
 }
+
+export default new Router(".app");

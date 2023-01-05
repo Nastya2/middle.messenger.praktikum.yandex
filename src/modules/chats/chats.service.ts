@@ -70,10 +70,6 @@ export class ChatsService  {
         }
         return http.delete(`${url}/chats/users`, options);
     }
-
-    public checkAutorization(): boolean {
-        return !!localStorage.getItem("user_id");
-    }
 }
 
 export default new ChatsService();

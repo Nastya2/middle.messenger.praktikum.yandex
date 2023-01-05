@@ -27,11 +27,11 @@ export class ProfileService  {
         return http.get(`${url}/auth/user`, {});
     }
 
-    public changeUserInfo(data: TUser): Promise<TUser & TUserAvatar> {
+    public changeUserInfo(data: TUser) {
         const options = {
             data
         }
-        return http.put(`${url}/user/profile`, options);
+        http.put(`${url}/user/profile`, options).then((user: TUser & TUserAvatar) => store.set("user", user));
     }
 
     public changeUserPassword(data: TUserPassword): Promise<string> {
@@ -41,11 +41,11 @@ export class ProfileService  {
         return http.put(`${url}/user/password`, options);
     }
 
-    public changeAvatar(data: FormData): Promise<TUser & TUserAvatar> {
+    public changeAvatar(data: FormData) {
         const options = {
             data
         }
-        return http.put(`${url}/user/profile/avatar`, options);
+        http.put(`${url}/user/profile/avatar`, options).then((user: TUser & TUserAvatar) => store.set("user", user));
     }
 
     public getAvatar(path: string): Promise<any> {
@@ -55,6 +55,7 @@ export class ProfileService  {
     public getUser() {
         return http.get(`${url}/auth/user`, {}).then((res: TUser & TUserAvatar) => {
             store.set("user", res);
+            console.log("getUser");
         }).catch((err) => console.log(err, "err"));
     }
 

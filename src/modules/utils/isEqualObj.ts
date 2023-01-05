@@ -1,4 +1,4 @@
-function isEqual(lhs: any, rhs:  any) {
+export function isEqual(lhs: any, rhs:  any) {
     let res = true;
     outer:for (const p in rhs) {
         if (!rhs.hasOwnProperty(p)) {

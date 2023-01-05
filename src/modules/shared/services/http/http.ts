@@ -76,10 +76,7 @@ export class HTTPTransport {
             }
           } else {
             if(xhr.status === 401) {
-              if(localStorage.getItem("user_id")) {
-                authService.logout();
-                localStorage.clear();
-              }
+              reject(JSON.parse(xhr.response).reason);
             }
             if(xhr.status === 400) {
               reject(JSON.parse(xhr.response).reason);

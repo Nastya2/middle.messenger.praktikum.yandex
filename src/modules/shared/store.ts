@@ -1,3 +1,4 @@
+import { isEqual } from "../utils/isEqualObj";
 import { TUser, TUserAvatar } from "../profile/profile.service";
 import { set } from "../utils/set";
 import { EventBus } from "./services/event-bus";
@@ -7,15 +8,17 @@ export enum StoreEvent {
 }
 
 class Store extends EventBus {
-    private state: {[user: string]: TUser & TUserAvatar} = {};
+    private state: {[user: string]: TUser & TUserAvatar } = {};
   
     public getState() {
       return this.state;
     }
   
     public set(path: string, value: unknown) {
-      set(this.state, path, value);
-      this.emit(StoreEvent.Updated, this.getState());
+      if (!isEqual(this.state, {path: value})) {
+        set(this.state, path, value);
+        this.emit(StoreEvent.Updated, this.getState());
+      }
     }
 }
 

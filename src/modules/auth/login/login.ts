@@ -7,7 +7,7 @@ import Component from "../../shared/services/component";
 import template from "./login.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
-import { router } from "../../../index";
+import  Router  from "../../routing/router";
 import { Link } from "../../shared/components/link/link";
 import authService from "../auth.service";
 
@@ -42,7 +42,7 @@ export const button = new Button({
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
             }
             if (checkValidityForm(error_form)) {
-                authService.login(data).then(() => router.go("/messenger"));
+                authService.login(data);
             } else {
                 hint_auth.show();
                 setTimeout(() => hint_auth.hide(), 3000);
@@ -128,7 +128,7 @@ const link_sing_up = new Link({
     text: "Нет аккаунта?",
     event: {
         click: function() {
-            router.go("/sign-up");
+            Router.go("/sign-up");
         }
     },
     classes: "auth-form__href"

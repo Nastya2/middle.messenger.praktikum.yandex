@@ -8,7 +8,7 @@ import { Tprops } from "@types";
 import Component from "../../shared/services/component";
 import tmp from "./edit-password.tmp";
 import Icon from "../../shared/components/icon/icon";
-import { router } from "../../../index";
+import  Router from "../../routing/router";
 import profileService from "../profile.service";
 import { Avatar } from "../../shared/components/avatar/avatar";
 
@@ -173,7 +173,7 @@ export const input_new_password_repeat = new Input({
 const arrowIcon = new Icon({
     event: {
         click: function() {
-            router.go("/settings");
+            Router.go("/settings");
         }
     },
     classes: "back"

@@ -5,15 +5,15 @@ import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./profile.tmp";
 import { Link } from "../shared/components/link/link";
-import { router } from "../../index";
+import  Router  from "../routing/router";
 import Icon from "../shared/components/icon/icon";
 import { TUser, TUserAvatar } from "./profile.service";
 import store from "../shared/store";
 import { StoreEvent } from "../shared/store";
 import { Avatar } from "../shared/components/avatar/avatar";
 import { url } from "../shared/consts";
-import profileService from "./profile.service";
 import authService from "../auth/auth.service";
+import { RouterEvent } from "../routing/route";
 
 export class ProfilePage extends Component {
     constructor(props: Tprops) {
@@ -21,8 +21,8 @@ export class ProfilePage extends Component {
     }
 
     public render(): DocumentFragment {
-        updateUser();
-        profileService.getUser();
+        updateInfo();
+        subStore();
         return this.compile(tmp, this.props);
     }
 }
@@ -194,8 +194,7 @@ const logout = new Link({
     classes: "logout",
     event: {
         click: function() {
-           authService.logout().then(() => router.go("/login"));
-           localStorage.clear();
+           authService.logout();
         }
     }
 });
@@ -204,7 +203,7 @@ const link_edit_profile = new Link({
     text: "Изменить данные",
     event: {
         click: function() {
-            router.go("/edit-profile");
+            Router.go("/edit-profile");
         }
     },
     classes: "info-block__name"
@@ -214,7 +213,7 @@ const link_edit_password = new Link({
     text: "Изменить пароль",
     event: {
         click: function() {
-            router.go("/edit-password");
+            Router.go("/edit-password");
         }
     },
     classes: "info-block__name"
@@ -223,16 +222,25 @@ const link_edit_password = new Link({
 const arrowIcon = new Icon({
     event: {
         click: function() {
-            router.go("/messenger");
+            Router.go("/messenger");
         }
     },
     classes: "back"
 });
 
+function subStore() {
+    const cb = store.on(StoreEvent.Updated, () => {
+        updateInfo();
+    });
+
+    Router.getRoute("/settings")?.on(RouterEvent.Leave,()  => {
+        store.off(StoreEvent.Updated, cb);
+    });
+}
+
 let userInfo: TUser & TUserAvatar;
-function updateUser() {
-    store.on(StoreEvent.Updated, () => {
-        userInfo = store.getState().user || {};
+function updateInfo() {  
+    userInfo = store.getState().user || {};
         avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
         setNameUser();
         setDisplayName();
@@ -240,7 +248,6 @@ function updateUser() {
         setLogin();
         setPhone();
         setSecondName();
-    });
 }
 
 export const Components = {

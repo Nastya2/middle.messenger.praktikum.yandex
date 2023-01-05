@@ -9,7 +9,7 @@ import { Button } from "../shared/components/button/button";
 import {AddUserDialog, input_name_user, label_name_user, button_close_add_user, error_add_user, closeAddUser} from "./components/add-user-dialog/add-user";
 import HeaderChat from "./components/header-chat/header-chat";
 import { Link } from "../shared/components/link/link";
-import { router } from "../../index";
+import  Router from "../routing/router";
 import { WSTransport, WSTransportEvents } from "../shared/services/wss";
 import { Input } from "../shared/components/input/input";
 import Message from "./components/message/message";
@@ -19,6 +19,7 @@ import { DeleteUserDialog, input_name_user_delete, button_close_user_delete, lab
 import DeleteUserIcon from "./components/delete-user/delete-user";
 import Icon from "../shared/components/icon/icon";
 import chatsService from "./chats.service";
+import store from "../shared/store";
 
 
 export class ChatsPage extends Component {
@@ -35,16 +36,16 @@ export class ChatsPage extends Component {
 let usersOpenChat = "";
 let infoUsersOpenChat: {login: string, user_id: number}[];
 let chat_id_active: number | null = null;
-const chat_items = new ChatItems({chats: []});
+let chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
-const sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
+let sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
 let chats_token:{token: string, chat_id: number}[] = [];
 
 const linkProfile = new Link({
     text: "Профиль",
     event: {
         click: function() {
-            router.go("/settings");
+            Router.go("/settings");
         }
     }
 });
@@ -219,6 +220,7 @@ const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, labe
 const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_user_delete, label_name_user_delete, button_close_user_delete, button_action_user_delete});
 
 let count_chats = 0;
+
 function getAllChatsAndUpdate() {
     chatsService.getAllChats().then((chats) => {
         if (count_chats !== chats.length) {
@@ -269,7 +271,7 @@ function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
 }
 
 function getTokenChat(): void {
-    const promise: Promise<{token: string, chat_id: number}>[] = [];
+    let promise: Promise<{token: string, chat_id: number}>[] = [];
     chats_id.forEach((id) => {
         promise.push(chatsService.getToken(id).then((res) => {
             return {
@@ -286,7 +288,7 @@ function getTokenChat(): void {
 }
 
 function connectSockets() {
-    const user_id = localStorage.getItem("user_id");
+    const user_id = store.getState().user.id;
     if (user_id) {
         chats_token.forEach((token) => {
             if(sockets.find((s) => s.chat_id === token.chat_id)) {
@@ -330,7 +332,7 @@ function subSocket(socket: WSTransport, chat_id: number) {
 
 
 function createMsg(data: {user_id: number, time: string, content: string}): Message {
-    if(String(data.user_id) === localStorage.getItem("user_id")) {
+    if(data.user_id === store.getState().user.id) {
         return new Message({
             text: data.content,
             time: new Date(Date.parse(data.time)),
