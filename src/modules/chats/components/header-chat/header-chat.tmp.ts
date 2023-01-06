@@ -4,7 +4,7 @@ export default  `.right-chats
                             .right-chats__header
                                 .right-chats__profile
                                     .right-chats__info
-                                        .avatar
+                                        #{avatar_right}
                                         .right-chats__name #{name}
                                     .right-chats__action
                                         #{add_user_icon}

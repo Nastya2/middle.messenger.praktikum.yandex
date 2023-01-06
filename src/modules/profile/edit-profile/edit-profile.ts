@@ -16,7 +16,6 @@ import { AvatarUpload } from "../../shared/components/avatar-upload/avatar-uploa
 import { Avatar } from "../../shared/components/avatar/avatar";
 import { url } from "../../shared/consts";
 import { RouterEvent } from "../../routing/route";
-import authService from "../../auth/auth.service";
 
 export class EditProfilePage extends Component {
     constructor(props: Tprops) {
@@ -31,7 +30,7 @@ export class EditProfilePage extends Component {
 }
 
 export const avatar_upload = new AvatarUpload({});
-export const avatar = new Avatar({src_img:""});
+export const avatar = new Avatar({src_img:"", alt_img: "Аватар"});
 
 export const button_change_file = new Button({
     text: "Поменять",

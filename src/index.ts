@@ -20,7 +20,8 @@ window.addEventListener("DOMContentLoaded",  async () => {
     .use("/not-found",  ErrorPage, []);
 
     authService.getUser().then(() => {
-        if (!Router.getRoute(window.location.pathname) ||  window.location.pathname === "/login" || window.location.pathname === "/sign-up")  {
+        if (!Router.getRoute(window.location.pathname) ||  window.location.pathname === "/login"
+         || window.location.pathname === "/sign-up" || window.location.pathname === "/") {
             Router.go("/messenger");
         } else {
             Router.go(window.location.pathname);

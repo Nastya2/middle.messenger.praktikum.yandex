@@ -27,7 +27,7 @@ export class ProfilePage extends Component {
     }
 }
 
-export const avatar = new Avatar({src_img:""});
+export const avatar = new Avatar({src_img:"", alt_img: "Аватар"});
 
 const label_email = new Label({
     class_label: "text-field-edit-info__label",
@@ -241,13 +241,13 @@ function subStore() {
 let userInfo: TUser & TUserAvatar;
 function updateInfo() {  
     userInfo = store.getState().user || {};
-        avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
-        setNameUser();
-        setDisplayName();
-        setEmail();
-        setLogin();
-        setPhone();
-        setSecondName();
+    avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
+    setNameUser();
+    setDisplayName();
+    setEmail();
+    setLogin();
+    setPhone();
+    setSecondName();
 }
 
 export const Components = {

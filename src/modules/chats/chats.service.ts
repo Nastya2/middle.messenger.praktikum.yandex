@@ -56,6 +56,13 @@ export class ChatsService  {
         return http.put(`${url}/chats/users`, options);
     }
 
+    public changeAvatarChat(data: FormData): Promise<TInitChat & TUser> {
+        const options = {
+            data
+        }
+        return http.put(`${url}/chats/avatar`, options);
+    }
+
     public getUsersChat(id: number): Promise<TUser[]> {
         return http.get(`${url}/chats/${id}/users`, {});
     }

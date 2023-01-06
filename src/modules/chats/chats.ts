@@ -1,4 +1,4 @@
-import ChatItem from "./components/chat-item/chat-item";
+import ChatItem, { chat_avatar } from "./components/chat-item/chat-item";
 import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./chats.tmp";
@@ -20,6 +20,9 @@ import DeleteUserIcon from "./components/delete-user/delete-user";
 import Icon from "../shared/components/icon/icon";
 import chatsService from "./chats.service";
 import store from "../shared/store";
+import { ChangeAvatarDialog, button_close_change_avatar, chat_avatar_upload, closeChangeAvatar } from "./components/change_avatar_dialog/change_avatar_dialog";
+import { Avatar } from "../shared/components/avatar/avatar";
+import { url } from "../shared/consts";
 
 
 export class ChatsPage extends Component {
@@ -49,6 +52,8 @@ const linkProfile = new Link({
         }
     }
 });
+
+
 
 const addChatIcon = new Icon({
     event: {
@@ -157,7 +162,7 @@ const button_action_add_chat = new Button({
             title: value
           }
           chatsService.createChat(data).then(() => getAllChatsAndUpdate());
-          const d = document.querySelector("dialog");
+          const d = document.querySelector("#add-chat") as HTMLDialogElement;
           d?.close();
         }
     },
@@ -215,36 +220,74 @@ const button_action_user_delete = new Button({
     },
 });
 
+const button_action_change_avatar = function() {
+    return new Button({
+        text: 'Изменить',
+        classes: 'btn',
+        event: {
+            click: function(e: Event) {
+              e.stopPropagation();
+              const avatar = document.getElementById('form-avatar') as HTMLFormElement;
+              console.log(avatar, chat_id_active);
+              if (avatar) {
+                const form = new FormData(avatar);
+                form.append("chatId", String(chat_id_active));
+                chatsService.changeAvatarChat(form).then(() => {
+                    closeChangeAvatar();
+                    getAllChatsAndUpdate();
+                }).catch(() => alert("Не удалось загрузить аватар."));
+                
+              } 
+            }
+        },
+    });    
+}
+
+export const avatar_right = function(avatar: string | null) {
+    return new Avatar({
+      src_img: avatar ? `${url}/resources/${avatar}` : "", 
+      alt_img:"Аватар"
+  });
+}
+
 const dialog_add_chat = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action_add_chat});
 const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, label_name_user, button_close_add_user, button_action_add_user});
 const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_user_delete, label_name_user_delete, button_close_user_delete, button_action_user_delete});
+export const dialog_change_avatar = function() {
+    return new ChangeAvatarDialog({button_action_change_avatar: button_action_change_avatar(), button_close_change_avatar: button_close_change_avatar(), chat_avatar_upload: chat_avatar_upload(),
+    event: {
+        click: function(e: Event) {
+            e.stopPropagation();
+        }
+    }});
+}
 
 let count_chats = 0;
 
 function getAllChatsAndUpdate() {
     chatsService.getAllChats().then((chats) => {
-        if (count_chats !== chats.length) {
-            count_chats = chats.length;
-            chats_id = chats.map((chat) => chat.id);
-    
-           const all_chats = chats.map((chat) => {
-                return new ChatItem({
-                    name: chat.title,
-                    msg: chat?.last_message?.content || "",
-                    time: chat?.last_message?.time ?  new Date(Date.parse(chat?.last_message?.time || "")) : "",
-                    count: chat.unread_count,
-                    event: {
-                        click: function() {
-                            chat_id_active = chat.id;
-                            getUsersChatAndUpdate(chat.id);
-                            updateChat();
-                        }
+        count_chats = chats.length;
+        chats_id = chats.map((chat) => chat.id);
+
+        const all_chats = chats.map((chat) => {
+            return new ChatItem({
+                name: chat.title,
+                msg: chat?.last_message?.content || "",
+                time: chat?.last_message?.time ?  new Date(Date.parse(chat?.last_message?.time || "")) : "",
+                count: chat.unread_count,
+                chat_avatar: chat_avatar(chat.avatar),
+                dialog_change_avatar: dialog_change_avatar(),
+                event: {
+                    click: function() {
+                        chat_id_active = chat.id;
+                        getUsersChatAndUpdate(chat.id);
+                        updateChat();
                     }
-            })});
-    
-            chat_items.setProps({chats: all_chats});
-            getTokenChat();
-        }
+                }
+        })});
+
+        chat_items.setProps({chats: all_chats});
+        getTokenChat();
     });
 }
 

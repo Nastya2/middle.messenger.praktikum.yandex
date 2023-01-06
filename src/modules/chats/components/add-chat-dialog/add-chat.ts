@@ -33,7 +33,7 @@ export const button_close = new Button({
   classes: 'btn',
   event: {
       click: function() {
-        const d = document.querySelector("dialog");
+        const d = document.querySelector("#add_chat") as HTMLDialogElement;
         d?.close();
       }
   },
