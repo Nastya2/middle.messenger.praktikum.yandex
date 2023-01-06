@@ -17,7 +17,7 @@ export default class ChatItem extends Component {
 
 export const chat_avatar = function(avatar: string | null) {
   return new Avatar({
-    src_img: `${url}/resources/${avatar}` || "", 
+    src_img: avatar ? `${url}/resources/${avatar}` : "", 
     alt_img:"Аватар",
     event: {
       click: function() {

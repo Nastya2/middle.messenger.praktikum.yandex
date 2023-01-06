@@ -41,6 +41,7 @@ let infoUsersOpenChat: {login: string, user_id: number}[];
 let chat_id_active: number | null = null;
 let chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
+let chats_id_avatar: {id: number, avatar: string | null | undefined}[] = [];
 let sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
 let chats_token:{token: string, chat_id: number}[] = [];
 
@@ -53,6 +54,13 @@ const linkProfile = new Link({
     }
 });
 
+
+export const avatar_right = function(avatar: string | null | undefined) {
+    return new Avatar({
+      src_img: avatar ? `${url}/resources/${avatar}` : "", 
+      alt_img:"Аватар"
+  });
+}
 
 
 const addChatIcon = new Icon({
@@ -136,17 +144,19 @@ const headerChat = new HeaderChat({
     btnSubmit,
     all_messages,
     add_user_icon,
-    delete_user_icon
+    delete_user_icon,
+    avatar_right: avatar_right(null)
 });
 
-function updateHeaderChat(): void {
+function updateHeaderChat(avatar: null | string | undefined): void {
     headerChat.setProps({
         name: usersOpenChat,
         input_msg,
         btnSubmit,
         all_messages,
         add_user_icon,
-        delete_user_icon
+        delete_user_icon,
+        avatar_right: avatar_right(avatar)
     });
 
     setScrollPosition();
@@ -228,7 +238,6 @@ const button_action_change_avatar = function() {
             click: function(e: Event) {
               e.stopPropagation();
               const avatar = document.getElementById('form-avatar') as HTMLFormElement;
-              console.log(avatar, chat_id_active);
               if (avatar) {
                 const form = new FormData(avatar);
                 form.append("chatId", String(chat_id_active));
@@ -243,13 +252,6 @@ const button_action_change_avatar = function() {
     });    
 }
 
-export const avatar_right = function(avatar: string | null) {
-    return new Avatar({
-      src_img: avatar ? `${url}/resources/${avatar}` : "", 
-      alt_img:"Аватар"
-  });
-}
-
 const dialog_add_chat = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action_add_chat});
 const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, label_name_user, button_close_add_user, button_action_add_user});
 const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_user_delete, label_name_user_delete, button_close_user_delete, button_action_user_delete});
@@ -262,12 +264,16 @@ export const dialog_change_avatar = function() {
     }});
 }
 
-let count_chats = 0;
-
 function getAllChatsAndUpdate() {
     chatsService.getAllChats().then((chats) => {
-        count_chats = chats.length;
         chats_id = chats.map((chat) => chat.id);
+
+        chats_id_avatar = chats.map((chat) => {
+            return  {
+                id: chat?.id,
+                avatar: chat?.avatar
+            }
+        });
 
         const all_chats = chats.map((chat) => {
             return new ChatItem({
@@ -293,20 +299,22 @@ function getAllChatsAndUpdate() {
 
 function updateChat(): void {
     const active_msg = sockets.find((msg) => msg.chat_id === chat_id_active);
+    const avatar = chats_id_avatar.find((chat) => chat.id === chat_id_active);
     if (active_msg) {
         all_messages.setProps({messages: [...active_msg.messages]});
-        updateHeaderChat();
+        updateHeaderChat(avatar?.avatar);
     }
 }
 
 
 function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
+    const avatar = chats_id_avatar.find((chat) => chat.id === chat_id_active);
     chatsService.getUsersChat(chat_id).then((res) => {
         infoUsersOpenChat = res.map((user) => ({login: user.login, user_id: user.id}));
         usersOpenChat = res.map((user) => {
             return user.login;
         }).join(",");
-        updateHeaderChat();
+        updateHeaderChat(avatar?.avatar);
         if (add_user) {
             closeAddUser();
         }
