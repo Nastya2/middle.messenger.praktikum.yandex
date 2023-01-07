@@ -7,7 +7,7 @@ import Component from "../../shared/services/component";
 import template from "./sigin.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
-import { router } from "../../../index";
+import  Router from "../../routing/router";
 import { Link } from "../../shared/components/link/link";
 import authService from "../auth.service";
 
@@ -55,7 +55,7 @@ export const button = new Button({
             }
 
             if (checkValidityForm(error_form)) {
-                authService.signUp(data).then(() => router.go("/messenger"));
+                authService.signUp(data);
             } else {
                 hint_auth.show();
                 setTimeout(() => hint_auth.hide(), 3000);
@@ -307,7 +307,7 @@ const link_sing_in = new Link({
     text: "Войти",
     event: {
         click: function() {
-            router.go("/login");
+            Router.go("/login");
         }
     },
     classes: "auth-form__href"

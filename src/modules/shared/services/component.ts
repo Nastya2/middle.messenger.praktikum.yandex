@@ -10,7 +10,7 @@ abstract class Component {
     FLOW_CDM: "flow:component-did-mount",
     FLOW_RENDER: "flow:render",
     FLOW_CDU: "flow:component-did-update"
-  };
+  } as const;
 
   private element: HTMLElement;
   public props: Tprops;

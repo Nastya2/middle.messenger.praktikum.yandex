@@ -1,5 +1,5 @@
 import store from "../shared/store";
-import { url } from "../shared/consts";
+import { BASE_URL } from "../shared/consts";
 import http from "../shared/services/http/http";
 
 
@@ -24,37 +24,38 @@ export type TUserAvatar = {
 
 export class ProfileService  {
     public getUserInfo(): Promise<TUser & TUserAvatar> {
-        return http.get(`${url}/auth/user`, {});
+        return http.get(`${BASE_URL}/auth/user`, {});
     }
 
-    public changeUserInfo(data: TUser): Promise<TUser & TUserAvatar> {
+    public changeUserInfo(data: TUser) {
         const options = {
             data
         }
-        return http.put(`${url}/user/profile`, options);
+        http.put(`${BASE_URL}/user/profile`, options).then((user: TUser & TUserAvatar) => store.set("user", user));
     }
 
     public changeUserPassword(data: TUserPassword): Promise<string> {
         const options = {
             data
         }
-        return http.put(`${url}/user/password`, options);
+        return http.put(`${BASE_URL}/user/password`, options);
     }
 
-    public changeAvatar(data: FormData): Promise<TUser & TUserAvatar> {
+    public changeAvatar(data: FormData) {
         const options = {
             data
         }
-        return http.put(`${url}/user/profile/avatar`, options);
+        http.put(`${BASE_URL}/user/profile/avatar`, options).then((user: TUser & TUserAvatar) => store.set("user", user));
     }
 
     public getAvatar(path: string): Promise<any> {
-        return http.get(`${url}/resources/${path}`, {});
+        return http.get(`${BASE_URL}/resources/${path}`, {});
     }
 
     public getUser() {
-        return http.get(`${url}/auth/user`, {}).then((res: TUser & TUserAvatar) => {
+        return http.get(`${BASE_URL}/auth/user`, {}).then((res: TUser & TUserAvatar) => {
             store.set("user", res);
+            console.log("getUser");
         }).catch((err) => console.log(err, "err"));
     }
 

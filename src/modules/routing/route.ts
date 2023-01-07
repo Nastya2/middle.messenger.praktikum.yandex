@@ -1,4 +1,5 @@
 import { Tprops } from "@types";
+import { EventBus } from "../shared/services/event-bus";
 import { isEqual } from "../utils/isEqual";
 import { renderDOM } from "../utils/renderDom";
 
@@ -6,13 +7,19 @@ type TpropsRoute = {
     rootQuery: string;
 }
 
-export class Route {
+export enum RouterEvent {
+    Leave =  "leave"
+}
+
+
+export class Route extends EventBus {
     private pathname = "";
     private blockClass: any;
     private block: any;
     private props:any;
     private propsComponent;
     constructor(pathname: string, view: any, props: TpropsRoute, propsComponent: Tprops) {
+        super();
         this.pathname = pathname;
         this.blockClass = view;
         this.block = null;
@@ -34,6 +41,7 @@ export class Route {
         if (container) {
             container.innerHTML = "";
         }
+        this.emit(RouterEvent.Leave, this.pathname);
     }
 
     public match(pathname: string) {

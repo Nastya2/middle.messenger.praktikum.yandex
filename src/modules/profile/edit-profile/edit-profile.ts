@@ -9,12 +9,13 @@ import Component from "../../shared/services/component";
 import tmp from "./edit-profile.tmp";
 import { TUser, TUserAvatar } from "../profile.service";
 import Icon from "../../shared/components/icon/icon";
-import { router } from "../../../index";
+import  Router from "../../routing/router";
 import profileService from "../profile.service";
 import store, { StoreEvent } from "../../shared/store";
 import { AvatarUpload } from "../../shared/components/avatar-upload/avatar-upload";
 import { Avatar } from "../../shared/components/avatar/avatar";
-import { url } from "../../shared/consts";
+import { BASE_URL } from "../../shared/consts";
+import { RouterEvent } from "../../routing/route";
 
 export class EditProfilePage extends Component {
     constructor(props: Tprops) {
@@ -22,14 +23,14 @@ export class EditProfilePage extends Component {
     }
 
     public render(): DocumentFragment {
-        profileService.getUser();
-        updateComponents();
+        updateInfo();
+        subStore();
         return this.compile(tmp, this.props);
     }
 }
 
 export const avatar_upload = new AvatarUpload({});
-export const avatar = new Avatar({src_img:""});
+export const avatar = new Avatar({src_img:"", alt_img: "Аватар"});
 
 export const button_change_file = new Button({
     text: "Поменять",
@@ -39,10 +40,8 @@ export const button_change_file = new Button({
             const avatar = document.getElementById('form-avatar') as HTMLFormElement;
             if (avatar) {
                 const form = new FormData(avatar);
-                profileService.changeAvatar(form).then(() => profileService.getUser());
-            }
-            
-            
+                profileService.changeAvatar(form);
+            } 
         }
     }
 });
@@ -412,25 +411,31 @@ function setDisplayName() {
 const arrowIcon = new Icon({
     event: {
         click: function() {
-            router.go("/settings");
+            Router.go("/settings");
         }
     },
     classes: "back"
 });
 
 let userInfo: TUser & TUserAvatar;
-
-function updateComponents() {
-    store.on(StoreEvent.Updated, () => { 
-        userInfo = store.getState().user || {};
-        avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
-        console.log("store update");
+function updateInfo() {  
+    userInfo = store.getState().user || {};
+        avatar.setProps({src_img: `${BASE_URL}/resources/${userInfo.avatar}`, name: userInfo.first_name});
         setName();
         setDisplayName();
         setEmail();
         setLogin();
         setPhone();
         setSecondName();
+}
+
+function subStore() {
+    const cb = store.on(StoreEvent.Updated, () => {
+        updateInfo();
+    });
+
+    Router.getRoute("/edit-profile")?.on(RouterEvent.Leave,()  => {
+        store.off(StoreEvent.Updated, cb);
     });
 }
 

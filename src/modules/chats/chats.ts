@@ -1,4 +1,4 @@
-import ChatItem from "./components/chat-item/chat-item";
+import ChatItem, { chat_avatar } from "./components/chat-item/chat-item";
 import { Tprops } from "@types";
 import Component from "../shared/services/component";
 import tmp from "./chats.tmp";
@@ -9,16 +9,19 @@ import { Button } from "../shared/components/button/button";
 import {AddUserDialog, input_name_user, label_name_user, button_close_add_user, error_add_user, closeAddUser} from "./components/add-user-dialog/add-user";
 import HeaderChat from "./components/header-chat/header-chat";
 import { Link } from "../shared/components/link/link";
-import { router } from "../../index";
+import  Router from "../routing/router";
 import { WSTransport, WSTransportEvents } from "../shared/services/wss";
 import { Input } from "../shared/components/input/input";
 import Message from "./components/message/message";
 import Messages from "./components/messages/messages";
-import AddUserIcon from "./components/add-user/add-user";
 import { DeleteUserDialog, input_name_user_delete, button_close_user_delete, label_name_user_delete, error_user_delete, closeDeleteUser } from "./components/delete-user-dialog/delete-user-dialog";
-import DeleteUserIcon from "./components/delete-user/delete-user";
 import Icon from "../shared/components/icon/icon";
 import chatsService from "./chats.service";
+import store from "../shared/store";
+import { ChangeAvatarDialog, button_close_change_avatar, chat_avatar_upload, closeChangeAvatar } from "./components/change_avatar_dialog/change_avatar_dialog";
+import { Avatar } from "../shared/components/avatar/avatar";
+import { BASE_URL } from "../shared/consts";
+import DeleteChatDialog, {button_close_delete_chat} from "./components/delete-chat-dialog/delete-chat-dialog";
 
 
 export class ChatsPage extends Component {
@@ -35,21 +38,31 @@ export class ChatsPage extends Component {
 let usersOpenChat = "";
 let infoUsersOpenChat: {login: string, user_id: number}[];
 let chat_id_active: number | null = null;
-const chat_items = new ChatItems({chats: []});
+let chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
-const sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
+let chats_id_avatar: {id: number, avatar: string | null | undefined}[] = [];
+let sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
 let chats_token:{token: string, chat_id: number}[] = [];
 
 const linkProfile = new Link({
     text: "Профиль",
     event: {
         click: function() {
-            router.go("/settings");
+            Router.go("/settings");
         }
     }
 });
 
-const addChatIcon = new Icon({
+
+export const avatar_right = function(avatar: string | null | undefined) {
+    return new Avatar({
+      src_img: avatar ? `${BASE_URL}/resources/${avatar}` : "", 
+      alt_img:"Аватар"
+  });
+}
+
+
+const add_chat_icon = new Icon({
     event: {
         click: function() {
             const d = dialog_add_chat.getContent().lastChild as HTMLDialogElement;
@@ -57,6 +70,27 @@ const addChatIcon = new Icon({
         }
     },
     classes: "add_chat"
+});
+
+const add_user_icon = new Icon({
+    event: {
+        click: function() {
+            const d = dialog_add_user.getContent().lastChild as HTMLDialogElement;
+            d?.showModal();
+        },
+    },
+    classes: "add_user"
+});
+
+
+const delete_chat_icon = new Icon({
+    event: {
+        click: function() {
+            const d = dialog_delete_chat.getContent().lastChild as HTMLDialogElement;
+            d?.showModal();
+        }
+    },
+    classes: "delete_chat_icon"
 });
 
 const input_msg = new Input({
@@ -106,45 +140,17 @@ const btnSubmit = new Button({
 
 const all_messages = new Messages({messages: []});
 
-const add_user_icon = new AddUserIcon({
-    event: {
-        click: function() {
-            const d = dialog_add_user.getContent().lastChild as HTMLDialogElement;
-            d?.showModal();
-        }
-    }
-});
 
-const delete_user_icon = new DeleteUserIcon({
+const delete_user_icon = new Icon({
     event: {
         click: function() {
             const d = dialog_delete_user.getContent().lastChild as HTMLDialogElement;
             d?.showModal();
-        }
-    }
+        },
+    },
+    classes: "delete_user"
 });
 
-const headerChat = new HeaderChat({
-    name: usersOpenChat,
-    input_msg,
-    btnSubmit,
-    all_messages,
-    add_user_icon,
-    delete_user_icon
-});
-
-function updateHeaderChat(): void {
-    headerChat.setProps({
-        name: usersOpenChat,
-        input_msg,
-        btnSubmit,
-        all_messages,
-        add_user_icon,
-        delete_user_icon
-    });
-
-    setScrollPosition();
-}
 
 const button_action_add_chat = new Button({
     text: 'Добавить',
@@ -156,8 +162,25 @@ const button_action_add_chat = new Button({
             title: value
           }
           chatsService.createChat(data).then(() => getAllChatsAndUpdate());
-          const d = document.querySelector("dialog");
+          const d = document.querySelector("#add_chat") as HTMLDialogElement;
           d?.close();
+        }
+    },
+});
+
+const button_action_delete_chat = new Button({
+    text: 'Удалить',
+    classes: 'btn',
+    event: {
+        click: function() {
+            const data = {
+                chatId: chat_id_active || 0
+            }
+            if (data.chatId) {
+                chatsService.deleteChat(data).then(() => getAllChatsAndUpdate()).catch(() => alert("При удалении чата произошла ошибка."));
+                const d = document.querySelector("#delete-chat") as HTMLDialogElement;
+                d?.close();
+            }
         }
     },
 });
@@ -214,54 +237,119 @@ const button_action_user_delete = new Button({
     },
 });
 
+const button_action_change_avatar = function() {
+    return new Button({
+        text: 'Изменить',
+        classes: 'btn',
+        event: {
+            click: function(e: Event) {
+              e.stopPropagation();
+              const avatar = document.getElementById('form-avatar') as HTMLFormElement;
+              if (avatar) {
+                const form = new FormData(avatar);
+                form.append("chatId", String(chat_id_active));
+                chatsService.changeAvatarChat(form).then(() => {
+                    closeChangeAvatar();
+                    getAllChatsAndUpdate();
+                }).catch(() => alert("Не удалось загрузить аватар."));
+                
+              } 
+            }
+        },
+    });    
+}
+
 const dialog_add_chat = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action_add_chat});
+const dialog_delete_chat = new DeleteChatDialog({button_action_delete_chat, button_close_delete_chat});
 const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, label_name_user, button_close_add_user, button_action_add_user});
 const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_user_delete, label_name_user_delete, button_close_user_delete, button_action_user_delete});
 
-let count_chats = 0;
+export const dialog_change_avatar = function() {
+    return new ChangeAvatarDialog({button_action_change_avatar: button_action_change_avatar(), button_close_change_avatar: button_close_change_avatar(), chat_avatar_upload: chat_avatar_upload(),
+    event: {
+        click: function(e: Event) {
+            e.stopPropagation();
+        }
+    }});
+}
+
+const headerChat = new HeaderChat({
+    name: usersOpenChat,
+    input_msg,
+    btnSubmit,
+    all_messages,
+    add_user_icon,
+    delete_user_icon,
+    avatar_right: avatar_right(null),
+    delete_chat_icon,
+});
+
+function updateHeaderChat(avatar: null | string | undefined): void {
+    headerChat.setProps({
+        name: usersOpenChat,
+        input_msg,
+        btnSubmit,
+        all_messages,
+        add_user_icon,
+        delete_user_icon,
+        avatar_right: avatar_right(avatar),
+        delete_chat_icon,
+    });
+
+    setScrollPosition();
+}
+
 function getAllChatsAndUpdate() {
     chatsService.getAllChats().then((chats) => {
-        if (count_chats !== chats.length) {
-            count_chats = chats.length;
-            chats_id = chats.map((chat) => chat.id);
-    
-           const all_chats = chats.map((chat) => {
-                return new ChatItem({
-                    name: chat.title,
-                    msg: chat?.last_message?.content || "",
-                    time: chat?.last_message?.time ?  new Date(Date.parse(chat?.last_message?.time || "")) : "",
-                    count: chat.unread_count,
-                    event: {
-                        click: function() {
-                            chat_id_active = chat.id;
-                            getUsersChatAndUpdate(chat.id);
-                            updateChat();
-                        }
+        chats_id = chats.map((chat) => chat.id);
+
+        chats_id_avatar = chats.map((chat) => {
+            return  {
+                id: chat?.id,
+                avatar: chat?.avatar
+            }
+        });
+
+        const all_chats = chats.map((chat) => {
+            return new ChatItem({
+                name: chat.title,
+                msg: chat?.last_message?.content || "",
+                time: chat?.last_message?.time ?  new Date(Date.parse(chat?.last_message?.time || "")) : "",
+                count: chat.unread_count,
+                chat_avatar: chat_avatar(chat.avatar),
+                dialog_change_avatar: dialog_change_avatar(),
+                event: {
+                    click: function() {
+                        chat_id_active = chat.id;
+                        getUsersChatAndUpdate(chat.id);
+                        updateChat();
                     }
-            })});
-    
-            chat_items.setProps({chats: all_chats});
-            getTokenChat();
-        }
+                }
+        })});
+
+        chat_items.setProps({chats: all_chats});
+        getTokenChat();
     });
 }
 
 function updateChat(): void {
     const active_msg = sockets.find((msg) => msg.chat_id === chat_id_active);
+    const avatar = chats_id_avatar.find((chat) => chat.id === chat_id_active);
     if (active_msg) {
         all_messages.setProps({messages: [...active_msg.messages]});
-        updateHeaderChat();
+        updateHeaderChat(avatar?.avatar);
     }
 }
 
 
 function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
+    const avatar = chats_id_avatar.find((chat) => chat.id === chat_id_active);
     chatsService.getUsersChat(chat_id).then((res) => {
         infoUsersOpenChat = res.map((user) => ({login: user.login, user_id: user.id}));
         usersOpenChat = res.map((user) => {
             return user.login;
         }).join(",");
-        updateHeaderChat();
+        updateHeaderChat(avatar?.avatar);
         if (add_user) {
             closeAddUser();
         }
@@ -269,7 +357,7 @@ function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
 }
 
 function getTokenChat(): void {
-    const promise: Promise<{token: string, chat_id: number}>[] = [];
+    let promise: Promise<{token: string, chat_id: number}>[] = [];
     chats_id.forEach((id) => {
         promise.push(chatsService.getToken(id).then((res) => {
             return {
@@ -285,8 +373,9 @@ function getTokenChat(): void {
     })
 }
 
+
 function connectSockets() {
-    const user_id = localStorage.getItem("user_id");
+    const user_id = store.getState().user.id;
     if (user_id) {
         chats_token.forEach((token) => {
             if(sockets.find((s) => s.chat_id === token.chat_id)) {
@@ -330,7 +419,7 @@ function subSocket(socket: WSTransport, chat_id: number) {
 
 
 function createMsg(data: {user_id: number, time: string, content: string}): Message {
-    if(String(data.user_id) === localStorage.getItem("user_id")) {
+    if(data.user_id === store.getState().user.id) {
         return new Message({
             text: data.content,
             time: new Date(Date.parse(data.time)),
@@ -355,11 +444,12 @@ function setScrollPosition():void {
 export const Components = {
     chat_items,
     dialog_add_chat,
-    addChatIcon,
+    add_chat_icon,
     dialog_add_user,
     headerChat,
     linkProfile,
-    dialog_delete_user
+    dialog_delete_user,
+    dialog_delete_chat
 };
 
 

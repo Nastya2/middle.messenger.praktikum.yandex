@@ -1,5 +1,3 @@
-import authService from "../../../auth/auth.service";
-
 enum METHODS {
   GET = 'get',
   POST = 'post',
@@ -7,11 +5,14 @@ enum METHODS {
   DELETE = 'delete'
 }
 
-
 interface Options {
   timeout?: number;
   data?: Record<string, any>;
   headers?: Record<string, string>;
+}
+
+interface IRequest {
+  (a:string, b: Options): Promise<any>
 }
 
 function queryStringify(data: Options["data"]): string {
@@ -26,19 +27,19 @@ function queryStringify(data: Options["data"]): string {
 }
 
 export class HTTPTransport {
-  public get = (url: string, options: Options) => {
+  public get: IRequest = (url, options) => {
     return this.request(url, {...options }, METHODS.GET, options.timeout);
   };
 
-  public post = (url: string, options: Options) => {	
+  public post: IRequest = (url, options) => {	
     return this.request(url, {...options }, METHODS.POST, options.timeout);
   };
 
-  public put = (url: string, options: Options) => {	 
+  public put: IRequest = (url, options) => {	 
     return this.request(url, {...options }, METHODS.PUT, options.timeout);
   };
 
-  public delete = (url: string, options: Options) => {	 
+  public delete: IRequest = (url, options) => {	 
     return this.request(url, {...options }, METHODS.DELETE, options.timeout);
   };
 
@@ -75,16 +76,9 @@ export class HTTPTransport {
               resolve(JSON.parse(xhr.response));
             }
           } else {
-            if(xhr.status === 401) {
-              if(localStorage.getItem("user_id")) {
-                authService.logout();
-                localStorage.clear();
-              }
-            }
-            if(xhr.status === 400) {
+            if(xhr.status === 400 || xhr.status === 401) {
               reject(JSON.parse(xhr.response).reason);
             }
-            console.log(xhr.status, JSON.parse(xhr.response).reason);
           }
         };
 

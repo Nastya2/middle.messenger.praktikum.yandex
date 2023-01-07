@@ -1,6 +1,8 @@
-import { url } from "../shared/consts";
+import { BASE_URL } from "../shared/consts";
 import http from "../shared/services/http/http";
-import { TUser, TUserAvatar } from "../profile/profile.service";
+import store from "../shared/store";
+import  Router from "../routing/router";
+import { TUser, TUserAvatar } from "modules/profile/profile.service";
 
 type TSignUp = {
     first_name: string,
@@ -18,12 +20,10 @@ type TSignIn = {
 
 
 export class AuthService  {
-    public logout(): Promise<XMLHttpRequest> {
-        return http.post(`${url}/auth/logout`, {});
-    }
-
-    public checkAutorization(): boolean {
-        return !!localStorage.getItem("user_id");
+    public logout(){
+        http.post(`${BASE_URL}/auth/logout`, {}).then(()  => {
+            Router.go("/");
+        }).catch(() => Router.go("/"));
     }
 
     public signUp(data: TSignUp) {
@@ -31,24 +31,24 @@ export class AuthService  {
             data,
         }
 
-        return http.post(`${url}/auth/signup`, options).then(() => {
-            return this.getUser();
-        }).catch((err) => console.log(err, "err"));
+        http.post(`${BASE_URL}/auth/signup`, options).then(() => {
+            this.getUser().then(() =>  Router.go("/messenger"));
+        }).catch(() => alert("Не удалось выполнить вход. Попробуйте еще раз."));
+
     }
 
     public getUser() {
-        return http.get(`${url}/auth/user`, {}).then((res: TUser & TUserAvatar) => {
-            localStorage.setItem("user_id", JSON.stringify(res.id));
-        }).catch((err) => console.log(err, "err"));
+        return http.get(`${BASE_URL}/auth/user`, {}).then((user: TUser & TUserAvatar) => store.set("user", user));
     }
 
-    public login(data: TSignIn): Promise<any> {
+    public login(data: TSignIn) {
         const options = {
            data,
         }
-        return http.post(`${url}/auth/signin`, options).then(() => {
-            return this.getUser();
-        }).catch((err) => console.log(err, "err"));
+        http.post(`${BASE_URL}/auth/signin`, options).then(() => {
+            this.getUser().then(() =>  Router.go("/messenger"));
+        }).catch(() => alert("Не удалось выполнить вход. Попробуйте еще раз."));
+        
     }
 
 
