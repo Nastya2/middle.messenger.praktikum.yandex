@@ -248,9 +248,10 @@ const button_action_change_avatar = function() {
               if (avatar) {
                 const form = new FormData(avatar);
                 form.append("chatId", String(chat_id_active));
-                chatsService.changeAvatarChat(form).then(() => {
+                chatsService.changeAvatarChat(form).then((chat) => {
                     closeChangeAvatar();
                     getAllChatsAndUpdate();
+                    updateHeaderChat(chat?.avatar);
                 }).catch(() => alert("Не удалось загрузить аватар."));
                 
               } 
