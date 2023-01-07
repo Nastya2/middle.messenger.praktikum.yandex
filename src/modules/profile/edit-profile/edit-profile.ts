@@ -420,13 +420,13 @@ const arrowIcon = new Icon({
 let userInfo: TUser & TUserAvatar;
 function updateInfo() {  
     userInfo = store.getState().user || {};
-        avatar.setProps({src_img: `${BASE_URL}/resources/${userInfo.avatar}`, name: userInfo.first_name});
-        setName();
-        setDisplayName();
-        setEmail();
-        setLogin();
-        setPhone();
-        setSecondName();
+    avatar.setProps({src_img: userInfo.avatar ? `${BASE_URL}/resources/${userInfo.avatar}`: "", name: userInfo.first_name});
+    setName();
+    setDisplayName();
+    setEmail();
+    setLogin();
+    setPhone();
+    setSecondName();
 }
 
 function subStore() {
