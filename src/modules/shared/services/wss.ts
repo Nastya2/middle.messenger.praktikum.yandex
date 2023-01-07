@@ -68,12 +68,16 @@ export  class WSTransport extends EventBus {
     });
 
     socket.addEventListener('message', (message) => {
-      const data = JSON.parse(message.data);
+      try {
+        const data = JSON.parse(message.data);
 
-      if (data.type !== "pong") {
-        this.emit(WSTransportEvents.Message, data);
+        if (data?.type !== "pong") {
+          this.emit(WSTransportEvents.Message, data);
+        }
+      } catch {
+        console.log("wss parse error");
       }
-
+    
     });
   }
 }

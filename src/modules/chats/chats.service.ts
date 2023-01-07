@@ -77,6 +77,13 @@ export class ChatsService  {
         }
         return http.delete(`${url}/chats/users`, options);
     }
+
+    public deleteChat(data: {chatId: number}): Promise<any> {
+        const options = {
+            data
+        }
+        return http.delete(`${url}/chats`, options);
+    }
 }
 
 export default new ChatsService();

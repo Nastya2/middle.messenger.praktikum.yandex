@@ -10,7 +10,8 @@ const tmp = `.wrap-chats
 
                 #{dialog_add_chat}
                 #{dialog_add_user}
-                #{dialog_delete_user}`;
+                #{dialog_delete_user}
+                #{dialog_delete_chat}`;
 export default tmp;
 
     

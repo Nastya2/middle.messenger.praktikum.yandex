@@ -298,3 +298,15 @@
   cursor: pointer;
   margin-left: 20px;
 }
+
+.delete_chat_icon {
+  content: "";
+  display: block;
+  background-image: url("./icons/delete-chat-icon.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  margin-left: 20px;
+}

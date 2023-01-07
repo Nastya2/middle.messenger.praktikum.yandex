@@ -23,6 +23,7 @@ import store from "../shared/store";
 import { ChangeAvatarDialog, button_close_change_avatar, chat_avatar_upload, closeChangeAvatar } from "./components/change_avatar_dialog/change_avatar_dialog";
 import { Avatar } from "../shared/components/avatar/avatar";
 import { url } from "../shared/consts";
+import DeleteChatDialog, {button_close_delete_chat} from "./components/delete-chat-dialog/delete-chat-dialog";
 
 
 export class ChatsPage extends Component {
@@ -71,6 +72,16 @@ const addChatIcon = new Icon({
         }
     },
     classes: "add_chat"
+});
+
+const delete_chat_icon = new Icon({
+    event: {
+        click: function() {
+            const d = dialog_delete_chat.getContent().lastChild as HTMLDialogElement;
+            d?.showModal();
+        }
+    },
+    classes: "delete_chat_icon"
 });
 
 const input_msg = new Input({
@@ -138,29 +149,6 @@ const delete_user_icon = new DeleteUserIcon({
     }
 });
 
-const headerChat = new HeaderChat({
-    name: usersOpenChat,
-    input_msg,
-    btnSubmit,
-    all_messages,
-    add_user_icon,
-    delete_user_icon,
-    avatar_right: avatar_right(null)
-});
-
-function updateHeaderChat(avatar: null | string | undefined): void {
-    headerChat.setProps({
-        name: usersOpenChat,
-        input_msg,
-        btnSubmit,
-        all_messages,
-        add_user_icon,
-        delete_user_icon,
-        avatar_right: avatar_right(avatar)
-    });
-
-    setScrollPosition();
-}
 
 const button_action_add_chat = new Button({
     text: 'Добавить',
@@ -174,6 +162,23 @@ const button_action_add_chat = new Button({
           chatsService.createChat(data).then(() => getAllChatsAndUpdate());
           const d = document.querySelector("#add-chat") as HTMLDialogElement;
           d?.close();
+        }
+    },
+});
+
+const button_action_delete_chat = new Button({
+    text: 'Удалить',
+    classes: 'btn',
+    event: {
+        click: function() {
+            const data = {
+                chatId: chat_id_active || 0
+            }
+            if (data.chatId) {
+                chatsService.deleteChat(data).then(() => getAllChatsAndUpdate()).catch(() => alert("При удалении чата произошла ошибка."));
+                const d = document.querySelector("#delete-chat") as HTMLDialogElement;
+                d?.close();
+            }
         }
     },
 });
@@ -253,6 +258,7 @@ const button_action_change_avatar = function() {
 }
 
 const dialog_add_chat = new AddChatDialog({input_name_chat, button_close, label_name_chat, button_action_add_chat});
+const dialog_delete_chat = new DeleteChatDialog({button_action_delete_chat, button_close_delete_chat});
 const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, label_name_user, button_close_add_user, button_action_add_user});
 const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_user_delete, label_name_user_delete, button_close_user_delete, button_action_user_delete});
 export const dialog_change_avatar = function() {
@@ -262,6 +268,32 @@ export const dialog_change_avatar = function() {
             e.stopPropagation();
         }
     }});
+}
+
+const headerChat = new HeaderChat({
+    name: usersOpenChat,
+    input_msg,
+    btnSubmit,
+    all_messages,
+    add_user_icon,
+    delete_user_icon,
+    avatar_right: avatar_right(null),
+    delete_chat_icon,
+});
+
+function updateHeaderChat(avatar: null | string | undefined): void {
+    headerChat.setProps({
+        name: usersOpenChat,
+        input_msg,
+        btnSubmit,
+        all_messages,
+        add_user_icon,
+        delete_user_icon,
+        avatar_right: avatar_right(avatar),
+        delete_chat_icon,
+    });
+
+    setScrollPosition();
 }
 
 function getAllChatsAndUpdate() {
@@ -412,7 +444,8 @@ export const Components = {
     dialog_add_user,
     headerChat,
     linkProfile,
-    dialog_delete_user
+    dialog_delete_user,
+    dialog_delete_chat
 };
 
 

@@ -1,12 +1,9 @@
-import authService from "../../../auth/auth.service";
-
 enum METHODS {
   GET = 'get',
   POST = 'post',
   PUT = 'put',
   DELETE = 'delete'
 }
-
 
 interface Options {
   timeout?: number;
@@ -75,13 +72,9 @@ export class HTTPTransport {
               resolve(JSON.parse(xhr.response));
             }
           } else {
-            if(xhr.status === 401) {
+            if(xhr.status === 400 || xhr.status === 401) {
               reject(JSON.parse(xhr.response).reason);
             }
-            if(xhr.status === 400) {
-              reject(JSON.parse(xhr.response).reason);
-            }
-            console.log(xhr.status, JSON.parse(xhr.response).reason);
           }
         };
 
