@@ -4,7 +4,7 @@ const tmp = `.wrap-chats
                         .left-chats__profile
                             #{linkProfile}
                     #{chat_items}
-                    #{addChatIcon}
+                    #{add_chat_icon}
 
                 #{headerChat}
 

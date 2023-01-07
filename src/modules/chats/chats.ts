@@ -14,9 +14,7 @@ import { WSTransport, WSTransportEvents } from "../shared/services/wss";
 import { Input } from "../shared/components/input/input";
 import Message from "./components/message/message";
 import Messages from "./components/messages/messages";
-import AddUserIcon from "./components/add-user/add-user";
 import { DeleteUserDialog, input_name_user_delete, button_close_user_delete, label_name_user_delete, error_user_delete, closeDeleteUser } from "./components/delete-user-dialog/delete-user-dialog";
-import DeleteUserIcon from "./components/delete-user/delete-user";
 import Icon from "../shared/components/icon/icon";
 import chatsService from "./chats.service";
 import store from "../shared/store";
@@ -64,7 +62,7 @@ export const avatar_right = function(avatar: string | null | undefined) {
 }
 
 
-const addChatIcon = new Icon({
+const add_chat_icon = new Icon({
     event: {
         click: function() {
             const d = dialog_add_chat.getContent().lastChild as HTMLDialogElement;
@@ -73,6 +71,17 @@ const addChatIcon = new Icon({
     },
     classes: "add_chat"
 });
+
+const add_user_icon = new Icon({
+    event: {
+        click: function() {
+            const d = dialog_add_user.getContent().lastChild as HTMLDialogElement;
+            d?.showModal();
+        },
+    },
+    classes: "add_user"
+});
+
 
 const delete_chat_icon = new Icon({
     event: {
@@ -131,22 +140,15 @@ const btnSubmit = new Button({
 
 const all_messages = new Messages({messages: []});
 
-const add_user_icon = new AddUserIcon({
-    event: {
-        click: function() {
-            const d = dialog_add_user.getContent().lastChild as HTMLDialogElement;
-            d?.showModal();
-        }
-    }
-});
 
-const delete_user_icon = new DeleteUserIcon({
+const delete_user_icon = new Icon({
     event: {
         click: function() {
             const d = dialog_delete_user.getContent().lastChild as HTMLDialogElement;
             d?.showModal();
-        }
-    }
+        },
+    },
+    classes: "delete_user"
 });
 
 
@@ -160,7 +162,7 @@ const button_action_add_chat = new Button({
             title: value
           }
           chatsService.createChat(data).then(() => getAllChatsAndUpdate());
-          const d = document.querySelector("#add-chat") as HTMLDialogElement;
+          const d = document.querySelector("#add_chat") as HTMLDialogElement;
           d?.close();
         }
     },
@@ -261,6 +263,7 @@ const dialog_add_chat = new AddChatDialog({input_name_chat, button_close, label_
 const dialog_delete_chat = new DeleteChatDialog({button_action_delete_chat, button_close_delete_chat});
 const dialog_add_user = new AddUserDialog({error_add_user, input_name_user, label_name_user, button_close_add_user, button_action_add_user});
 const dialog_delete_user = new DeleteUserDialog({error_user_delete, input_name_user_delete, label_name_user_delete, button_close_user_delete, button_action_user_delete});
+
 export const dialog_change_avatar = function() {
     return new ChangeAvatarDialog({button_action_change_avatar: button_action_change_avatar(), button_close_change_avatar: button_close_change_avatar(), chat_avatar_upload: chat_avatar_upload(),
     event: {
@@ -370,6 +373,7 @@ function getTokenChat(): void {
     })
 }
 
+
 function connectSockets() {
     const user_id = store.getState().user.id;
     if (user_id) {
@@ -440,7 +444,7 @@ function setScrollPosition():void {
 export const Components = {
     chat_items,
     dialog_add_chat,
-    addChatIcon,
+    add_chat_icon,
     dialog_add_user,
     headerChat,
     linkProfile,

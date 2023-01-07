@@ -18,7 +18,7 @@ export const button_close_delete_chat = new Button({
   classes: 'btn',
   event: {
       click: function() {
-        const d = document.querySelector("#delete_chat") as HTMLDialogElement;
+        const d = document.querySelector("#delete-chat") as HTMLDialogElement;
         d?.close();
       }
   },
