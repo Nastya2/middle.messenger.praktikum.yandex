@@ -2,7 +2,7 @@ import Component from "../../../shared/services/component";
 import template from "./chat-item.tmp"
 import { Tprops } from "@types";
 import { Avatar } from "../../../shared/components/avatar/avatar";
-import { url } from "../../../shared/consts";
+import { BASE_URL } from "../../../shared/consts";
 
 
 export default class ChatItem extends Component {
@@ -17,7 +17,7 @@ export default class ChatItem extends Component {
 
 export const chat_avatar = function(avatar: string | null) {
   return new Avatar({
-    src_img: avatar ? `${url}/resources/${avatar}` : "", 
+    src_img: avatar ? `${BASE_URL}/resources/${avatar}` : "", 
     alt_img:"Аватар",
     event: {
       click: function() {

@@ -1,4 +1,4 @@
-import { url } from "../shared/consts";
+import { BASE_URL } from "../shared/consts";
 import http from "../shared/services/http/http";
 
 type TCreateChat = {
@@ -28,61 +28,61 @@ type TUser = {
 
 export class ChatsService  {
     public getAllChats(): Promise<TInitChat[]> {
-        return http.get(`${url}/chats`, {});
+        return http.get(`${BASE_URL}/chats`, {});
     }
 
     public createChat(data: TCreateChat): Promise<XMLHttpRequest> {
         const options = {
             data
         }
-        return http.post(`${url}/chats`, options);
+        return http.post(`${BASE_URL}/chats`, options);
     }
 
     public getChat(id: number): Promise<XMLHttpRequest> {
-        return http.get(`${url}/chats/${id}/common`, {});
+        return http.get(`${BASE_URL}/chats/${id}/common`, {});
     }
 
     public searchUser(data: {login: string}): Promise<TUser[]> {
         const options = {
             data
         }
-        return http.post(`${url}/user/search`, options);
+        return http.post(`${BASE_URL}/user/search`, options);
     }
 
     public addUsersToChat(data: {users: number[], chatId: number}): Promise<string> {
         const options = {
             data
         }
-        return http.put(`${url}/chats/users`, options);
+        return http.put(`${BASE_URL}/chats/users`, options);
     }
 
     public changeAvatarChat(data: FormData): Promise<TInitChat & TUser> {
         const options = {
             data
         }
-        return http.put(`${url}/chats/avatar`, options);
+        return http.put(`${BASE_URL}/chats/avatar`, options);
     }
 
     public getUsersChat(id: number): Promise<TUser[]> {
-        return http.get(`${url}/chats/${id}/users`, {});
+        return http.get(`${BASE_URL}/chats/${id}/users`, {});
     }
 
     public getToken(id: number): Promise<{token: string}> {
-        return http.post(`${url}/chats/token/${id}`, {});
+        return http.post(`${BASE_URL}/chats/token/${id}`, {});
     }
 
     public deleteUsers(data: {users: number[], chatId: number}): Promise<string> {
         const options = {
             data
         }
-        return http.delete(`${url}/chats/users`, options);
+        return http.delete(`${BASE_URL}/chats/users`, options);
     }
 
     public deleteChat(data: {chatId: number}): Promise<any> {
         const options = {
             data
         }
-        return http.delete(`${url}/chats`, options);
+        return http.delete(`${BASE_URL}/chats`, options);
     }
 }
 

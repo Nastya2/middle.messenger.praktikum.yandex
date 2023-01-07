@@ -11,7 +11,7 @@ import { TUser, TUserAvatar } from "./profile.service";
 import store from "../shared/store";
 import { StoreEvent } from "../shared/store";
 import { Avatar } from "../shared/components/avatar/avatar";
-import { url } from "../shared/consts";
+import { BASE_URL } from "../shared/consts";
 import authService from "../auth/auth.service";
 import { RouterEvent } from "../routing/route";
 
@@ -241,7 +241,7 @@ function subStore() {
 let userInfo: TUser & TUserAvatar;
 function updateInfo() {  
     userInfo = store.getState().user || {};
-    avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
+    avatar.setProps({src_img: `${BASE_URL}/resources/${userInfo.avatar}`, name: userInfo.first_name});
     setNameUser();
     setDisplayName();
     setEmail();

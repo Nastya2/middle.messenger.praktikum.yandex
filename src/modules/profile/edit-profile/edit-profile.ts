@@ -14,7 +14,7 @@ import profileService from "../profile.service";
 import store, { StoreEvent } from "../../shared/store";
 import { AvatarUpload } from "../../shared/components/avatar-upload/avatar-upload";
 import { Avatar } from "../../shared/components/avatar/avatar";
-import { url } from "../../shared/consts";
+import { BASE_URL } from "../../shared/consts";
 import { RouterEvent } from "../../routing/route";
 
 export class EditProfilePage extends Component {
@@ -420,7 +420,7 @@ const arrowIcon = new Icon({
 let userInfo: TUser & TUserAvatar;
 function updateInfo() {  
     userInfo = store.getState().user || {};
-        avatar.setProps({src_img: `${url}/resources/${userInfo.avatar}`, name: userInfo.first_name});
+        avatar.setProps({src_img: `${BASE_URL}/resources/${userInfo.avatar}`, name: userInfo.first_name});
         setName();
         setDisplayName();
         setEmail();

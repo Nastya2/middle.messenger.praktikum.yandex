@@ -1,4 +1,4 @@
-import { url } from "../shared/consts";
+import { BASE_URL } from "../shared/consts";
 import http from "../shared/services/http/http";
 import store from "../shared/store";
 import  Router from "../routing/router";
@@ -21,7 +21,7 @@ type TSignIn = {
 
 export class AuthService  {
     public logout(){
-        http.post(`${url}/auth/logout`, {}).then(()  => {
+        http.post(`${BASE_URL}/auth/logout`, {}).then(()  => {
             Router.go("/");
         }).catch(() => Router.go("/"));
     }
@@ -31,21 +31,21 @@ export class AuthService  {
             data,
         }
 
-        http.post(`${url}/auth/signup`, options).then(() => {
+        http.post(`${BASE_URL}/auth/signup`, options).then(() => {
             this.getUser().then(() =>  Router.go("/messenger"));
         }).catch(() => alert("Не удалось выполнить вход. Попробуйте еще раз."));
 
     }
 
     public getUser() {
-        return http.get(`${url}/auth/user`, {}).then((user: TUser & TUserAvatar) => store.set("user", user));
+        return http.get(`${BASE_URL}/auth/user`, {}).then((user: TUser & TUserAvatar) => store.set("user", user));
     }
 
     public login(data: TSignIn) {
         const options = {
            data,
         }
-        http.post(`${url}/auth/signin`, options).then(() => {
+        http.post(`${BASE_URL}/auth/signin`, options).then(() => {
             this.getUser().then(() =>  Router.go("/messenger"));
         }).catch(() => alert("Не удалось выполнить вход. Попробуйте еще раз."));
         

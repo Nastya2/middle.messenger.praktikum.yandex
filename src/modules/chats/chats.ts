@@ -20,7 +20,7 @@ import chatsService from "./chats.service";
 import store from "../shared/store";
 import { ChangeAvatarDialog, button_close_change_avatar, chat_avatar_upload, closeChangeAvatar } from "./components/change_avatar_dialog/change_avatar_dialog";
 import { Avatar } from "../shared/components/avatar/avatar";
-import { url } from "../shared/consts";
+import { BASE_URL } from "../shared/consts";
 import DeleteChatDialog, {button_close_delete_chat} from "./components/delete-chat-dialog/delete-chat-dialog";
 
 
@@ -56,7 +56,7 @@ const linkProfile = new Link({
 
 export const avatar_right = function(avatar: string | null | undefined) {
     return new Avatar({
-      src_img: avatar ? `${url}/resources/${avatar}` : "", 
+      src_img: avatar ? `${BASE_URL}/resources/${avatar}` : "", 
       alt_img:"Аватар"
   });
 }

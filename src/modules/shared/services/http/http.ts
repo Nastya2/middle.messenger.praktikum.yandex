@@ -11,6 +11,10 @@ interface Options {
   headers?: Record<string, string>;
 }
 
+interface IRequest {
+  (a:string, b: Options): Promise<any>
+}
+
 function queryStringify(data: Options["data"]): string {
   let url = "";
 
@@ -23,19 +27,19 @@ function queryStringify(data: Options["data"]): string {
 }
 
 export class HTTPTransport {
-  public get = (url: string, options: Options) => {
+  public get: IRequest = (url, options) => {
     return this.request(url, {...options }, METHODS.GET, options.timeout);
   };
 
-  public post = (url: string, options: Options) => {	
+  public post: IRequest = (url, options) => {	
     return this.request(url, {...options }, METHODS.POST, options.timeout);
   };
 
-  public put = (url: string, options: Options) => {	 
+  public put: IRequest = (url, options) => {	 
     return this.request(url, {...options }, METHODS.PUT, options.timeout);
   };
 
-  public delete = (url: string, options: Options) => {	 
+  public delete: IRequest = (url, options) => {	 
     return this.request(url, {...options }, METHODS.DELETE, options.timeout);
   };
 
