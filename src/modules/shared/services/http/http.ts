@@ -5,12 +5,14 @@ enum METHODS {
   DELETE = 'delete'
 }
 
-type stringObj =  Record<string, string>;
-
 interface Options {
   timeout?: number;
   data?: Record<string, any>;
   headers?: Record<string, string>;
+}
+
+interface IRequest {
+  (a:string, b: Options): Promise<any>
 }
 
 function queryStringify(data: Options["data"]): string {
@@ -24,25 +26,25 @@ function queryStringify(data: Options["data"]): string {
   return "?" + url;
 }
 
-class HTTPTransport {
-  public get = (url: string, options: Options) => {
+export class HTTPTransport {
+  public get: IRequest = (url, options) => {
     return this.request(url, {...options }, METHODS.GET, options.timeout);
   };
 
-  public post = (url: string, options: Options) => {	
+  public post: IRequest = (url, options) => {	
     return this.request(url, {...options }, METHODS.POST, options.timeout);
   };
 
-  public put = (url: string, options: Options) => {	 
+  public put: IRequest = (url, options) => {	 
     return this.request(url, {...options }, METHODS.PUT, options.timeout);
   };
 
-  public delete = (url: string, options: Options) => {	 
+  public delete: IRequest = (url, options) => {	 
     return this.request(url, {...options }, METHODS.DELETE, options.timeout);
   };
 
-  private request = (url: string, options: Options, method: METHODS,timeout = 5000) => {
-      const headers = options.headers;
+  private request = (url: string, options: Options, method: METHODS,timeout = 5000): Promise<any> => {
+      const headers = options.headers || {};
     
       let data: Options["data"];
       if(options.data) {
@@ -51,11 +53,15 @@ class HTTPTransport {
 
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
         xhr.timeout = timeout;
 
-        if(method === METHODS.GET) {
+        if(method === METHODS.GET && data) {
           url = url + queryStringify(data);
+        } else if (!(data instanceof FormData)) {
+          headers["content-type"] = 'application/json'
         }
+
         xhr.open(method, url);
         
         for(const key in headers) {
@@ -63,8 +69,17 @@ class HTTPTransport {
         }
         
         xhr.onload = function() {
-          console.log(xhr);
-          resolve(xhr);
+          if (xhr.status === 200)  {
+            if(xhr.response === "OK" || xhr.getResponseHeader("content-type") === "image/jpeg") {
+              resolve(xhr.response);
+            } else {
+              resolve(JSON.parse(xhr.response));
+            }
+          } else {
+            if(xhr.status === 400 || xhr.status === 401) {
+              reject(JSON.parse(xhr.response).reason);
+            }
+          }
         };
 
         xhr.onabort = function() {reject(new Error("abort"))}
@@ -73,9 +88,13 @@ class HTTPTransport {
 
         if (method === METHODS.GET || !data) {
           xhr.send();
+        } else if(data instanceof FormData) {
+          xhr.send(data);
         } else {
           xhr.send(JSON.stringify(data));
         }
       });
   };
 }
+
+export default new HTTPTransport();

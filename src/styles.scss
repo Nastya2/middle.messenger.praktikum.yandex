@@ -12,7 +12,9 @@
 }
 
 body,
-html, .app, .app > div {
+html,
+.app,
+.app > div {
   font-family: Arial, sans-serif;
   width: 100%;
   height: 100%;
@@ -20,8 +22,9 @@ html, .app, .app > div {
   color: var(--dark-color);
   font-size: 13px;
   font-weight: 500;
+  position: fixed;
+  overflow-y: scroll;
 }
-
 
 .wrap {
   display: flex;
@@ -111,6 +114,7 @@ html, .app, .app > div {
   font-weight: 500;
   font-size: 13px;
   line-height: 13px;
+  cursor: pointer;
 
   &_width280 {
     width: 280px;
@@ -120,6 +124,16 @@ html, .app, .app > div {
 .btn-action {
   width: 100%;
   text-align: center;
+
+  &.between {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+
+    & > div {
+      width: 20%;
+    }
+  }
 }
 
 .color-blue {
@@ -136,4 +150,23 @@ html, .app, .app > div {
 
 .error {
   color: red !important;
+}
+
+dialog {
+  border: none;
+  width: 40%;
+  border-radius: 5px;
+
+  h2 {
+    font-size: 16px;
+  }
+}
+
+.no-chat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 25px;
+  font-weight: bold;
 }

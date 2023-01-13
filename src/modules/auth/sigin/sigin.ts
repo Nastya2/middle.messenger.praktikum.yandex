@@ -1,39 +1,65 @@
 import { regular_login, regular_password, regular_email, regular_name, regular_phone } from "../../shared/regular_expressions";
 import { Tprops } from "@types";
-import { checkValidity } from "../../shared/validation-functions";
+import { checkValidityElement, checkValidityForm } from "../../shared/validation-functions";
 import { Button } from "../../shared/components/button/button";
 import { Input } from "../../shared/components/input/input";
 import Component from "../../shared/services/component";
 import template from "./sigin.tmp";
 import { Error } from "../../shared/components/error/error";
 import { Label } from "../../shared/components/label/label";
+import  Router from "../../routing/router";
+import { Link } from "../../shared/components/link/link";
+import authService from "../auth.service";
 
 
 export class SigInPage extends Component {
+
     constructor(props: Tprops) {
         super(props);
     }
 
     public render(): DocumentFragment {
+        hint_auth.hide();
         return this.compile(template, this.props);
     }
 }
+
+const error_form = {
+    email: true,
+    login: true,
+    password: true,
+    first_name: true,
+    second_name: true,
+    password_repeat: true,
+    phone: true
+}
+
+export const hint_auth = new Error({
+    error: "Введите корректные данные!"
+});
 
 export const button = new Button({
     text: "Зарегистрироваться",
     classes: "btn btn_sigin-top-bottom",
     event: {
         click: function() {
+            const form = document.querySelector(".auth-form") as HTMLFormElement;
+            form.reportValidity();
             const data = {
                 login: (input_login.getContent().lastChild as HTMLInputElement).value,
                 password: (input_password.getContent().lastChild as HTMLInputElement).value,
-                password_repeat: (input_password_repeat.getContent().lastChild as HTMLInputElement).value,
                 email: (input_email.getContent().lastChild as HTMLInputElement).value,
                 first_name: (input_first_name.getContent().lastChild as HTMLInputElement).value,
                 second_name: (input_second_name.getContent().lastChild as HTMLInputElement).value,
                 phone: (input_phone.getContent().lastChild as HTMLInputElement).value,
             }
-            console.log(data);
+
+            if (checkValidityForm(error_form)) {
+                authService.signUp(data);
+            } else {
+                hint_auth.show();
+                setTimeout(() => hint_auth.hide(), 3000);
+            }
         }
     },
 });
@@ -57,10 +83,11 @@ export const input_email = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректный адресс, пример, address@yandex.ru"});
             error_email.setProps({
                 error: err
             });
+            error_form.email = !!err;
             error_email.show();
             
         },
@@ -92,10 +119,11 @@ export const input_login = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 3, max: 20, patternMismatch: "Некорректный логин, пример, login2022-5_5"});
             error_login.setProps({
                 error: err
             });
+            error_form.login = !!err;
             error_login.show();
             
         },
@@ -124,10 +152,11 @@ export const input_first_name = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректное имя, пример, Иван или Ivan."});
             error_first_name.setProps({
                 error: err
             });
+            error_form.first_name = !!err;
             error_first_name.show();
             
         },
@@ -156,10 +185,11 @@ export const input_second_name = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректная фамилия, пример, Иванов или Ivanov."});
             error_second_name.setProps({
                 error: err
             });
+            error_form.second_name = !!err;
             error_second_name.show();
             
         },
@@ -190,10 +220,11 @@ export const input_phone = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
+            err = checkValidityElement(event.target as HTMLInputElement, {patternMismatch: "Некорректный телефон"});
             error_phone.setProps({
                 error: err
             });
+            error_form.phone = !!err;
             error_phone.show(); 
         },
         focus: function() {
@@ -223,10 +254,11 @@ export const input_password = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
             error_password.setProps({
                 error: err
             });
+            error_form.password= !!err;
             error_password.show();
             
         },
@@ -257,10 +289,11 @@ export const input_password_repeat = new Input({
     event: {
         blur: function(event: Event) {
             let err = "";
-            err = checkValidity(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
+            err = checkValidityElement(event.target as HTMLInputElement, {min: 8, max: 40, patternMismatch: "Пароль должен содержать хотя бы одну заглавную букву и цифру"});
             error_password_repeat.setProps({
                 error: err
             });
+            error_form.password_repeat = !!err;
             error_password_repeat.show();
             
         },
@@ -269,6 +302,16 @@ export const input_password_repeat = new Input({
         }
     }
 });
+
+const link_sing_in = new Link({
+    text: "Войти",
+    event: {
+        click: function() {
+            Router.go("/login");
+        }
+    },
+    classes: "auth-form__href"
+}); 
 
 export const Components = {
     button,
@@ -292,6 +335,8 @@ export const Components = {
     error_password,
     error_password_repeat,
     error_phone,
-    error_second_name
+    error_second_name,
+    link_sing_in,
+    hint_auth
 };
 

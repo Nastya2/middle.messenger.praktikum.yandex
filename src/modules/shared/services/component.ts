@@ -4,14 +4,13 @@ import {v4 as makeUUID} from "uuid";
 import { compile, compileTemplate } from "pug";
 import { Tprops } from "@types";
 
-
 abstract class Component {
   static EVENTS = {
     INIT: "init",
     FLOW_CDM: "flow:component-did-mount",
     FLOW_RENDER: "flow:render",
     FLOW_CDU: "flow:component-did-update"
-  };
+  } as const;
 
   private element: HTMLElement;
   public props: Tprops;
@@ -48,12 +47,13 @@ abstract class Component {
     const props: Tprops = {};
 
     Object.entries(propsAndChildren).forEach(([key, value]) => {
-      if (value instanceof Component) {
+      if (value instanceof Component || Array.isArray(propsAndChildren[key])) {
         children[key] = value;
       } else {
         props[key] = value;
       }
     });
+
     return {props, children};
   }
 
@@ -97,26 +97,47 @@ abstract class Component {
 
   public compile(template: string, props: Tprops): DocumentFragment {
     const propsAndStubs = { ...props };
- 
     Object.entries(this.children).forEach(([key, child]) => {
-      propsAndStubs[key] = `div data-id="${child.id}"`;
+      if(Array.isArray(child)) {
+        propsAndStubs[key] = {};
+        Object.entries(child).forEach(([key2, child2]) => {
+          propsAndStubs[key][key2] = `div data-id="${child2.id}"`;
+        });
+      } else {
+        propsAndStubs[key] = `div data-id="${child.id}"`;
+      }
     });
 
+  
     const fragment = this.createResources('template') as HTMLTemplateElement;
-    if(!this.compileTemplate) {
-      this.compileTemplate = compile(template);
-    }
+
+    this.compileTemplate = compile(template);
+
 
     fragment.innerHTML = this.compileTemplate(propsAndStubs);
 
     Object.values(this.children).forEach((child: Component) => {
-      const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
+      if(Array.isArray(child)) {
+        Object.values(child).forEach((c: Component) => {
 
-      if (stub) {
-        stub.replaceWith(child.getContent());
+          const stub = fragment.content.querySelector(`[data-id="${c.id}"]`);
+
+          if (stub) {
+            stub.replaceWith(c.getContent());
+          } else {
+            console.log("заглушка не найдена");
+          }
+        });
+
       } else {
-        console.log("заглушка не найдена");
+        const stub = fragment.content.querySelector(`[data-id="${child.id}"]`);
+        if (stub) {
+          stub.replaceWith(child.getContent());
+        } else {
+          console.log("заглушка не найдена");
+        }
       }
+     
     });
 
     return fragment.content;
@@ -132,10 +153,11 @@ abstract class Component {
       return;
     }
 
-    this.removeListener();
-
     if(this._componentDidUpdate(this.props, nextProps)) {
+      this.props = this.getChildren(nextProps).props;
+      this.children = this.getChildren(nextProps).children;
       Object.assign(this.props, nextProps);
+      this.removeListener();
       this.eventBus().emit(Component.EVENTS.FLOW_CDU, nextProps, this.props);
     }
   };
@@ -163,6 +185,10 @@ abstract class Component {
     this.getContent().style.display = "block";
   }
 
+  public clear() {
+    this.element.innerHTML = "";
+  }
+
   public hide(): void {
     this.getContent().style.display = "none";
   }
@@ -170,7 +196,6 @@ abstract class Component {
   private addEvents(): void {
     /* eslint-disable */
     const events = this.props.event as any;
-
     if (events) {
       Object.keys(events).forEach(eventName => {
         this.element.firstElementChild!.addEventListener(eventName, events[eventName]);
