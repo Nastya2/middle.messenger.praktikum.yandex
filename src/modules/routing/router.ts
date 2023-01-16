@@ -7,11 +7,7 @@ export class Router {
     private currentRoute: null | Route = null;
     private rootQuery = "";
     constructor(rootQuery: string) {
-        if (!Router.instance) {
-            this.rootQuery = rootQuery;
-            Router.instance = this;
-        } 
-        return Router.instance;
+        this.rootQuery = rootQuery;
     }
 
     public use(pathname: string, block: any, props: any) {
@@ -20,12 +16,15 @@ export class Router {
         return this; 
     }
 
+    public reset() {
+        this.currentRoute = null;
+        this.routes = [];
+    }
+
     public start() {
        window.onpopstate = (event: any) => {
-        console.log(event.currentTarget.location.pathname, "start event");
         this.onRoute(event.currentTarget.location.pathname);
       };
-      console.log(window.location.pathname, "start");
       this.onRoute(window.location.pathname);
     }
 
