@@ -6,7 +6,8 @@
     "lint-fix": "./node_modules/.bin/eslint . --fix && npx stylelint '**/*.scss' --fix",
     "test": "mocha --require ts-node/register --require ./mocha-setup.js './src/modules/**/*.test.ts'",
     "start": "webpack serve --open --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "build": "webpack --config webpack.prod.js",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
