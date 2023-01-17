@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const devMode = process.env.NODE_ENV === "development";
 
 module.exports = {
-  mode: "development",
+  //mode: "development",
   entry: "./src/index.ts",
   devtool: "inline-source-map",
   output: {
