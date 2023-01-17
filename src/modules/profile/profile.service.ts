@@ -55,7 +55,6 @@ export class ProfileService  {
     public getUser() {
         return http.get(`${BASE_URL}/auth/user`, {}).then((res: TUser & TUserAvatar) => {
             store.set("user", res);
-            console.log("getUser");
         }).catch((err) => console.log(err, "err"));
     }
 

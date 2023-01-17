@@ -7,7 +7,9 @@ import Router from "./modules/routing/router";
 import { ErrorPage } from "./modules/errors/error";
 import { EditPasswordPage, Components as EditPasswordComponents} from "./modules/profile/edit-password/edit-password";
 import authService from "./modules/auth/auth.service";
+import "./styles.scss";
 
+console.log(process.env.NODE_ENV);
 window.addEventListener("DOMContentLoaded",  async () => {
     Router
     .use("/",  LoginPage, LoginComponents)
