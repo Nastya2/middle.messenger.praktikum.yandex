@@ -1,14 +1,14 @@
-var sinon = require("sinon");
+const sinon = require("sinon");
 
 const getContentFake1 = sinon.fake.returns(document.createElement('div'));
 class BlockMock1  {
     getContent = getContentFake1;
-    dispatchComponentDidMount() {}
+    dispatchComponentDidMount() { return true; }
 }
 const getContentFake2 = sinon.fake.returns(document.createElement('div'));
 class BlockMock2  {
     getContent = getContentFake2;
-    dispatchComponentDidMount() {}
+    dispatchComponentDidMount() {  return true; }
 }
 
 global.window.history.back = () => {

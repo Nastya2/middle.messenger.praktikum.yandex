@@ -13,6 +13,10 @@
   ],
   "rules": {
     "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {"ts-ignore": false}
+    ],
     "@typescript-eslint/no-this-alias": [
       "error",
       {
