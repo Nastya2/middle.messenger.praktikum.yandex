@@ -29,7 +29,7 @@ module.exports = {
   },
   devServer: {
     compress: true,
-    port: 4000,
+    port: 3000,
     historyApiFallback: true,
     open: true,
     hot: true,
