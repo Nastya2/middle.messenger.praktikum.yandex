@@ -135,6 +135,7 @@ const link_sing_up = new Link({
 }); 
 
 export const Components = {
+    hint_auth,
     button,
     input_login,
     input_password,
@@ -142,6 +143,5 @@ export const Components = {
     error_password,
     label_login,
     label_password,
-    link_sing_up,
-    hint_auth
+    link_sing_up
 };
