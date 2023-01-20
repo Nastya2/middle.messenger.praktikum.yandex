@@ -38,10 +38,10 @@ export class ChatsPage extends Component {
 let usersOpenChat = "";
 let infoUsersOpenChat: {login: string, user_id: number}[];
 let chat_id_active: number | null = null;
-let chat_items = new ChatItems({chats: []});
+const chat_items = new ChatItems({chats: []});
 let chats_id: number[] = [];
 let chats_id_avatar: {id: number, avatar: string | null | undefined}[] = [];
-let sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
+const sockets: {socket: WSTransport, chat_id: number, messages: Message[]}[] = [];
 let chats_token:{token: string, chat_id: number}[] = [];
 
 const linkProfile = new Link({
@@ -358,7 +358,7 @@ function getUsersChatAndUpdate(chat_id: number, add_user?: boolean): void {
 }
 
 function getTokenChat(): void {
-    let promise: Promise<{token: string, chat_id: number}>[] = [];
+    const promise: Promise<{token: string, chat_id: number}>[] = [];
     chats_id.forEach((id) => {
         promise.push(chatsService.getToken(id).then((res) => {
             return {
@@ -371,7 +371,7 @@ function getTokenChat(): void {
     Promise.all(promise).then((res) => {
         chats_token = res;
         connectSockets();
-    })
+    });
 }
 
 

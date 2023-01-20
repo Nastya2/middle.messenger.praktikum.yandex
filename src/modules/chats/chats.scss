@@ -8,7 +8,7 @@
     height: 50px;
     border-radius: 50%;
     background: #efefef;
-  
+
     img {
       width: 50px;
       height: 50px;
@@ -197,7 +197,6 @@
   &__name {
     font-weight: 600;
     font-size: 13px;
-    line-height: 13px;
     color: #1e1e1e;
     margin-bottom: 5px;
     text-overflow: ellipsis;
@@ -250,13 +249,6 @@
   justify-content: center;
 }
 
-.avatar {
-  width: 47px;
-  height: 47px;
-  border-radius: 50%;
-  background: #efefef;
-}
-
 .submit-msg {
   margin-left: 14px;
   transform: rotate(180deg);
@@ -302,7 +294,7 @@
 .delete_chat_icon {
   content: "";
   display: block;
-  background-image: url("./icons/delete-chat-icon.png");
+  background-image: url("./icons/delete-chat-icon.svg");
   background-position: center;
   background-repeat: no-repeat;
   width: 30px;

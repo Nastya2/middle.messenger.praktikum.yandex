@@ -43,7 +43,7 @@ export class HTTPTransport {
     return this.request(url, {...options }, METHODS.DELETE, options.timeout);
   };
 
-  private request = (url: string, options: Options, method: METHODS,timeout = 5000): Promise<any> => {
+  private request = (url: string, options: Options, method: METHODS,timeout = 15000): Promise<any> => {
       const headers = options.headers || {};
     
       let data: Options["data"];
@@ -56,9 +56,11 @@ export class HTTPTransport {
         xhr.withCredentials = true;
         xhr.timeout = timeout;
 
-        if(method === METHODS.GET && data) {
+        if (method === METHODS.GET && data) {
           url = url + queryStringify(data);
-        } else if (!(data instanceof FormData)) {
+        } 
+        
+        if (data && !(data instanceof FormData)) {
           headers["content-type"] = 'application/json'
         }
 
